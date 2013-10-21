@@ -1,48 +1,54 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.daveclay</groupId>
-  <artifactId>kinect-test</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0.0-SNAPSHOT</version>
-  <name>Testing Processing and Kinect</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.daveclay</groupId>
+    <artifactId>kinect-test</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>Testing Processing and Kinect</name>
 
-  <scm>
-    <connection>scm:hg:ssh://hg@bitbucket.org/daveclay/kinect-test</connection>
-    <developerConnection>scm:hg:ssh://hg@bitbucket.org/daveclay/kinect-test</developerConnection>
-    <url>https://bitbucket.org/daveclay/kinect-test/overview</url>
-    <tag>HEAD</tag>
-  </scm>
+    <scm>
+        <connection>scm:hg:ssh://hg@bitbucket.org/daveclay/kinect-test</connection>
+        <developerConnection>scm:hg:ssh://hg@bitbucket.org/daveclay/kinect-test</developerConnection>
+        <url>https://bitbucket.org/daveclay/kinect-test/overview</url>
+        <tag>HEAD</tag>
+    </scm>
 
 
-  <distributionManagement>
-    <repository>
-      <id>daveclay-releases</id>
-      <name>daveclay repo</name>
-      <url>http://daveclay.com/nexus/content/repositories/releases</url>
-    </repository>
-    <snapshotRepository>
-      <id>daveclay-snapshots</id>
-      <name>daveclay repo</name>
-      <url>http://daveclay.com/nexus/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>daveclay-releases</id>
+            <name>daveclay repo</name>
+            <url>http://daveclay.com/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>daveclay-snapshots</id>
+            <name>daveclay repo</name>
+            <url>http://daveclay.com/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <properties>
-		<scala.version>2.10.1</scala.version>
-	</properties>
+        <scala.version>2.10.1</scala.version>
+    </properties>
 
     <dependencies>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>${scala.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.processing</groupId>
-			<artifactId>processing-core</artifactId>
-			<version>2.0.3</version>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.processing</groupId>
+            <artifactId>processing-core</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jogamp.jogl</groupId>
+            <artifactId>jogl-all</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
@@ -70,6 +76,6 @@
                     </execution>
                 </executions>
             </plugin>
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 </project>
