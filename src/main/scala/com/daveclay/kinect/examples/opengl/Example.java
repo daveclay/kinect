@@ -8,6 +8,11 @@ import javax.media.opengl.GL2;
  * http://wiki.processing.org/w/Advanced_OpenGL
  */
 public class Example extends PApplet {
+
+    public static void main(String[] args) {
+        PApplet.main(Example.class.getName());
+    }
+
     float a;
     GL2 gl;
     PGraphicsOpenGL pgl;
