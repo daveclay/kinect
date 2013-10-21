@@ -27,7 +27,16 @@
     </snapshotRepository>
   </distributionManagement>
 
+    <properties>
+		<scala.version>2.10.1</scala.version>
+	</properties>
+
     <dependencies>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.processing</groupId>
 			<artifactId>processing-core</artifactId>
