@@ -1,4 +1,4 @@
-package com.daveclay.kinect.examples.opengl;
+package com.daveclay.processing.examples.opengl;
 
 import processing.core.PApplet;
 import processing.opengl.*;
@@ -7,10 +7,10 @@ import javax.media.opengl.GL2;
 /**
  * http://wiki.processing.org/w/Advanced_OpenGL
  */
-public class Example extends PApplet {
+public class OpenGLExample extends PApplet {
 
     public static void main(String[] args) {
-        PApplet.main(Example.class.getName());
+        PApplet.main(OpenGLExample.class.getName());
     }
 
     float a;
