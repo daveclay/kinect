@@ -1,6 +1,7 @@
 package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
+import com.daveclay.processing.kinect.api.FrameExporter;
 import com.daveclay.processing.kinect.api.SimpleHandGestureAware;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -13,13 +14,13 @@ public class HandHolding3DBall extends SimpleHandGestureAware {
     }
 
     private SimpleOpenNI kinect;
-
+    private FrameExporter frameExporter;
     private float max = 66;
     private float min = 14;
 
-    private int count = 0;
-
     public void setup() {
+        frameExporter = new FrameExporter(this, "/Users/daveclay/Desktop/out/ball%s.tif");
+
         kinect = new SimpleOpenNI(this);
         kinect.setMirror(true);
 
@@ -58,12 +59,7 @@ public class HandHolding3DBall extends SimpleHandGestureAware {
             popMatrix();
         }
 
-        String shit = count + "";
-        while (shit.length() < 3) {
-            shit = "0" + shit;
-        }
-        saveFrame("/Users/daveclay/Desktop/out/ball " + shit + ".tif");
-        count++;
+        frameExporter.writeFrame();
     }
 
     public void keyPressed() {
