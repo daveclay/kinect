@@ -60,7 +60,7 @@ public class Hands extends PApplet {
     {
         size(1024,768,OPENGL);
 
-        //context = new SimpleOpenNI(this);
+        //kinect = new SimpleOpenNI(this);
         context = new SimpleOpenNI(this);
         if(context.isInit() == false)
         {
@@ -73,20 +73,20 @@ public class Hands extends PApplet {
         context.setMirror(true);
 
         // enable depthMap generation
-        //context.enableDepth();
+        //kinect.enableDepth();
 
         // enable hands + gesture generation
         context.enableHand();
         context.startGesture(SimpleOpenNI.GESTURE_WAVE);
 
         // set how smooth the hand capturing should be
-        //context.setSmoothingHands(.5);
+        //kinect.setSmoothingHands(.5);
 
         stroke(255,255,255);
         smooth();
 
         float aspect = (float)(width)/(float)(height);
-        perspective(radians(45), aspect, 10.0f,150000.0f);
+        perspective(radians(45), aspect, 10.0f, 150000.0f);
     }
 
     public void draw()
@@ -114,15 +114,15 @@ public class Hands extends PApplet {
         // draw point cloud
         stroke(200);
         beginShape(POINTS);
-        for(int y=0;y < context.depthHeight();y+=steps)
+        for(int y=0;y < kinect.depthHeight();y+=steps)
         {
-            for(int x=0;x < context.depthWidth();x+=steps)
+            for(int x=0;x < kinect.depthWidth();x+=steps)
             {
-                index = x + y * context.depthWidth();
+                index = x + y * kinect.depthWidth();
                 if(depthMap[index] > 0)
                 {
                     // draw the projected point
-                    realWorldPoint = context.depthMapRealWorld()[index];
+                    realWorldPoint = kinect.depthMapRealWorld()[index];
                     vertex(realWorldPoint.x,realWorldPoint.y,realWorldPoint.z);
                 }
             }
@@ -176,7 +176,7 @@ public class Hands extends PApplet {
         ArrayList<PVector> vecList = new ArrayList<PVector>();
         vecList.add(pos);
 
-        handPathList.put(handId,vecList);
+        handPathList.put(handId, vecList);
     }
 
     public void onTrackedHand(SimpleOpenNI curContext,int handId,PVector pos)

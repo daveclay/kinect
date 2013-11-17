@@ -48,7 +48,7 @@ public class UserTest extends PApplet {
         context.enableDepth();
 
         // enable skeleton generation for all joints
-        // context.enableUser();
+        // kinect.enableUser();
         context.enableHand();
 
         background(200, 0, 0);
@@ -64,7 +64,7 @@ public class UserTest extends PApplet {
         context.update();
 
         // draw depthImageMap
-        //image(context.depthImage(),0,0);
+        //image(kinect.depthImage(),0,0);
         image(context.userImage(), 0, 0);
 
         // draw the skeleton if it's available
@@ -102,7 +102,7 @@ public class UserTest extends PApplet {
         // to get the 3d joint data
   /*
   PVector jointPos = new PVector();
-  context.getJointPositionSkeleton(userId,SimpleOpenNI.SKEL_NECK,jointPos);
+  kinect.getJointPositionSkeleton(userId,SimpleOpenNI.SKEL_NECK,jointPos);
   println(jointPos);
   */
 

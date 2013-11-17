@@ -62,9 +62,10 @@ public class UserAndDepth extends PApplet {
         context.update();
 
         // draw depthImageMap
-        //image(context.depthImage(),0,0);
+        //image(kinect.depthImage(),0,0);
         image(context.userImage(),0,0);
 
+        translate(width/2, height/2, 0);
         // draw the skeleton if it's available
         int[] userList = context.getUsers();
         for(int i=0;i<userList.length;i++)
@@ -101,7 +102,7 @@ public class UserAndDepth extends PApplet {
         // to get the 3d joint data
   /*
   PVector jointPos = new PVector();
-  context.getJointPositionSkeleton(userId,SimpleOpenNI.SKEL_NECK,jointPos);
+  kinect.getJointPositionSkeleton(userId,SimpleOpenNI.SKEL_NECK,jointPos);
   println(jointPos);
   */
 
