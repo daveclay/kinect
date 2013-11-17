@@ -1,16 +1,10 @@
-package com.daveclay.processing.kinect;
+package com.daveclay.processing.kinect.examples;
 
 import SimpleOpenNI.SimpleOpenNI;
 import processing.core.PApplet;
 import processing.core.PImage;
-import processing.core.PVector;
 
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 
 public class PixelTests extends PApplet {
 

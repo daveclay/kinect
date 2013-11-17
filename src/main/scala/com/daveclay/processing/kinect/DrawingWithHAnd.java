@@ -7,10 +7,10 @@ import processing.core.PVector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HandCoordinates extends PApplet {
+public class DrawingWithHand extends PApplet {
 
     public static void main(String[] args) {
-        PApplet.main(HandCoordinates.class.getName());
+        PApplet.main(DrawingWithHand.class.getName());
     }
 
     private SimpleOpenNI kinect;

@@ -1,4 +1,4 @@
-package com.daveclay.processing.kinect;
+package com.daveclay.processing.kinect.examples;
 
 import SimpleOpenNI.*;
 import processing.core.*;
@@ -22,10 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 
-public class Hands extends PApplet {
+public class HandsSimpleOpenNIExample extends PApplet {
 
     public static void main(String[] args) {
-        PApplet.main(Hands.class.getName());
+        PApplet.main(HandsSimpleOpenNIExample.class.getName());
     }
 /* --------------------------------------------------------------------------
  * SimpleOpenNI Hands3d Test

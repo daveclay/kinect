@@ -1,4 +1,4 @@
-package com.daveclay.processing.kinect;
+package com.daveclay.processing.kinect.examples;
 
 import SimpleOpenNI.*;
 import processing.core.*;
