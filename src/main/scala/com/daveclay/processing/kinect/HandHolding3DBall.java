@@ -2,6 +2,7 @@ package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.kinect.api.FrameExporter;
+import com.daveclay.processing.kinect.api.HandData;
 import com.daveclay.processing.kinect.api.SimpleHandGestureAware;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -15,6 +16,7 @@ public class HandHolding3DBall extends SimpleHandGestureAware {
 
     private SimpleOpenNI kinect;
     private FrameExporter frameExporter;
+    private HandData handData;
     private float max = 66;
     private float min = 14;
 
@@ -27,7 +29,7 @@ public class HandHolding3DBall extends SimpleHandGestureAware {
         kinect.enableRGB();
         size(kinect.rgbWidth(), kinect.rgbHeight(), OPENGL);
 
-        super.init(kinect);
+        handData = super.initHandGestures(kinect);
         useWaveGesture();
     }
 
@@ -38,7 +40,7 @@ public class HandHolding3DBall extends SimpleHandGestureAware {
         PImage image = kinect.rgbImage();
         background(image);
 
-        for (PVector hand : getAllCurrentHandPositions()) {
+        for (PVector hand : handData.getAllCurrentHandPositions()) {
             pushMatrix();
             fill(color(0, 255, 0));
             rect(hand.x, hand.y, 10, 10);
