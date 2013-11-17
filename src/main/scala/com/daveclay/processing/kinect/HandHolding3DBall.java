@@ -1,22 +1,18 @@
 package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
+import com.daveclay.processing.kinect.api.SimpleHandGestureAware;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
-
-import java.util.HashMap;
-import java.util.Map;
-
-public class HandHolding3DBall extends PApplet {
+public class HandHolding3DBall extends SimpleHandGestureAware {
 
     public static void main(String[] args) {
         PApplet.main(HandHolding3DBall.class.getName());
     }
 
     private SimpleOpenNI kinect;
-    private Map<Integer, PVector> hands = new HashMap<Integer, PVector>();
 
     private float max = 66;
     private float min = 14;
@@ -30,9 +26,8 @@ public class HandHolding3DBall extends PApplet {
         kinect.enableRGB();
         size(kinect.rgbWidth(), kinect.rgbHeight(), OPENGL);
 
-        kinect.enableDepth();
-        kinect.enableHand();
-        kinect.startGesture(SimpleOpenNI.GESTURE_WAVE);
+        super.init(kinect);
+        useWaveGesture();
     }
 
     public void draw() {
@@ -42,7 +37,7 @@ public class HandHolding3DBall extends PApplet {
         PImage image = kinect.rgbImage();
         background(image);
 
-        for (PVector hand : hands.values()) {
+        for (PVector hand : getAllCurrentHandPositions()) {
             pushMatrix();
             fill(color(0, 255, 0));
             rect(hand.x, hand.y, 10, 10);
@@ -69,34 +64,6 @@ public class HandHolding3DBall extends PApplet {
         }
         saveFrame("/Users/daveclay/Desktop/out/ball " + shit + ".tif");
         count++;
-    }
-
-
-    public void onNewHand(SimpleOpenNI curContext, int handId, PVector pos) {
-        println("onNewHand - handId: " + handId + ", pos: " + pos);
-        kinect.convertRealWorldToProjective(pos, pos);
-        hands.put(handId, pos);
-    }
-
-    public void onTrackedHand(SimpleOpenNI curContext, int handId, PVector pos) {
-        // println("onTrackedHand - handId: " + handId + ", pos: " + pos );
-        kinect.convertRealWorldToProjective(pos, pos);
-        hands.put(handId, pos);
-    }
-
-    public void onLostHand(SimpleOpenNI curContext, int handId) {
-        println("onLostHand - handId: " + handId);
-        hands.remove(handId);
-    }
-
-
-    public void onCompletedGesture(SimpleOpenNI curContext, int gestureType, PVector pos) {
-        println("onCompletedGesture - gestureType: " + gestureType + ", pos: " + pos);
-
-        kinect.startTrackingHand(pos);
-
-        int handId = kinect.startTrackingHand(pos);
-        println("Gesture completed for hand " + handId);
     }
 
     public void keyPressed() {

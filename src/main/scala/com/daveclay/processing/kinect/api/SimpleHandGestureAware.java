@@ -5,25 +5,43 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
-
-public abstract class HandGestureAware extends PApplet implements Hand {
+public abstract class SimpleHandGestureAware extends PApplet implements Hand {
 
     private SimpleOpenNI kinect;
-    private int handVecListSize = 30;
+    private int handPositionsToTrack = 30;
     private Map<Integer, ArrayList<PVector>> handPathList = new HashMap<Integer, ArrayList<PVector>>();
 
-    public HandGestureAware(SimpleOpenNI simpleOpenNI) {
+    public void init(SimpleOpenNI simpleOpenNI) {
         kinect = simpleOpenNI;
         kinect.enableDepth();
         kinect.enableHand();
     }
 
+    public void setHandPositionsToTrack(int handPositionsToTrack) {
+        this.handPositionsToTrack = handPositionsToTrack;
+    }
+
     public void useWaveGesture() {
         kinect.startGesture(SimpleOpenNI.GESTURE_WAVE);
+    }
+
+    public List<PVector> getAllCurrentHandPositions() {
+        List<PVector> positions = new ArrayList<PVector>();
+        for (int hand : handPathList.keySet()) {
+            PVector currentHandPosition = getCurrentHandPosition(hand);
+            positions.add(currentHandPosition);
+        }
+        return positions;
+    }
+
+    public Collection<ArrayList<PVector>> getAllHands() {
+        return handPathList.values();
     }
 
     public void useRaisedHand() {
@@ -44,6 +62,7 @@ public abstract class HandGestureAware extends PApplet implements Hand {
 
     public void onNewHand(SimpleOpenNI curContext, int handId, PVector pos) {
         System.out.println("onNewHand - handId: " + handId + ", pos: " + pos);
+        kinect.convertRealWorldToProjective(pos, pos);
         ArrayList<PVector> vecList = new ArrayList<PVector>();
         vecList.add(pos);
         handPathList.put(handId, vecList);
@@ -51,10 +70,11 @@ public abstract class HandGestureAware extends PApplet implements Hand {
 
     public void onTrackedHand(SimpleOpenNI curContext, int handId, PVector pos) {
         //println("onTrackedHand - handId: " + handId + ", pos: " + pos );
+        kinect.convertRealWorldToProjective(pos, pos);
         ArrayList<PVector> vecList = handPathList.get(handId);
         if (vecList != null) {
             vecList.add(0, pos);
-            if (vecList.size() >= handVecListSize) {
+            if (vecList.size() >= handPositionsToTrack) {
                 vecList.remove(vecList.size() - 1);
             }
         }
