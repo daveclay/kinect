@@ -2,21 +2,21 @@ package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.kinect.api.FrameExporter;
-import com.daveclay.processing.kinect.api.HandData;
-import com.daveclay.processing.kinect.api.SimpleHandGestureAware;
+import com.daveclay.processing.kinect.api.HandGestureHandler;
+import com.daveclay.processing.kinect.api.HandGestures;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
-public class HandHolding3DBall extends SimpleHandGestureAware {
+public class HandAwareHolding3DBall extends PApplet {
 
     public static void main(String[] args) {
-        PApplet.main(HandHolding3DBall.class.getName());
+        PApplet.main(HandAwareHolding3DBall.class.getName());
     }
 
     private SimpleOpenNI kinect;
     private FrameExporter frameExporter;
-    private HandData handData;
+    private HandGestures handGestures;
     private float max = 66;
     private float min = 14;
 
@@ -29,8 +29,8 @@ public class HandHolding3DBall extends SimpleHandGestureAware {
         kinect.enableRGB();
         size(kinect.rgbWidth(), kinect.rgbHeight(), OPENGL);
 
-        handData = super.initHandGestures(kinect);
-        useWaveGesture();
+        handGestures = HandGestureHandler.init(kinect);
+        handGestures.useWaveGesture();
     }
 
     public void draw() {
@@ -40,7 +40,7 @@ public class HandHolding3DBall extends SimpleHandGestureAware {
         PImage image = kinect.rgbImage();
         background(image);
 
-        for (PVector hand : handData.getAllCurrentHandPositions()) {
+        for (PVector hand : handGestures.getAllCurrentHandPositions()) {
             pushMatrix();
             fill(color(0, 255, 0));
             rect(hand.x, hand.y, 10, 10);

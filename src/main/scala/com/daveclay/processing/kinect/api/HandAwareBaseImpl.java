@@ -3,7 +3,7 @@ package com.daveclay.processing.kinect.api;
 import SimpleOpenNI.SimpleOpenNI;
 import processing.core.PVector;
 
-public abstract class HandBaseImpl implements Hand {
+public abstract class HandAwareBaseImpl implements HandAware {
 
     @Override
     public void onNewHand(SimpleOpenNI kinect, int handId, PVector pos) {

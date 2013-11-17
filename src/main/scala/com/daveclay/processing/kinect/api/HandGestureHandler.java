@@ -1,7 +1,6 @@
 package com.daveclay.processing.kinect.api;
 
 import SimpleOpenNI.SimpleOpenNI;
-import processing.core.PApplet;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -10,24 +9,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-public abstract class SimpleHandGestureAware extends PApplet implements Hand {
+public class HandGestureHandler implements HandAware {
 
     private SimpleOpenNI kinect;
-    private HandDataImpl handDataImpl;
+    private HandGesturesImpl handDataImpl;
 
-    /**
-     *  available for subclasses
-     */
-    protected HandData handData;
+    public static HandGestures init(SimpleOpenNI kinect) {
+        HandGestureHandler handGestures = new HandGestureHandler(kinect);
+        return handGestures.handDataImpl;
+    }
 
-    public HandData initHandGestures(SimpleOpenNI simpleOpenNI) {
+    public HandGestureHandler(SimpleOpenNI simpleOpenNI) {
         kinect = simpleOpenNI;
         kinect.enableDepth();
-        kinect.enableHand();
-        handDataImpl = new HandDataImpl(simpleOpenNI);
-        handData = handDataImpl;
-        return handDataImpl;
+        kinect.enableHand(this);
+        handDataImpl = new HandGesturesImpl(simpleOpenNI);
     }
 
     public void setHandPositionsToTrack(int handPositionsToTrack) {
@@ -67,16 +63,16 @@ public abstract class SimpleHandGestureAware extends PApplet implements Hand {
         System.out.println("onCompletedGesture - gestureType: " + gestureType + ", pos: " + pos);
         kinect.startTrackingHand(pos);
         int handId = kinect.startTrackingHand(pos);
-        println("Gesture completed for hand " + handId);
+        System.out.println("Gesture completed for hand " + handId);
     }
 
-    public static class HandDataImpl implements HandData {
+    public static class HandGesturesImpl implements HandGestures {
 
         private final SimpleOpenNI kinect;
         private int handPositionsToTrack = 30;
         private Map<Integer, ArrayList<PVector>> handPathList = new HashMap<Integer, ArrayList<PVector>>();
 
-        public HandDataImpl(SimpleOpenNI kinect) {
+        public HandGesturesImpl(SimpleOpenNI kinect) {
             this.kinect = kinect;
         }
 
