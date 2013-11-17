@@ -1,6 +1,7 @@
 package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
+import com.daveclay.processing.Sphere;
 import com.daveclay.processing.kinect.api.FrameExporter;
 import com.daveclay.processing.kinect.api.HandGestureHandler;
 import com.daveclay.processing.kinect.api.HandGestures;
@@ -17,11 +18,18 @@ public class HandAwareHolding3DBall extends PApplet {
     private SimpleOpenNI kinect;
     private FrameExporter frameExporter;
     private HandGestures handGestures;
-    private float max = 66;
-    private float min = 14;
+
+    private float rotateY = 96;
+    private float rotateX = 28;
+    private float rotateZ = 180;
+
+    private Sphere sphere;
 
     public void setup() {
         frameExporter = new FrameExporter(this, "/Users/daveclay/Desktop/out/ball%s.tif");
+
+        PImage image = loadImage("/Users/daveclay/Dropbox/joeface.jpg");
+        sphere = new Sphere(this, image);
 
         kinect = new SimpleOpenNI(this);
         kinect.setMirror(true);
@@ -47,17 +55,20 @@ public class HandAwareHolding3DBall extends PApplet {
             popMatrix();
 
             pushMatrix();
-            noStroke();
-            smooth();
             translate(hand.x, hand.y, 0);
-            fill(color(255, 0, 0));
-            lights();
+            // fill(color(255, 0, 0));
+            // lights();
 
-            float size = map(hand.z, 480, 3200, max, min);
+            float size = map(hand.z, 480, 3200, 66, 14);
             if (size < 1) {
                 size = 1;
             }
-            sphere(size);
+            rotateX(radians(rotateX));
+            rotateY(radians(rotateY));
+            rotateZ(radians(rotateZ));
+            sphere.radius(size);
+            sphere.drawSphere(this);
+
             popMatrix();
         }
 
@@ -65,24 +76,38 @@ public class HandAwareHolding3DBall extends PApplet {
     }
 
     public void keyPressed() {
+        System.out.println("keyCode: " + keyCode);
         switch(keyCode)
         {
             case LEFT:
-                max -= 2;
-                println("max: " + max);
+                rotateY -= 2;
+                println("rotateY: " + rotateY);
                 break;
             case RIGHT:
-                max += 2;
-                println("max: " + max);
+                rotateY += 2;
+                println("rotateY: " + rotateY);
                 break;
             case UP:
-                min += 1;
-                println("min: " + min);
+                rotateX += 2;
+                println("rotateX: " + rotateX);
                 break;
             case DOWN:
-                min -= 1;
-                println("min: " + min);
+                rotateX -= 2;
+                println("rotateX : " + rotateX);
                 break;
+        }
+        if (key == ',') {
+            rotateZ -= 2;
+            println("rotateZ : " + rotateZ);
+        } else if (key == '.') {
+            rotateZ += 2;
+            println("rotateZ : " + rotateZ);
+        }
+
+        if (key == 'r') {
+            frameExporter.start();
+        } else if (key == 's') {
+            frameExporter.stop();
         }
     }
 }

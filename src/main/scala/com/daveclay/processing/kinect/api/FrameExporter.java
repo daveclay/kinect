@@ -7,6 +7,7 @@ public class FrameExporter {
     private final String outputFileTemplate;
     private final PApplet pApplet;
     private int count = 0;
+    private boolean recording = false;
 
     /**
      *
@@ -18,13 +19,25 @@ public class FrameExporter {
         this.outputFileTemplate = outputFileTemplate;
     }
 
+    public void start() {
+        System.out.println("Starting frame capture");
+        recording = true;
+    }
+
+    public void stop() {
+        System.out.println("Stopping frame capture");
+        recording = false;
+    }
+
     public void writeFrame() {
-        String paddedCount = count + "";
-        while (paddedCount.length() < 5) {
-            paddedCount = "0" + paddedCount;
+        if (recording) {
+            String paddedCount = count + "";
+            while (paddedCount.length() < 5) {
+                paddedCount = "0" + paddedCount;
+            }
+            String path = String.format(outputFileTemplate, paddedCount);
+            pApplet.saveFrame(path);
+            count++;
         }
-        String path = String.format(outputFileTemplate, paddedCount);
-        pApplet.saveFrame(path);
-        count++;
     }
 }
