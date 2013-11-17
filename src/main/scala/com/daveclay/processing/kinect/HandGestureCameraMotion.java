@@ -54,9 +54,16 @@ public class HandGestureCameraMotion extends PApplet {
         handGestures.useWaveGesture();
 
         camera = new PeasyCam(this, 0);
-        camera.setMinimumDistance(10);
+        camera.setMinimumDistance(3);
         // camera.setMaximumDistance(10000);
         camera.setActive(true);
+
+
+        // fucking depth
+        float fov = PI/3;
+        float cameraZ = (height/2.0f) / tan(fov/2.0f);
+        float aspect = width  / height;
+        perspective(fov, aspect, cameraZ/100.0f, cameraZ*100.0f);
 
         rebuildStarField();
 
@@ -64,15 +71,16 @@ public class HandGestureCameraMotion extends PApplet {
     }
 
     private void rebuildStarField() {
-        System.out.println("Rebuilding Star Field");
+        System.out.println("Rebuilding Star Field... ");
         stars.clear();
         for (int i = 0; i < numberOfStars; i++) {
             buildStar(i);
         }
+        System.out.println("Done rebuilding Star Field");
     }
 
     private void translateToTheMiddleOfTheStarField() {
-        translate(0, 0, depthRange / 2);
+        camera.lookAt(0, 0, -1 * depthRange / 2);
     }
 
     private void buildStar(int i) {
@@ -87,10 +95,9 @@ public class HandGestureCameraMotion extends PApplet {
     public void draw() {
         background(50);
         kinect.update();
-        camera.setDistance(camDistance);
+        // camera.setDistance(camDistance);
 
         drawStars();
-
         drawHUD();
 
         for (PVector hand : handGestures.getAllCurrentHandPositions()) {
@@ -104,8 +111,11 @@ public class HandGestureCameraMotion extends PApplet {
 
     private void drawHUD() {
         camera.beginHUD();
-        float[] lookAtPoint = camera.getLookAt();
-
+        float[] lookAtPoint = camera.getRotations();
+        String s = "x: " + lookAtPoint[0] + "\ny: " + lookAtPoint[1] + "\nz: " + lookAtPoint[2];
+        fill(color(255, 255, 255));
+        textSize(11);
+        text(s, 10, 10, 200, 200);
         camera.endHUD();
     }
 
