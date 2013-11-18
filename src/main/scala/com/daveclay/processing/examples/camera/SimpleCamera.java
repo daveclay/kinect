@@ -44,13 +44,11 @@ public class SimpleCamera extends PApplet {
         background(80);
         lights();
 
-        pushMatrix();
         translate(width / 2, height / 2, -100);
         fill(color(255, 0, 0));
         sphere(200);
-        popMatrix();
 
-        camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+        camera(eyeX, eyeY, -100, centerX, centerY, centerZ, upX, upY, upZ);
     }
 
     private void logCamera() {
@@ -79,6 +77,8 @@ public class SimpleCamera extends PApplet {
                 break;
             case 47:
                 selectParam();
+                break;
+            case 32:
                 break;
         }
     }

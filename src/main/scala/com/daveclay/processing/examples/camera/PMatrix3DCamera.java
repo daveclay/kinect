@@ -16,9 +16,6 @@ public class PMatrix3DCamera extends PApplet {
     public void setup()
     {
         size(800, 800, P3D); //OPENGL);
-        frameRate(30);
-        sphereDetail(1);
-        textFont(createFont("Monaco", 14));
         stars = new float[1500][3];
         for(int i = 0; i < stars.length; i++)
         {
@@ -35,14 +32,21 @@ public class PMatrix3DCamera extends PApplet {
 
     public void draw()
     {
+        background(80);
+        lights();
+
+        translate(0, 0, 0);
+        fill(color(255, 0, 0));
+        sphere(500);
+
         cam.rotateX(-(mouseY - height / 2.0f) / height / 20f);
         cam.rotateY(-(mouseX - width  / 2.0f) / width  / 20f);
         PVector x = cam.mult(new PVector(1, 0, 0), new PVector(0, 0, 0));
         PVector y = cam.mult(new PVector(0, 1, 0), new PVector(0, 0, 0));
         PVector d = x.cross(y); d.normalize(); d.mult(R);
-        background(0);
-        noStroke();
         camera(0, 0, 0, d.x, d.y, d.z, y.x, y.y, y.z);
+
+        /*
         for(int i = 0; i < stars.length; i++)
         {
             pushMatrix();
@@ -55,6 +59,7 @@ public class PMatrix3DCamera extends PApplet {
         stroke(255);
         line(width / 2 - 9, height / 2 - 0, width / 2 + 8, height / 2 + 0);
         line(width / 2 - 0, height / 2 - 9, width / 2 + 0, height / 2 + 8);
+        */
     }
 
 }
