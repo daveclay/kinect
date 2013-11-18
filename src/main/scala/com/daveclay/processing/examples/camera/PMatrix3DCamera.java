@@ -1,4 +1,4 @@
-package com.daveclay.processing.examples;
+package com.daveclay.processing.examples.camera;
 
 import processing.core.PApplet;
 import processing.core.PMatrix3D;
