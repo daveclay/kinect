@@ -39,12 +39,28 @@ public class PMatrix3DCamera extends PApplet {
         fill(color(255, 0, 0));
         sphere(500);
 
+        translate(5, 1, 0);
+        fill(color(0, 180, 180));
+        sphere(20);
+
         cam.rotateX(-(mouseY - height / 2.0f) / height / 20f);
         cam.rotateY(-(mouseX - width  / 2.0f) / width  / 20f);
-        PVector x = cam.mult(new PVector(1, 0, 0), new PVector(0, 0, 0));
-        PVector y = cam.mult(new PVector(0, 1, 0), new PVector(0, 0, 0));
-        PVector d = x.cross(y); d.normalize(); d.mult(R);
+
+        PVector x = new PVector();
+        cam.mult(new PVector(1, 0, 0), x);
+
+        PVector y = new PVector();
+        cam.mult(new PVector(0, 1, 0), y);
+
+        PVector d = x.cross(y);
+        d.normalize();
+        d.mult(R);
+
         camera(0, 0, 0, d.x, d.y, d.z, y.x, y.y, y.z);
+
+        textSize(32);
+        fill(color(255, 255, 255));
+        text("Hi there.", 10, 10);
 
         /*
         for(int i = 0; i < stars.length; i++)
