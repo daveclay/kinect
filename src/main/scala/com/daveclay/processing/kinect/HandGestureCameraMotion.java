@@ -44,30 +44,34 @@ public class HandGestureCameraMotion extends PApplet {
     public void setup() {
         frameExporter = new FrameExporter(this, "/Users/daveclay/Desktop/out/ball%s.tif");
 
-        kinect = new SimpleOpenNI(this);
-        kinect.setMirror(true);
-
-        kinect.enableRGB();
         size(1024, 768, OPENGL);
-
-        handGestures = HandGestureHandler.init(kinect);
-        handGestures.useWaveGesture();
+        //initKinect();
 
         camera = new PeasyCam(this, 0);
         camera.setMinimumDistance(3);
         // camera.setMaximumDistance(10000);
         camera.setActive(true);
 
-
         // fucking depth
+        // This absolutely FUCKS the camera's HUD, fucking piece of shit.
         float fov = PI/3;
         float cameraZ = (height/2.0f) / tan(fov/2.0f);
         float aspect = width  / height;
-        perspective(fov, aspect, cameraZ/100.0f, cameraZ*100.0f);
+        perspective(fov, aspect, cameraZ/10.0f, cameraZ*100.0f);
 
         rebuildStarField();
 
         translateToTheMiddleOfTheStarField();
+    }
+
+    private void initKinect() {
+        kinect = new SimpleOpenNI(this);
+        kinect.setMirror(true);
+
+        kinect.enableRGB();
+
+        handGestures = HandGestureHandler.init(kinect);
+        handGestures.useWaveGesture();
     }
 
     private void rebuildStarField() {
@@ -80,6 +84,7 @@ public class HandGestureCameraMotion extends PApplet {
     }
 
     private void translateToTheMiddleOfTheStarField() {
+        // translate(0, 0, -1 * depthRange / 2);
         camera.lookAt(0, 0, -1 * depthRange / 2);
     }
 
@@ -94,19 +99,24 @@ public class HandGestureCameraMotion extends PApplet {
 
     public void draw() {
         background(50);
-        kinect.update();
+        // kinect.update();
         // camera.setDistance(camDistance);
 
         drawStars();
         drawHUD();
 
+        // updateHandPositions();
+        // frameExporter.writeFrame();
+    }
+
+    private void updateHandPositions() {
         for (PVector hand : handGestures.getAllCurrentHandPositions()) {
             float x = hand.x;
             float y = hand.y;
             float z = hand.z;
-            // camera(x, y, z, width/2.0f, height/2.0f, 0, 0, 1, 0);
+
+            // camera.lookAt(x, y, z);
         }
-        // frameExporter.writeFrame();
     }
 
     private void drawHUD() {
@@ -114,8 +124,8 @@ public class HandGestureCameraMotion extends PApplet {
         float[] lookAtPoint = camera.getRotations();
         String s = "x: " + lookAtPoint[0] + "\ny: " + lookAtPoint[1] + "\nz: " + lookAtPoint[2];
         fill(color(255, 255, 255));
-        textSize(11);
-        text(s, 10, 10, 200, 200);
+        // textSize(32);
+        text(s, 10, 10, 70, 80);
         camera.endHUD();
     }
 
