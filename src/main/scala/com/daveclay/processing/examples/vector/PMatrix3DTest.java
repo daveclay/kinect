@@ -12,6 +12,7 @@ public class PMatrix3DTest extends PApplet {
     processing.core.PMatrix3D cam;
     private float angleX;
     private float angleY;
+    private float angleZ;
 
     public void setup() {
         size(800, 800, P3D); //OPENGL);
@@ -25,15 +26,16 @@ public class PMatrix3DTest extends PApplet {
 
         cam.rotateX(angleX);
         cam.rotateY(angleY);
-
-        // Note that this never calls rotateZ...
-        // There are orientations that are impossible with a rotation on the Z-axis (upright along the Z-axis looking down the X-axis, for example)
+        cam.rotateZ(angleZ);
 
         PVector x = new PVector();
         cam.mult(new PVector(1, 0, 0), x);
 
         PVector y = new PVector();
         cam.mult(new PVector(0, 1, 0), y);
+
+        PVector z = new PVector();
+        cam.mult(new PVector(0, 0, 1), z);
 
         // vector cross product: results in a vector pointing perpendicular from the plane that the x and y vectors make.
         PVector d = x.cross(y);
@@ -42,17 +44,39 @@ public class PMatrix3DTest extends PApplet {
         pushMatrix();
         translate(width / 2, height / 2, -500);
 
-        rotateX(angleX);
-        rotateY(angleY);
+        applyMatrix(cam);
 
         fill(color(255, 0, 0));
         stroke(color(255, 255, 255));
         box(200);
+
+        pushMatrix();
+        translate(0, 0, -10000);
+        noStroke();
+        fill(color(255, 0, 0));
+        box(1, 1, 30000);
         popMatrix();
 
-        textSize(32);
+        pushMatrix();
+        translate(-10000, 0, 0);
+        noStroke();
+        fill(color(0, 255, 0));
+        box(30000, 1, 1);
+        popMatrix();
+
+        pushMatrix();
+        translate(0, -10000, 0);
+        noStroke();
+        fill(color(0, 0, 255));
+        box(1, 30000, 1);
+        popMatrix();
+
+
+        popMatrix();
+
+        textSize(11);
         fill(color(255, 255, 255));
-        text("Hi there.", 10, 10);
+        text("x: " + x + "\ny: " + y + "\nz: " + z, 30, 30);
     }
 
     public void keyPressed() {

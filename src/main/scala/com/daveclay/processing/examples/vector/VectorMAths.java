@@ -8,7 +8,7 @@ public class VectorMaths {
     public static void main(String[] args) {
 
         PMatrix3D cam = new PMatrix3D();
-        cam.rotateX(90);
+        cam.rotateX(360);
 
         PVector x = new PVector();
         cam.mult(new PVector(1, 0, 0), x);
@@ -16,8 +16,11 @@ public class VectorMaths {
         PVector y = new PVector();
         cam.mult(new PVector(0, 1, 0), y);
 
+        PVector z = new PVector();
+        cam.mult(new PVector(0, 0, 1), z);
+
         PVector c = x.cross(y);
 
-        System.out.println(x + "\n" + y + "\n" + c + "\n");
+        System.out.println("x: " + x + "\ny: " + y + "\nz: " + z + "\nX x Y: " + c + "\n");
     }
 }
