@@ -20,7 +20,12 @@ public class VectorMaths {
         cam.mult(new PVector(0, 0, 1), z);
 
         PVector c = x.cross(y);
+        PVector norm = c.get();
+        norm.normalize();
 
-        System.out.println("x: " + x + "\ny: " + y + "\nz: " + z + "\nX x Y: " + c + "\n");
+        assert c.equals(z);
+        assert c.equals(norm);
+
+        System.out.println("x: " + x + "\ny: " + y + "\nz: " + z + "\nX x Y: " + c + "\nnorm: " + norm);
     }
 }
