@@ -43,8 +43,16 @@ public class PMatrix3DCamera extends PApplet {
         fill(color(0, 180, 180));
         sphere(20);
 
-        cam.rotateX(-(mouseY - height / 2.0f) / height / 20f);
-        cam.rotateY(-(mouseX - width  / 2.0f) / width  / 20f);
+        float angleX = -(mouseY - height / 2.0f) / height / 20f;
+        cam.rotateX(angleX);
+
+        // 0 to .024 or so.
+        float angleY = -(mouseX - width / 2.0f) / width / 20f;
+        System.out.println(angleY);
+        cam.rotateY(angleY);
+
+        // Note that this never calls rotateZ...
+        // There are orientations that are impossible with a rotation on the Z-axis (upright along the Z-axis looking down the X-axis, for example)
 
         PVector x = new PVector();
         cam.mult(new PVector(1, 0, 0), x);
@@ -52,11 +60,15 @@ public class PMatrix3DCamera extends PApplet {
         PVector y = new PVector();
         cam.mult(new PVector(0, 1, 0), y);
 
+        // vector cross product: results in a vector pointing perpendicular from the plane that the x and y vectors make.
         PVector d = x.cross(y);
         d.normalize();
-        d.mult(R);
+        // d.mult(R);
 
+        System.out.println(y);
+        camera(0, 0, 0, d.x, d.y, d.z, 0, 1, 0);
         camera(0, 0, 0, d.x, d.y, d.z, y.x, y.y, y.z);
+        //camera(0, 0, 0, 100, 100, 0, y.x, y.y, y.z);
 
         textSize(32);
         fill(color(255, 255, 255));

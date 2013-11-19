@@ -44,11 +44,16 @@ public class SimpleCamera extends PApplet {
         background(80);
         lights();
 
-        translate(width / 2, height / 2, -100);
-        fill(color(255, 0, 0));
-        sphere(200);
+        translate(0, height / 2, 0);
+        fill(color(255, 0, 0, 60));
+        box(10000, 1, 10000);
 
-        camera(eyeX, eyeY, -100, centerX, centerY, centerZ, upX, upY, upZ);
+        // translate(width / 2, height / 2, 0);
+        translate(800, 400, -200);
+        fill(color(0, 180, 180));
+        sphere(100);
+
+        camera(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
     }
 
     private void logCamera() {
