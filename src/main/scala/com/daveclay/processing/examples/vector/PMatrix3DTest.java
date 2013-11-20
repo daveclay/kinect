@@ -22,6 +22,7 @@ public class PMatrix3DTest extends PApplet {
     private float angleX;
     private float angleY;
     private float angleZ;
+    private float translateX;
 
     public void setup() {
         size(800, 800, P3D); //OPENGL);
@@ -36,9 +37,9 @@ public class PMatrix3DTest extends PApplet {
         lights();
 
         calculateMatrixStuff();
-        drawShit();
+        translateAndDraw();
 
-        camera(x.x, y.y, z.z, center.x, center.y, center.z, 0f, 1f, 0f);
+        // camera(x.x, y.y, z.z, center.x, center.y, center.z, 0f, 1f, 0f);
         // camera(0, 0, 100, 0, 0, 0, 0f, 1f, 0f);
 
         textSize(11);
@@ -46,18 +47,21 @@ public class PMatrix3DTest extends PApplet {
         text("x: " + x + "\ny: " + y + "\nz: " + z, 30, 30);
     }
 
-    private void drawShit() {
+    private void translateAndDraw() {
         pushMatrix();
-
         translate(center.x, center.y, center.z);
-        // applyMatrix(matrix);
+        applyMatrix(matrix);
 
+        drawElements();
+        popMatrix();
+    }
+
+    private void drawElements() {
         drawCenterBox();
         drawXAxis();
         drawZAxis();
         drawYAxis();
 
-        popMatrix();
     }
 
     private void drawCenterBox() {
@@ -70,6 +74,8 @@ public class PMatrix3DTest extends PApplet {
         matrix.rotateX(angleX);
         matrix.rotateY(angleY);
         matrix.rotateZ(angleZ);
+
+        matrix.translate(translateX, 0, 0);
 
         x.set(0, 0, 0);
         matrix.mult(new PVector(1, 0, 0), x);
@@ -128,7 +134,11 @@ public class PMatrix3DTest extends PApplet {
             case DOWN:
                 angleY -= .01;
                 break;
+            case SHIFT:
+                translateX++;
+                break;
             case 82: // r
+                matrix.reset();
                 break;
         }
     }
