@@ -1,6 +1,7 @@
 package com.daveclay.processing.examples.vector;
 
 import processing.core.PApplet;
+import processing.core.PMatrix3D;
 import processing.core.PVector;
 
 public class PMatrix3DTest extends PApplet {
@@ -9,15 +10,15 @@ public class PMatrix3DTest extends PApplet {
         PApplet.main(PMatrix3DTest.class.getName());
     }
 
-    processing.core.PMatrix3D matrix;
+    private static final boolean moveCamera = true;
+
+    private PMatrix3D orbitMatrix = new PMatrix3D();
+    private PMatrix3D rotationMatrix = new PMatrix3D();
     private PVector center;
 
     private PVector x = new PVector();
     private PVector y = new PVector();
     private PVector z = new PVector();
-    private PVector d;
-
-    private PVector cameraPoint = new PVector(0, 0, 0);
 
     private float angleX;
     private float angleY;
@@ -26,34 +27,46 @@ public class PMatrix3DTest extends PApplet {
 
     public void setup() {
         size(800, 800, P3D); //OPENGL);
-        matrix = new processing.core.PMatrix3D();
-        matrix.translate(100f, 0f, 0f);
-        center = new PVector(width / 2, height / 2, -500);
+        center = new PVector(width / 2, height / 2, -800);
     }
 
-    public void draw()
-    {
+    public void draw() {
         background(80);
         lights();
 
         calculateMatrixStuff();
-        translateAndDraw();
 
-        // camera(x.x, y.y, z.z, center.x, center.y, center.z, 0f, 1f, 0f);
-        // camera(0, 0, 100, 0, 0, 0, 0f, 1f, 0f);
+        drawOrbitingCube();
+        moveUniverseAndDraw();
 
         textSize(11);
         fill(color(255, 255, 255));
         text("x: " + x + "\ny: " + y + "\nz: " + z, 30, 30);
     }
 
-    private void translateAndDraw() {
+    private void drawOrbitingCube() {
         pushMatrix();
-        translate(center.x, center.y, center.z);
-        applyMatrix(matrix);
+        translateToCenter();
+        orbitMatrix.set(rotationMatrix);
+        orbitMatrix.translate(300, 0, 0);
+        applyMatrix(orbitMatrix);
+        drawOrbitBox();
+
+
+        popMatrix();
+    }
+
+    private void moveUniverseAndDraw() {
+        pushMatrix();
+        translateToCenter();
+        applyMatrix(rotationMatrix);
 
         drawElements();
         popMatrix();
+    }
+
+    private void translateToCenter() {
+        translate(center.x, center.y, center.z);
     }
 
     private void drawElements() {
@@ -61,7 +74,12 @@ public class PMatrix3DTest extends PApplet {
         drawXAxis();
         drawZAxis();
         drawYAxis();
+    }
 
+    private void drawOrbitBox() {
+        fill(color(0, 0, 180));
+        stroke(color(255, 255, 255));
+        box(100);
     }
 
     private void drawCenterBox() {
@@ -71,24 +89,18 @@ public class PMatrix3DTest extends PApplet {
     }
 
     private void calculateMatrixStuff() {
-        matrix.rotateX(angleX);
-        matrix.rotateY(angleY);
-        matrix.rotateZ(angleZ);
-
-        matrix.translate(translateX, 0, 0);
+        rotationMatrix.rotateX(angleX);
+        rotationMatrix.rotateY(angleY);
+        rotationMatrix.rotateZ(angleZ);
 
         x.set(0, 0, 0);
-        matrix.mult(new PVector(1, 0, 0), x);
+        rotationMatrix.mult(new PVector(1, 0, 0), x);
 
         y.set(0, 0, 0);
-        matrix.mult(new PVector(0, 1, 0), y);
+        rotationMatrix.mult(new PVector(0, 1, 0), y);
 
         z.set(0, 0, 0);
-        matrix.mult(new PVector(0, 0, 1), z);
-
-        // vector cross product: results in a vector pointing perpendicular from the plane that the x and y vectors make.
-        d = x.cross(y);
-        d.normalize();
+        rotationMatrix.mult(new PVector(0, 0, 1), z);
     }
 
     private void drawXAxis() {
@@ -138,7 +150,7 @@ public class PMatrix3DTest extends PApplet {
                 translateX++;
                 break;
             case 82: // r
-                matrix.reset();
+                rotationMatrix.reset();
                 break;
         }
     }
