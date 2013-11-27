@@ -25,7 +25,7 @@ public class FaceRecognitionVideo extends PApplet {
         capture = new CaptureUtils().openByName(this, "name=FaceTime HD Camera (Built-in),size=640x360,fps=30");
         size(opencv.width, opencv.height, P2D);
 
-        opencv.loadCascade(HAAR_CASCADES_PATH);
+        opencv.loadCascade(LBP_CASCADES_FRONTAL_FACE_PATH);
     }
 
     public void draw() {
