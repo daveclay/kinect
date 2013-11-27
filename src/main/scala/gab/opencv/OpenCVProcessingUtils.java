@@ -302,7 +302,7 @@ public class OpenCVProcessingUtils {
     }
     
     private String getLibPath() {
-        URL url = this.getClass().getResource("OpenCV.class");
+        URL url = this.getClass().getResource(Mat.class.getName());
         if (url != null) {
           // Convert URL to string, taking care of spaces represented by the "%20"
           // string.
@@ -373,15 +373,9 @@ public class OpenCVProcessingUtils {
 	 * NB: ant build scripts copy the data folder outside of the
 	 * jar so that this will work.
 	 * 
-	 * @param cascadeFileName
+	 * @param cascadePath
 	*/
-	public void loadCascade(String cascadeFileName){
-
-		// localize path to cascade file to point at the library's data folder
-		String relativePath = "cascade-files/" + cascadeFileName;
-		String cascadePath = getLibPath();
-		cascadePath += relativePath;
-				
+	public void loadCascade(String cascadePath){
 		PApplet.println("Load cascade from: " + cascadePath);
 
 		classifier = new CascadeClassifier(cascadePath);   
@@ -389,7 +383,7 @@ public class OpenCVProcessingUtils {
         if(classifier.empty()){
         	PApplet.println("Cascade failed to load"); // raise exception here?
         } else {
-        	PApplet.println("Cascade loaded: " + cascadeFileName);
+        	PApplet.println("Cascade loaded: " + cascadePath);
         }
 	}
 	
@@ -626,8 +620,6 @@ public class OpenCVProcessingUtils {
 	 * 		By default this will normalize the histogram (scale the values to 0.0-1.0). Pass false as the third argument to keep values unormalized.
 	 * @param numBins 
 	 * 		The number of bins into which divide the histogram should be divided.
-	 * @param normalize (optional)
-	 * 		Whether or not to normalize the histogram (scale the values to 0.0-1.0). Defaults to true.
 	 * @return
 	 * 		A Histogram object that you can call draw() on.
 	 */
