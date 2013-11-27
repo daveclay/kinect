@@ -32,6 +32,7 @@
     <orderEntry type="library" name="MovieMaker" level="project" />
     <orderEntry type="library" name="peasycam" level="project" />
     <orderEntry type="library" name="opencv-247" level="application" />
+    <orderEntry type="library" name="gstreamer-java" level="application" />
   </component>
 </module>
 

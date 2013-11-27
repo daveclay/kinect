@@ -9,9 +9,11 @@ package com.daveclay.opencv.examples;
 import org.opencv.core.Mat;
 import org.opencv.highgui.VideoCapture;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.daveclay.opencv.OpenCVConstants.*;
 import static com.daveclay.opencv.OpenCVImageConverter.*;
@@ -24,15 +26,27 @@ public class FacialRecognitionVideoStream2 {
     private VideoStreamRecognitionPanel panel = new VideoStreamRecognitionPanel();
     private Mat sourceImage = new Mat();
 
+    private Timer timer = new Timer();
+    private TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+            try {
+                captureAndProcess();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     public static void main(String arg[]) throws IOException {
+        loadOpenCVNativeLibrary();
         FacialRecognitionVideoStream2 facialRecognitionVideoStream2 = new FacialRecognitionVideoStream2();
-        facialRecognitionVideoStream2.run();
+        facialRecognitionVideoStream2.start();
     }
 
-    public void run() throws IOException {
-        loadOpenCVNativeLibrary();
+    public void start() throws IOException {
 
-        String window_name = "Capture - Face detection";
+        String window_name = "CaptureExample - Face detection";
         frame = new JFrame(window_name);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
@@ -42,13 +56,11 @@ public class FacialRecognitionVideoStream2 {
         //-- 2. Read the video stream
         capture = new VideoCapture(0);
         if (capture.isOpened()) {
-            while (true) {
-                render();
-            }
+            timer.scheduleAtFixedRate(task, 0, 1000 / 30);
         }
     }
 
-    private void render() throws IOException {
+    private void captureAndProcess() throws IOException {
         capture.read(sourceImage);
         if (!sourceImage.empty()) {
             frame.setSize(sourceImage.width() + 40, sourceImage.height() + 60);
