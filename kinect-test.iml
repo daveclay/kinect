@@ -31,6 +31,7 @@
     <orderEntry type="library" name="video" level="project" />
     <orderEntry type="library" name="MovieMaker" level="project" />
     <orderEntry type="library" name="peasycam" level="project" />
+    <orderEntry type="library" name="opencv-247" level="application" />
   </component>
 </module>
 
