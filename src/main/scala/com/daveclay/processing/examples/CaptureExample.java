@@ -3,7 +3,12 @@ package com.daveclay.processing.examples;
 import processing.core.PApplet;
 import processing.video.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class CaptureExample extends PApplet {
+
     public static void main(String[] args) {
         PApplet.main(CaptureExample.class.getName());
     }

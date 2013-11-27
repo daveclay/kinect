@@ -1,4 +1,4 @@
-package com.daveclay.processing;
+package com.daveclay.processing.opengl;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

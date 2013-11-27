@@ -1,4 +1,4 @@
-package com.daveclay.processing
+package com.daveclay.processing.examples
 
 import processing.core.PApplet
 

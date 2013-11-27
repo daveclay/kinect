@@ -97,7 +97,6 @@ public class OpenCVProcessingUtils {
 	public int colorSpace;
 
 	private PImage outputImage;
-	private PImage inputImage;
 
 	private boolean nativeLoaded;
 
@@ -124,36 +123,24 @@ public class OpenCVProcessingUtils {
 	public final static int VERTICAL = 1;
 
 
-
-
     /**
-     * Initialize OpenCV with the path to an image.
-     * The image will be loaded and prepared for processing.
-     *
      * @param theParent - A PApplet representing the user sketch, i.e "this"
-     * @param pathToImg - A String with a path to the image to be loaded
      */
-    public OpenCVProcessingUtils(PApplet theParent, String pathToImg){
+    public OpenCVProcessingUtils(PApplet theParent) {
     	initNative();
     	useColor = false;
-    	loadFromString(theParent, pathToImg);
     }
 
     /**
-     * Initialize OpenCV with the path to an image.
-     * The image will be loaded and prepared for processing.
-     *
      * @param theParent - A PApplet representing the user sketch, i.e "this"
-     * @param pathToImg - A String with a path to the image to be loaded
      * @param useColor - (Optional) Set to true if you want to use the color version of the image for processing.
      */
-    public OpenCVProcessingUtils(PApplet theParent, String pathToImg, boolean useColor){
+    public OpenCVProcessingUtils(PApplet theParent, boolean useColor){
     	initNative();
     	this.useColor = useColor;
     	if(useColor){
     		useColor(); // have to set the color space.
     	}
-    	loadFromString(theParent, pathToImg);
     }
 
     private void loadFromString(PApplet theParent, String pathToImg){
@@ -294,8 +281,8 @@ public class OpenCVProcessingUtils {
 		parent = theParent;
 		init(width, height);
 	}
-    
-    private void init(int w, int h){
+
+    public void init(int w, int h){
     	width = w;
     	height = h;
 		welcome();
@@ -750,10 +737,6 @@ public class OpenCVProcessingUtils {
 	// NOTE: We're not handling the signed/unsigned
 	// 		 conversion. Is that any issue?
 	public void loadImage(PImage img){				
-		// FIXME: is there a better way to hold onto
-		// 			this?
-		inputImage = img;
-		
 		toCv(img, matBGRA);
 		ARGBtoBGRA(matBGRA,matBGRA);
 		populateBGRA();
@@ -802,7 +785,7 @@ public class OpenCVProcessingUtils {
 	 * @param img
 	 * 			The PImage you want the Mat converted into.
 	 */
-	public void toPImage(Mat m, PImage img){	
+	public void toPImage(Mat m, PImage img){
 		  img.loadPixels();
 
 		  if(m.channels() == 3){
@@ -873,11 +856,7 @@ public class OpenCVProcessingUtils {
 	public String matToS(Mat mat){
 		return CvType.typeToString(mat.type());
 	}
-			
-	public PImage getInput(){
-		return inputImage;
-	}
-	
+
 	public PImage getOutput(){
 		if(useColor){
 			toPImage(matBGRA, outputImage);

@@ -1,7 +1,7 @@
 package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
-import com.daveclay.processing.Sphere;
+import com.daveclay.processing.opengl.Sphere;
 import com.daveclay.processing.kinect.api.FrameExporter;
 import com.daveclay.processing.kinect.api.HandGestureHandler;
 import com.daveclay.processing.kinect.api.HandGestures;
