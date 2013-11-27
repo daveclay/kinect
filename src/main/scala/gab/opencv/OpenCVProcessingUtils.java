@@ -349,10 +349,10 @@ public class OpenCVProcessingUtils {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-		    	System.loadLibrary("opencv_java245"); 	
+		    	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	    	}
 	    	else{
-	    		 System.err.println("Cannot load local version of opencv_java245  : Linux 32/64, Windows 32 bits or Mac Os 64 bits are only avaible");
+	    		 System.err.println("Cannot load local version of " + Core.NATIVE_LIBRARY_NAME + ": Linux 32/64, Windows 32 bits or Mac Os 64 bits are only avaible");
 	    	}
     	}
     }

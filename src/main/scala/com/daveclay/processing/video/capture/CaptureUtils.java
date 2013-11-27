@@ -1,5 +1,6 @@
 package com.daveclay.processing.video.capture;
 
+import processing.core.PApplet;
 import processing.video.Capture;
 
 import java.util.ArrayList;
@@ -18,5 +19,15 @@ public class CaptureUtils {
 
     public List<VideoCaptureDevice> getVideoCaptureDevices() {
         return Collections.unmodifiableList(devices);
+    }
+
+    public Capture openByName(PApplet pApplet, String name) {
+        for (VideoCaptureDevice device : devices) {
+            if (device.getInfo().equals(name)) {
+                return device.open(pApplet);
+            }
+        }
+
+        throw new IllegalArgumentException("No such device named " + name + ", available devices: " + devices);
     }
 }
