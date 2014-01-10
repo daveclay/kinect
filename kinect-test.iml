@@ -5,7 +5,7 @@
       <configuration>
         <option name="compilerLibraryLevel" value="Project" />
         <option name="compilerLibraryName" value="Maven: org.scala-lang:scala-compiler-bundle:2.10.1" />
-        <option name="compilerOptions" value="-make:transitive -dependencyfile /Users/daveclay/work/kinect-test/target/.scala_dependencies" />
+        <option name="compilerOptions" value="-make:transitive -dependencyfile $MODULE_DIR$/target/.scala_dependencies" />
         <option name="deprecationWarnings" value="true" />
         <option name="vmOptions" value="" />
       </configuration>
@@ -21,18 +21,19 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.10.1" level="project" />
-    <orderEntry type="library" name="Maven: org.processing:core:2.0.3" level="project" />
-    <orderEntry type="library" name="Maven: org.processing:jogl-all:2.0.3" level="project" />
-    <orderEntry type="library" name="Maven: org.processing:gluegen-rt:2.0.3" level="project" />
-    <orderEntry type="library" name="Maven: org.processing:gluegen-rt:natives-macosx-universal:2.0.3" level="project" />
-    <orderEntry type="library" name="Maven: org.processing:jogl-all:natives-macosx-universal:2.0.3" level="project" />
     <orderEntry type="library" name="SimpleOpenNI" level="application" />
     <orderEntry type="library" name="video" level="project" />
     <orderEntry type="library" name="MovieMaker" level="project" />
     <orderEntry type="library" name="peasycam" level="project" />
     <orderEntry type="library" name="opencv-247" level="application" />
     <orderEntry type="library" name="gstreamer-java" level="application" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.10.1" level="project" />
+    <orderEntry type="library" name="Maven: org.processing:core:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.processing:jogl-all:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.processing:gluegen-rt:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.processing:gluegen-rt:natives-macosx-universal:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.processing:jogl-all:natives-macosx-universal:2.0.3" level="project" />
+    <orderEntry type="library" name="minim" level="application" />
   </component>
 </module>
 
