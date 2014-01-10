@@ -25,12 +25,15 @@ public class DrumTriggers extends PApplet {
     Hotpoint snareTrigger;
     Hotpoint kickTrigger;
 
-    float s = 1;
+    float pointCloudScale = 1;
 
     public void setup() {
-        size(1024, 768, OPENGL);
         kinect = new SimpleOpenNI(this);
+        kinect.enableRGB();
         kinect.enableDepth();
+
+        size(kinect.rgbWidth(), kinect.rgbHeight(), OPENGL);
+        // size(1024, 768, OPENGL);
 
         minim = new Minim(this);
         // load both audio files
@@ -44,17 +47,18 @@ public class DrumTriggers extends PApplet {
     }
 
     public void draw() {
-        background(0);
         kinect.update();
+
+        background(kinect.rgbImage());
 
         translate(width/2, height/2, -1000);
         rotateX(radians(180));
 
         translate(0, 0, 1400);
-        rotateY(radians(map(mouseX, 0, width, -180, 180)));
+        // rotateY(radians(map(mouseX, 0, width, -180, 180)));
 
-        translate(0, 0, s*-1000);
-        scale(s);
+        translate(0, 0, pointCloudScale *-1000);
+        scale(pointCloudScale);
 
 
         stroke(255);
@@ -72,7 +76,13 @@ public class DrumTriggers extends PApplet {
             point(currentPoint.x, currentPoint.y, currentPoint.z);
         }
 
-        println(snareTrigger.pointsIncluded);
+        pushMatrix();
+        rotateX(radians(180));
+        translate(0, 0, -500);
+        textSize(13);
+        fill(200, 140, 0);
+        text("snare points: " + snareTrigger.pointsIncluded, 20, 20);
+        popMatrix();
 
         if(snareTrigger.isHit()) {
             snare.play();
@@ -114,10 +124,10 @@ public class DrumTriggers extends PApplet {
 
     public void keyPressed() {
         if (keyCode == 38) {
-            s = s + 0.01f;
+            pointCloudScale = pointCloudScale + 0.1f;
         }
         if (keyCode == 40) {
-            s = s - 0.01f;
+            pointCloudScale = pointCloudScale - 0.1f;
         }
     }
 
