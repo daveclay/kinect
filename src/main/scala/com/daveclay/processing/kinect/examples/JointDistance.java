@@ -33,13 +33,9 @@ public class JointDistance extends PApplet {
         kinect.update();
         image(kinect.depthImage(), 0, 0);
 
-        IntVector userList = new IntVector();
-        kinect.getUsers(userList);
-
-        if (userList.size() > 0) {
-            int userId = userList.get(0);
-
-            if ( kinect.isTrackingSkeleton(userId)) {
+        int[] userList = kinect.getUsers();
+        for (int userId : userList) {
+            if (kinect.isTrackingSkeleton(userId)) {
                 PVector leftHand = new PVector();
                 PVector rightHand = new PVector();
 
@@ -64,11 +60,12 @@ public class JointDistance extends PApplet {
         }
     }
 
-    // user-tracking callbacks!
-    public void onNewUser(int userId) {
-        println("start pose detection");
+    public void onNewUser(SimpleOpenNI curContext, int userId)
+    {
+        println("onNewUser - userId: " + userId);
+        println("\tstart tracking skeleton");
+
         kinect.startTrackingSkeleton(userId);
-        //kinect.startPoseDetection("Psi", userId);
     }
 }
 
