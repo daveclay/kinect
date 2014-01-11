@@ -60,7 +60,6 @@ public class PMatrix3DTest extends PApplet {
         pushMatrix();
         translateToCenter();
         applyMatrix(rotationMatrix);
-
         drawElements();
         popMatrix();
     }

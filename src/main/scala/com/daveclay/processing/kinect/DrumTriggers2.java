@@ -1,29 +1,22 @@
-package com.daveclay.processing.kinect.examples;
+package com.daveclay.processing.kinect;
 
+import SimpleOpenNI.SimpleOpenNI;
 import ddf.minim.AudioPlayer;
 import ddf.minim.Minim;
 import processing.core.PApplet;
-import SimpleOpenNI.SimpleOpenNI;
 import processing.core.PVector;
 
-public class DrumTriggers extends PApplet {
+public class DrumTriggers2 extends PApplet {
 
     public static void main(String[] args) {
-        PApplet.main(DrumTriggers.class.getName());
+        PApplet.main(DrumTriggers2.class.getName());
     }
 
     SimpleOpenNI kinect;
-
-    float rotation = 0;
-
-    // two AudioPlayer objects this time
     Minim minim;
-    AudioPlayer kick;
-    AudioPlayer snare;
 
-    // declare our two hotpoint objects
-    Hotpoint snareTrigger;
-    Hotpoint kickTrigger;
+    HotpointAudio kick;
+    HotpointAudio snare;
 
     float pointCloudScale = 1;
 
@@ -37,13 +30,15 @@ public class DrumTriggers extends PApplet {
 
         minim = new Minim(this);
         // load both audio files
-        snare = minim.loadFile("hat.wav");
-        kick = minim.loadFile("kick.wav");
+        AudioPlayer snareAudio = minim.loadFile("hat.wav");
+        AudioPlayer kickAudio = minim.loadFile("kick.wav");
 
         // initialize hotpoints with their origins (x,y,z) and their size
-        snareTrigger = new Hotpoint(200, 0, 600, 150);
-        kickTrigger = new Hotpoint(-200, 0, 600, 150);
+        Hotpoint snareTrigger = new Hotpoint(200, 0, 600, 150, color(230, 230, 0));
+        Hotpoint kickTrigger = new Hotpoint(-200, 0, 600, 150, color(130, 0, 230));
 
+        kick = new HotpointAudio(kickTrigger, kickAudio);
+        snare = new HotpointAudio(snareTrigger, snareAudio);
     }
 
     public void draw() {
@@ -59,38 +54,15 @@ public class DrumTriggers extends PApplet {
         translate(0, 0, -500);
         textSize(13);
         fill(200, 140, 0);
-        text("snare points: " + snareTrigger.pointsIncluded, 20, 20);
+        text("snare points: " + snare.getHotpoint().pointsIncluded, 20, 20);
         popMatrix();
 
         handleTriggers();
     }
 
     private void handleTriggers() {
-        if(snareTrigger.isHit()) {
-            snare.play();
-        }
-
-        if(!snare.isPlaying()) {
-            snare.rewind();
-            snare.pause();
-        }
-
-        if (kickTrigger.isHit()) {
-            kick.play();
-        }
-
-        if(!kick.isPlaying()) {
-            kick.rewind();
-            kick.pause();
-        }
-
-        // display each hotpoint
-        // and clear its points
-        snareTrigger.draw();
-        snareTrigger.clear();
-
-        kickTrigger.draw();
-        kickTrigger.clear();
+        snare.handleTriggers();
+        kick.handleTriggers();
     }
 
     private void renderPointCloudScene() {
@@ -112,20 +84,20 @@ public class DrumTriggers extends PApplet {
 
             // have each hotpoint check to see
             // if it includes the currentPoint
-            snareTrigger.check(currentPoint);
-            kickTrigger.check(currentPoint);
+            snare.getHotpoint().check(currentPoint);
+            kick.getHotpoint().check(currentPoint);
 
             point(currentPoint.x, currentPoint.y, currentPoint.z);
         }
 
+        // display each hotpoint
+        kick.getHotpoint().draw();
+        snare.getHotpoint().draw();
     }
 
-    public void stop()
-    {
-        // make sure to close
-        // both AudioPlayer objects
-        kick.close();
-        snare.close();
+    public void stop() {
+        kick.getAudioPlayer().close();
+        snare.getAudioPlayer().close();
 
         minim.stop();
         super.stop();
@@ -140,6 +112,36 @@ public class DrumTriggers extends PApplet {
         }
     }
 
+    static class HotpointAudio {
+        private Hotpoint hotpoint;
+        private AudioPlayer audioPlayer;
+
+        HotpointAudio(Hotpoint hotpoint, AudioPlayer audioPlayer) {
+            this.hotpoint = hotpoint;
+            this.audioPlayer = audioPlayer;
+        }
+
+        public Hotpoint getHotpoint() {
+            return hotpoint;
+        }
+
+        public AudioPlayer getAudioPlayer() {
+            return audioPlayer;
+        }
+
+        private void handleTriggers() {
+            if(hotpoint.isHit()) {
+                audioPlayer.play();
+            }
+
+            if(!audioPlayer.isPlaying()) {
+                audioPlayer.rewind();
+                audioPlayer.pause();
+            }
+            hotpoint.clear();
+        }
+    }
+
     class Hotpoint {
         PVector center;
         int fillColor;
@@ -151,14 +153,13 @@ public class DrumTriggers extends PApplet {
         int threshold;
 
 
-        Hotpoint(float centerX, float centerY, float centerZ, int boxSize) {
+        Hotpoint(float centerX, float centerY, float centerZ, int boxSize, int color) {
             center = new PVector(centerX, centerY, centerZ);
             size = boxSize;
             pointsIncluded = 0;
             maxPoints = 1000;
             threshold = 0;
-
-            fillColor = strokeColor = color(random(255), random(255), random(255));
+            fillColor = strokeColor = color;
         }
 
         void setThreshold( int newThreshold ){
