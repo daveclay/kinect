@@ -50,10 +50,8 @@ public class DrumTriggers2 extends PApplet {
         popMatrix();
 
         pushMatrix();
-        rotateX(radians(180));
-        translate(0, 0, -500);
-        textSize(13);
-        fill(200, 140, 0);
+        textSize(23);
+        fill(200, 0, 200);
         text("snare points: " + snare.getHotpoint().pointsIncluded, 20, 20);
         popMatrix();
 

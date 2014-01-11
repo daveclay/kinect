@@ -50,18 +50,17 @@ public class UserTest extends PApplet {
         // enable skeleton generation for all joints
         // kinect.enableUser();
         context.enableHand();
+        context.enableUser();
+    }
 
+    public void draw() {
         background(200, 0, 0);
+        // update the cam
+        context.update();
 
         stroke(0,0,255);
         strokeWeight(3);
         smooth();
-    }
-
-    public void draw()
-    {
-        // update the cam
-        context.update();
 
         // draw depthImageMap
         //image(kinect.depthImage(),0,0);
@@ -131,7 +130,7 @@ public class UserTest extends PApplet {
 // -----------------------------------------------------------------
 // SimpleOpenNI events
 
-    void onNewUser(SimpleOpenNI curContext, int userId)
+    public void onNewUser(SimpleOpenNI curContext, int userId)
     {
         println("onNewUser - userId: " + userId);
         println("\tstart tracking skeleton");
@@ -139,12 +138,12 @@ public class UserTest extends PApplet {
         curContext.startTrackingSkeleton(userId);
     }
 
-    void onLostUser(SimpleOpenNI curContext, int userId)
+    public void onLostUser(SimpleOpenNI curContext, int userId)
     {
         println("onLostUser - userId: " + userId);
     }
 
-    void onVisibleUser(SimpleOpenNI curContext, int userId)
+    public void onVisibleUser(SimpleOpenNI curContext, int userId)
     {
         //println("onVisibleUser - userId: " + userId);
     }

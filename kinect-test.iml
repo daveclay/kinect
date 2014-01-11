@@ -21,7 +21,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="SimpleOpenNI" level="application" />
+    <orderEntry type="library" name="SimpleOpenNI 2.0" level="application" />
     <orderEntry type="library" name="video" level="project" />
     <orderEntry type="library" name="MovieMaker" level="project" />
     <orderEntry type="library" name="peasycam" level="project" />
