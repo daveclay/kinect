@@ -27,6 +27,8 @@ public class HandBoxes extends PApplet {
         kinect.enableRGB();
         kinect.enableUser();
 
+        kinect.alternativeViewPointDepthToImage();
+
         size(640, 480, OPENGL);
         stroke(255, 0, 0);
         strokeWeight(5);
