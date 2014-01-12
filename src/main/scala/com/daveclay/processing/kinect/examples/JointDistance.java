@@ -22,16 +22,17 @@ public class JointDistance extends PApplet {
     public void setup() {
         kinect = new SimpleOpenNI(this);
         kinect.enableDepth();
+        kinect.enableRGB();
         kinect.enableUser();
 
         size(640, 480);
-        stroke(255,0,0);
+        stroke(255, 0, 0);
         strokeWeight(5);
     }
 
     public void draw() {
         kinect.update();
-        image(kinect.depthImage(), 0, 0);
+        background(kinect.rgbImage());
 
         int[] userList = kinect.getUsers();
         for (int userId : userList) {
