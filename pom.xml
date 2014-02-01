@@ -29,7 +29,7 @@
     </distributionManagement>
 
     <properties>
-        <scala.version>2.10.1</scala.version>
+        <scala.version>2.10.2</scala.version>
     </properties>
 
     <dependencies>

@@ -1,4 +1,4 @@
-package com.daveclay.processing.kinect.examples;
+package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
 import processing.core.PApplet;
@@ -11,21 +11,27 @@ import processing.core.PVector;
  _outOfSceneUserMethod   = getMethodRef(obj,"onOutOfSceneUser",new Class[] { SimpleOpenNI.class,int.class });
  _visibleUserMethod      = getMethodRef(obj,"onVisibleUser",new Class[] { SimpleOpenNI.class,int.class });
  */
-public class HandBoxes extends PApplet {
+public class BodyLocator extends PApplet {
+
 
     public static void main(String[] args) {
-        PApplet.main(HandBoxes.class.getName());
+        PApplet.main(BodyLocator.class.getName());
     }
 
     SimpleOpenNI  kinect;
     Box leftHandBox;
     Box rightHandBox;
 
+    PVector centerOfMass = new PVector();
+    PVector leftHandPosition3d = new PVector();
+    PVector rightHandPosition3d = new PVector();
+
     public void setup() {
         kinect = new SimpleOpenNI(this);
         kinect.enableDepth();
         kinect.enableRGB();
         kinect.enableUser();
+        // kinect.setMirror(true);
 
         kinect.alternativeViewPointDepthToImage();
 
@@ -34,10 +40,10 @@ public class HandBoxes extends PApplet {
         strokeWeight(5);
 
         leftHandBox = new Box();
-        leftHandBox.color = color(255, 0, 0);
+        leftHandBox.color = color(255, 120, 0);
 
         rightHandBox = new Box();
-        rightHandBox.color = color(0, 0, 255);
+        rightHandBox.color = color(0, 80, 255);
     }
 
     public void draw() {
@@ -53,9 +59,15 @@ public class HandBoxes extends PApplet {
         PVector rightPosition = rightHandBox.center;
         if (rightPosition != null) {
             pushMatrix();
-            textSize(11);
+            textSize(15);
             fill(0, 255, 0);
-            text("Z:" + rightPosition.z, 10, 10);
+            text("3D y: " + rightHandPosition3d.y + "\n2D y:" + rightPosition.y, 450, 10);
+            if (rightHandPosition3d.x > 20) {
+                text("Previous Frame", 10, 10);
+            } else if (rightHandPosition3d.x < -20) {
+                text("Next Frame", 10, 10);
+            }
+
             popMatrix();
         }
     }
@@ -65,33 +77,36 @@ public class HandBoxes extends PApplet {
         int[] userList = kinect.getUsers();
         for (int userId : userList) {
             if (kinect.isTrackingSkeleton(userId)) {
-                drawLineBetweenHands(userId, SimpleOpenNI.SKEL_LEFT_HAND, SimpleOpenNI.SKEL_RIGHT_HAND);
+                drawLineBetweenHands(userId);
             }
         }
         popMatrix();
     }
 
-    void drawLineBetweenHands(int userId, int joint1, int joint2) {
-        PVector joint1Pos = new PVector();
-        PVector joint2Pos = new PVector();
+    void determineCenterOfMass(int userId) {
+        kinect.getCoM(userId, centerOfMass);
+    }
 
-        kinect.getJointPositionSkeleton(userId, joint1, joint1Pos);
-        kinect.getJointPositionSkeleton(userId, joint2, joint2Pos);
+    void drawLineBetweenHands(int userId) {
 
-        PVector joint1Pos2d = new PVector();
-        PVector joint2Pos2d = new PVector();
+
+        kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_HAND, leftHandPosition3d);
+        kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_HAND, rightHandPosition3d);
+
+        PVector leftHandPosition2d = new PVector();
+        PVector rightHandPosition2d = new PVector();
 
         // switch from 3D "real world" to 2D "projection"
-        kinect.convertRealWorldToProjective(joint1Pos, joint1Pos2d);
-        kinect.convertRealWorldToProjective(joint2Pos, joint2Pos2d);
+        kinect.convertRealWorldToProjective(leftHandPosition3d, leftHandPosition2d);
+        kinect.convertRealWorldToProjective(rightHandPosition3d, rightHandPosition2d);
 
         pushMatrix();
-        stroke(255, 0, 0);
+        stroke(120);
         strokeWeight(5);
-        line(joint1Pos2d.x, joint1Pos2d.y,
-                joint2Pos2d.x, joint2Pos2d.y);
-        leftHandBox.drawAt(joint1Pos2d);
-        rightHandBox.drawAt(joint2Pos2d);
+        line(leftHandPosition2d.x, leftHandPosition2d.y,
+                rightHandPosition2d.x, rightHandPosition2d.y);
+        leftHandBox.drawAt(leftHandPosition2d);
+        rightHandBox.drawAt(rightHandPosition2d);
         popMatrix();
 
     }

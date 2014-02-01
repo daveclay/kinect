@@ -2,6 +2,7 @@ package com.daveclay.processing.examples.opencv;
 
 import gab.opencv.*;
 import processing.core.PApplet;
+import processing.core.PVector;
 
 import java.awt.Rectangle;
 

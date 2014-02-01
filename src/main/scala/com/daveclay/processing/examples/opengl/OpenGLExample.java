@@ -23,7 +23,8 @@ public class OpenGLExample extends PApplet {
     public void setup() {
         size(800, 600, OPENGL);
         pgl = (PGraphicsOpenGL) g;  // g may change
-        gl = pgl.beginPGL().gl.getGL2();
+
+        //gl = pgl.beginPGL().gl.getGL2();
         projMatrix = new float[16];
         mvMatrix = new float[16];
     }
