@@ -81,6 +81,8 @@ public class BodyLocator extends PApplet {
             infoSketch.logRoundedFloat("Right", stageBounds.getRightmost());
             infoSketch.logRoundedFloat("Nearest", stageBounds.getNearest());
             infoSketch.logRoundedFloat("Furthest", stageBounds.getFurthest());
+            infoSketch.logVector("Left Hand", leftHandPosition2d);
+            infoSketch.logVector("Rigth Hand", rightHandPosition2d);
         }
     }
 
@@ -108,7 +110,11 @@ public class BodyLocator extends PApplet {
 
     void drawLineBetweenHands() {
         pushMatrix();
-        //rotateY(radians(180));
+        translate(width, 0);
+
+        leftHandPosition2d = VectorMath.reflectVertically(leftHandPosition2d);
+        rightHandPosition2d = VectorMath.reflectVertically(rightHandPosition2d);
+
         stroke(120);
         strokeWeight(2);
         line(leftHandPosition2d.x, leftHandPosition2d.y,
@@ -146,6 +152,17 @@ public class BodyLocator extends PApplet {
     public void onLostUser(SimpleOpenNI kinect, int userId) {
         if (userId == this.currentlyTrackingUserId) {
             this.currentlyTrackingUserId = null;
+        }
+    }
+
+    public static class VectorMath {
+
+        public static PVector reflectVertically(PVector vector) {
+            PVector verticalNormal = new PVector(1, 0, 0);
+            PVector v = vector.get();
+            verticalNormal.mult(2f * v.dot(verticalNormal));
+            v.sub(verticalNormal);
+            return v;
         }
     }
 }
