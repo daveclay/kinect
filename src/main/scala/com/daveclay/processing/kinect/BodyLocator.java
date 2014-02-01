@@ -1,7 +1,7 @@
 package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
-import com.daveclay.processing.api.InfoSketch;
+import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.kinect.api.StageBounds;
@@ -20,18 +20,18 @@ public class BodyLocator extends PApplet implements UserListener {
 
     public static void main(String[] args) {
 
-        InfoSketch infoSketch = new InfoSketch();
-        BodyLocator bodyLocator = new BodyLocator(infoSketch);
+        LogSketch logSketch = new LogSketch();
+        BodyLocator bodyLocator = new BodyLocator(logSketch);
         StageMonitor stageMonitor = new StageMonitor(
                 bodyLocator.getStageBounds(),
-                infoSketch,
+                logSketch,
                 bodyLocator.getPosition());
 
-        SketchRunner.run(infoSketch, bodyLocator, stageMonitor);
+        SketchRunner.run(logSketch, bodyLocator, stageMonitor);
 
-        infoSketch.frame.setLocation(0, 100);
-        bodyLocator.frame.setLocation(infoSketch.getWidth() + 10, 100);
-        stageMonitor.frame.setLocation(0, infoSketch.getHeight() + 10);
+        logSketch.frame.setLocation(0, 100);
+        bodyLocator.frame.setLocation(logSketch.getWidth() + 10, 100);
+        stageMonitor.frame.setLocation(0, logSketch.getHeight() + 10);
     }
 
     SimpleOpenNI  kinect;
@@ -49,10 +49,10 @@ public class BodyLocator extends PApplet implements UserListener {
 
     StageBounds stageBounds = new StageBounds();
 
-    InfoSketch infoSketch;
+    LogSketch logSketch;
 
-    public BodyLocator(InfoSketch infoSketch) {
-        this.infoSketch = infoSketch;
+    public BodyLocator(LogSketch logSketch) {
+        this.logSketch = logSketch;
     }
 
     public StageBounds getStageBounds() {
@@ -92,14 +92,14 @@ public class BodyLocator extends PApplet implements UserListener {
 
     public void drawDebugInfo() {
         if (currentlyTrackingUserId != null) {
-            infoSketch.logVector("CoM", centerOfMass);
-            infoSketch.logVector("Center", stageBounds.getCenter());
-            infoSketch.logRoundedFloat("Left", stageBounds.getLeft());
-            infoSketch.logRoundedFloat("Right", stageBounds.getRight());
-            infoSketch.logRoundedFloat("Nearest", stageBounds.getFront());
-            infoSketch.logRoundedFloat("Furthest", stageBounds.getBack());
-            infoSketch.logVector("Left Hand", leftHandPosition2d);
-            infoSketch.logVector("Rigth Hand", rightHandPosition2d);
+            logSketch.logVector("CoM", centerOfMass);
+            logSketch.logVector("Center", stageBounds.getCenter());
+            logSketch.logRoundedFloat("Left", stageBounds.getLeft());
+            logSketch.logRoundedFloat("Right", stageBounds.getRight());
+            logSketch.logRoundedFloat("Nearest", stageBounds.getFront());
+            logSketch.logRoundedFloat("Furthest", stageBounds.getBack());
+            logSketch.logVector("Left Hand", leftHandPosition2d);
+            logSketch.logVector("Right Hand", rightHandPosition2d);
         }
     }
 
@@ -174,27 +174,27 @@ public class BodyLocator extends PApplet implements UserListener {
 
     public static class StageMonitor extends PApplet {
         private final StageBounds stageBounds;
-        private final InfoSketch infoSketch;
+        private final LogSketch logSketch;
         private final PVector position;
         private final int width;
         private final int height;
 
         public StageMonitor(StageBounds stageBounds,
                             PVector position,
-                            InfoSketch infoSketch,
+                            LogSketch logSketch,
                             int width,
                             int height) {
             this.width = width;
             this.height = height;
-            this.infoSketch = infoSketch;
+            this.logSketch = logSketch;
             this.position = position;
             this.stageBounds = stageBounds;
         }
 
         public StageMonitor(StageBounds stageBounds,
-                            InfoSketch infoSketch,
+                            LogSketch logSketch,
                             PVector position) {
-            this(stageBounds, position, infoSketch, 400, 400);
+            this(stageBounds, position, logSketch, 400, 400);
         }
 
         @Override
@@ -210,18 +210,29 @@ public class BodyLocator extends PApplet implements UserListener {
             float right = stageBounds.getRight();
             float front = stageBounds.getFront();
             float back = stageBounds.getBack();
+            PVector center = stageBounds.getCenter();
 
             // TODO: draw the box proportionally?
 
             float mappedX = map(position.x, left, right, 0, width);
             float mappedZ = map(position.z, front, back, 0, height);
 
-            infoSketch.logRoundedFloat("mappedX", mappedX);
-            infoSketch.logRoundedFloat("mappedZ", mappedZ);
+            logSketch.logRoundedFloat("mappedX", mappedX);
+            logSketch.logRoundedFloat("mappedZ", mappedZ);
+
+            PVector vector = position.get();
+            vector.sub(center);
+            logSketch.logVector("within", vector);
+            logSketch.logRoundedFloat("within-tolerance", vector.mag());
+
+            stroke(255, 255, 255);
+            if (VectorMath.isWithin(center, position, 80)) {
+                fill(0, 255, 0);
+            } else {
+                fill(255, 0, 0);
+            }
 
             strokeWeight(2);
-            stroke(0, 255, 255);
-            fill(0, 255, 0);
             rect(mappedX, mappedZ, 10, 10);
         }
     }

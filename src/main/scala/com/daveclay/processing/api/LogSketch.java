@@ -3,22 +3,23 @@ package com.daveclay.processing.api;
 import processing.core.PApplet;
 import processing.core.PVector;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class InfoSketch extends PApplet {
+public class LogSketch extends PApplet {
 
     private final int width;
     private final int height;
-    private Map<String, String> lines = new TreeMap<String, String>();
+    private Map<String, String> lines = new LinkedHashMap<String, String>();
     private int fontSize = 23;
 
-    public InfoSketch(int width, int height) {
+    public LogSketch(int width, int height) {
         this.width = width;
         this.height = height;
     }
 
-    public InfoSketch() {
+    public LogSketch() {
         this(640, 480);
     }
 

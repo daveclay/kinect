@@ -11,4 +11,11 @@ public class VectorMath {
         v.sub(verticalNormal);
         return v;
     }
+
+    public static boolean isWithin(PVector center, PVector location, float tolerance) {
+        PVector vector = location.get();
+        vector.sub(center);
+        return vector.mag() < tolerance;
+    }
+
 }
