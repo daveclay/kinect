@@ -3,7 +3,9 @@ package com.daveclay.processing.kinect;
 import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.api.InfoSketch;
 import com.daveclay.processing.api.SketchRunner;
+import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.kinect.api.StageBounds;
+import com.daveclay.processing.kinect.api.UserListener;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -14,20 +16,27 @@ import processing.core.PVector;
  _outOfSceneUserMethod   = getMethodRef(obj,"onOutOfSceneUser",new Class[] { SimpleOpenNI.class,int.class });
  _visibleUserMethod      = getMethodRef(obj,"onVisibleUser",new Class[] { SimpleOpenNI.class,int.class });
  */
-public class BodyLocator extends PApplet {
+public class BodyLocator extends PApplet implements UserListener {
 
     public static void main(String[] args) {
+
         InfoSketch infoSketch = new InfoSketch();
         BodyLocator bodyLocator = new BodyLocator(infoSketch);
-        SketchRunner.run(infoSketch, bodyLocator);
+        StageMonitor stageMonitor = new StageMonitor(
+                bodyLocator.getStageBounds(),
+                infoSketch,
+                bodyLocator.getPosition());
+
+        SketchRunner.run(infoSketch, bodyLocator, stageMonitor);
 
         infoSketch.frame.setLocation(0, 100);
         bodyLocator.frame.setLocation(infoSketch.getWidth() + 10, 100);
+        stageMonitor.frame.setLocation(0, infoSketch.getHeight() + 10);
     }
 
     SimpleOpenNI  kinect;
-    Box leftHandBox;
-    Box rightHandBox;
+    HandBox leftHandBox;
+    HandBox rightHandBox;
 
     Integer currentlyTrackingUserId = -1;
 
@@ -46,6 +55,14 @@ public class BodyLocator extends PApplet {
         this.infoSketch = infoSketch;
     }
 
+    public StageBounds getStageBounds() {
+        return stageBounds;
+    }
+
+    public PVector getPosition() {
+        return centerOfMass;
+    }
+
     public void setup() {
         kinect = new SimpleOpenNI(this);
         kinect.enableDepth();
@@ -59,10 +76,10 @@ public class BodyLocator extends PApplet {
         stroke(255, 0, 0);
         strokeWeight(5);
 
-        leftHandBox = new Box();
+        leftHandBox = new HandBox();
         leftHandBox.color = color(255, 120, 0);
 
-        rightHandBox = new Box();
+        rightHandBox = new HandBox();
         rightHandBox.color = color(0, 80, 255);
     }
 
@@ -77,10 +94,10 @@ public class BodyLocator extends PApplet {
         if (currentlyTrackingUserId != null) {
             infoSketch.logVector("CoM", centerOfMass);
             infoSketch.logVector("Center", stageBounds.getCenter());
-            infoSketch.logRoundedFloat("Left", stageBounds.getLeftmost());
-            infoSketch.logRoundedFloat("Right", stageBounds.getRightmost());
-            infoSketch.logRoundedFloat("Nearest", stageBounds.getNearest());
-            infoSketch.logRoundedFloat("Furthest", stageBounds.getFurthest());
+            infoSketch.logRoundedFloat("Left", stageBounds.getLeft());
+            infoSketch.logRoundedFloat("Right", stageBounds.getRight());
+            infoSketch.logRoundedFloat("Nearest", stageBounds.getFront());
+            infoSketch.logRoundedFloat("Furthest", stageBounds.getBack());
             infoSketch.logVector("Left Hand", leftHandPosition2d);
             infoSketch.logVector("Rigth Hand", rightHandPosition2d);
         }
@@ -106,14 +123,15 @@ public class BodyLocator extends PApplet {
         // switch from 3D "real world" to 2D "projection"
         kinect.convertRealWorldToProjective(leftHandPosition3d, leftHandPosition2d);
         kinect.convertRealWorldToProjective(rightHandPosition3d, rightHandPosition2d);
+
+        leftHandPosition2d = VectorMath.reflectVertically(leftHandPosition2d);
+        rightHandPosition2d = VectorMath.reflectVertically(rightHandPosition2d);
     }
 
     void drawLineBetweenHands() {
         pushMatrix();
         translate(width, 0);
 
-        leftHandPosition2d = VectorMath.reflectVertically(leftHandPosition2d);
-        rightHandPosition2d = VectorMath.reflectVertically(rightHandPosition2d);
 
         stroke(120);
         strokeWeight(2);
@@ -122,10 +140,9 @@ public class BodyLocator extends PApplet {
         leftHandBox.drawAt(leftHandPosition2d);
         rightHandBox.drawAt(rightHandPosition2d);
         popMatrix();
-
     }
 
-    class Box {
+    class HandBox {
 
         PVector center;
         int color;
@@ -155,14 +172,57 @@ public class BodyLocator extends PApplet {
         }
     }
 
-    public static class VectorMath {
+    public static class StageMonitor extends PApplet {
+        private final StageBounds stageBounds;
+        private final InfoSketch infoSketch;
+        private final PVector position;
+        private final int width;
+        private final int height;
 
-        public static PVector reflectVertically(PVector vector) {
-            PVector verticalNormal = new PVector(1, 0, 0);
-            PVector v = vector.get();
-            verticalNormal.mult(2f * v.dot(verticalNormal));
-            v.sub(verticalNormal);
-            return v;
+        public StageMonitor(StageBounds stageBounds,
+                            PVector position,
+                            InfoSketch infoSketch,
+                            int width,
+                            int height) {
+            this.width = width;
+            this.height = height;
+            this.infoSketch = infoSketch;
+            this.position = position;
+            this.stageBounds = stageBounds;
+        }
+
+        public StageMonitor(StageBounds stageBounds,
+                            InfoSketch infoSketch,
+                            PVector position) {
+            this(stageBounds, position, infoSketch, 400, 400);
+        }
+
+        @Override
+        public void setup() {
+            size(width, height);
+        }
+
+        @Override
+        public void draw() {
+            background(100);
+
+            float left = stageBounds.getLeft();
+            float right = stageBounds.getRight();
+            float front = stageBounds.getFront();
+            float back = stageBounds.getBack();
+
+            // TODO: draw the box proportionally?
+
+            float mappedX = map(position.x, left, right, 0, width);
+            float mappedZ = map(position.z, front, back, 0, height);
+
+            infoSketch.logRoundedFloat("mappedX", mappedX);
+            infoSketch.logRoundedFloat("mappedZ", mappedZ);
+
+            strokeWeight(2);
+            stroke(0, 255, 255);
+            fill(0, 255, 0);
+            rect(mappedX, mappedZ, 10, 10);
         }
     }
 }

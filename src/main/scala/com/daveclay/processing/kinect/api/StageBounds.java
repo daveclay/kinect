@@ -3,10 +3,10 @@ package com.daveclay.processing.kinect.api;
 import processing.core.PVector;
 
 public class StageBounds {
-    private float nearest = Integer.MAX_VALUE; // positive
-    private float furthest = 0f; // also positive, but bigger.
-    private float rightmost = Integer.MAX_VALUE; // right goes negative
-    private float leftmost = 0; // left goes positive
+    private float front = Integer.MAX_VALUE; // positive
+    private float back = 0f; // also positive, but bigger.
+    private float right = Integer.MAX_VALUE; // right goes negative
+    private float left = 0; // left goes positive
 
     private boolean ignoreZeros = true;
 
@@ -14,17 +14,17 @@ public class StageBounds {
         if (ignoreZeros && isZero(location)) {
             return;
         }
-        if (location.z < nearest) {
-            nearest = location.z;
+        if (location.z < front) {
+            front = location.z;
         }
-        if (location.z > furthest) {
-            furthest = location.z;
+        if (location.z > back) {
+            back = location.z;
         }
-        if (location.x < rightmost) {
-            rightmost = location.x;
+        if (location.x < right) {
+            right = location.x;
         }
-        if (location.x > leftmost) {
-            leftmost = location.x;
+        if (location.x > left) {
+            left = location.x;
         }
     }
 
@@ -37,8 +37,8 @@ public class StageBounds {
     }
 
     public PVector getCenter(PVector result) {
-        float z = (furthest + nearest) / 2;
-        float x = (leftmost + rightmost) / 2;
+        float z = (back + front) / 2;
+        float x = (left + right) / 2;
 
         if (result != null) {
             result.set(x, 0, z);
@@ -48,19 +48,19 @@ public class StageBounds {
         }
     }
 
-    public float getNearest() {
-        return nearest;
+    public float getFront() {
+        return front;
     }
 
-    public float getFurthest() {
-        return furthest;
+    public float getBack() {
+        return back;
     }
 
-    public float getRightmost() {
-        return rightmost;
+    public float getRight() {
+        return right;
     }
 
-    public float getLeftmost() {
-        return leftmost;
+    public float getLeft() {
+        return left;
     }
 }
