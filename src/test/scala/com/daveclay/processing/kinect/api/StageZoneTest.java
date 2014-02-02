@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class StageZoneTest {
 
-    private Stage.StageZone leftFrontStageZone;
+    private Stage.RectStageZone leftFrontStageZone;
     private Stage stage;
     private float front = 800;
     private float back = 2300;
@@ -34,7 +34,7 @@ public class StageZoneTest {
     @Before
     public void setUp() {
         stage = new Stage();
-        leftFrontStageZone = new Stage.StageZone(Stage.LEFT_FRONT);
+        leftFrontStageZone = new Stage.LeftFrontZone();
         stageBounds = new StageBounds();
 
         // random space, somewhat like kinect numbers

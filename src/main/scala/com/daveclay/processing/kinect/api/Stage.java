@@ -3,67 +3,195 @@ package com.daveclay.processing.kinect.api;
 import com.daveclay.processing.api.VectorMath;
 import processing.core.PVector;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Stage {
 
-    static final int LEFT_FRONT = 1;
-    static final int RIGHT_FRONT = 2;
-    static final int LEFT_BACK = 3;
-    static final int RIGHT_BACK = 4;
-
     private final StageBounds stageBounds = new StageBounds();
-    private float centerRadius = 200;
-    private StageZone leftFrontZone = new StageZone(LEFT_FRONT);
-    private StageZone rightFrontZone = new StageZone(RIGHT_FRONT);
-    private StageZone leftBackZone = new StageZone(LEFT_BACK);
-    private StageZone rightBackZone = new StageZone(RIGHT_BACK);
+    private Map<String, StageZone> stageZoneById = new HashMap<String, StageZone>();
+    private List<StageZone> stageZones = new ArrayList<StageZone>();
+
+    public void addStageZone(StageZone stageZone) {
+        this.stageZones.add(stageZone);
+        this.stageZoneById.put(stageZone.getID(), stageZone);
+    }
 
     public StageBounds getStageBounds() {
         return stageBounds;
     }
 
+    public void setupDefaultStageZones() {
+        addStageZone(new CenterZone());
+        addStageZone(new LeftFrontZone());
+        addStageZone(new RightFrontZone());
+        addStageZone(new LeftBackZone());
+        addStageZone(new RightBackZone());
+    }
+
     public void updatePosition(PVector position) {
         stageBounds.updatePosition(position);
-        for (StageZone stageZone: Arrays.asList(leftFrontZone, rightFrontZone, leftBackZone, rightBackZone)) {
+        for (StageZone stageZone : stageZones) {
             stageZone.updateStageBounds(stageBounds);
         }
     }
 
-    public float getCenterRadius() {
-        return centerRadius;
+    public boolean isWithinZone(String zoneID, PVector position) {
+        StageZone zone = stageZoneById.get(zoneID);
+        return zone != null && zone.isWithinBounds(position);
     }
 
     public boolean isWithinCenterZone(PVector position) {
-        PVector center = stageBounds.getCenter();
-        return VectorMath.isWithin(center, position, centerRadius);
+        return isWithinZone(CenterZone.ID, position);
     }
 
     public boolean isWithinLeftFront(PVector position) {
-        return leftFrontZone.isWithinBounds(position);
+        return isWithinZone(LeftFrontZone.ID, position);
     }
 
     public boolean isWithinRightFront(PVector position) {
-        return rightFrontZone.isWithinBounds(position);
+        return isWithinZone(RightFrontZone.ID, position);
     }
 
     public boolean isWithinLeftBack(PVector position) {
-        return leftBackZone.isWithinBounds(position);
+        return isWithinZone(LeftBackZone.ID, position);
     }
 
     public boolean isWithinRightBack(PVector position) {
-        return rightBackZone.isWithinBounds(position);
+        return isWithinZone(RightBackZone.ID, position);
     }
 
-    public static class StageZone {
+    public static interface StageZone {
+        String getID();
+        boolean isWithinBounds(PVector position);
+        void updateStageBounds(StageBounds stageBounds);
+    }
 
-        private final int stageZoneType;
-        private final PVector leftBottomFront = new PVector();
-        private final PVector rightTopBack = new PVector();
+    public static class CenterZone implements StageZone {
 
-        public StageZone(int stageZoneType) {
-            this.stageZoneType = stageZoneType;
+        public static final String ID = "Center";
+
+        private final PVector center = new PVector();
+        private float centerRadius = 200;
+
+        @Override
+        public String getID() {
+            return ID;
         }
+
+        public float getCenterRadius() {
+            return centerRadius;
+        }
+
+        public void setCenterRadius(float centerRadius) {
+            this.centerRadius = centerRadius;
+        }
+
+        @Override
+        public void updateStageBounds(StageBounds stageBounds) {
+            center.set(stageBounds.getCenter());
+        }
+
+        @Override
+        public boolean isWithinBounds(PVector position) {
+            return VectorMath.isWithin(center, position, centerRadius);
+        }
+    }
+
+    public static class LeftFrontZone extends RectStageZone {
+        public static final String ID = "Left Front";
+
+        @Override
+        public String getID() {
+            return ID;
+        }
+
+        @Override
+        void calculateBounds(StageBounds stageBounds, PVector stageCenter) {
+            leftBottomFront.set(
+                    stageBounds.getLeft(),
+                    stageBounds.getBottom(),
+                    stageBounds.getFront());
+
+            rightTopBack.set(
+                    stageCenter.x,
+                    stageBounds.getTop(), // note that we don't bother with top/bottom. Todo: different types of zones that incorporate Y.
+                    stageCenter.z);
+        }
+    }
+
+    public static class RightFrontZone extends RectStageZone {
+        public static final String ID = "Right Front";
+
+        @Override
+        public String getID() {
+            return ID;
+        }
+
+        @Override
+        void calculateBounds(StageBounds stageBounds, PVector stageCenter) {
+            leftBottomFront.set(
+                    stageCenter.x,
+                    stageBounds.getBottom(),
+                    stageBounds.getFront());
+
+            rightTopBack.set(
+                    stageBounds.getRight(),
+                    stageBounds.getTop(),
+                    stageCenter.z);
+        }
+    }
+
+    public static class LeftBackZone extends RectStageZone {
+        public static final String ID = "Left Back";
+
+        @Override
+        public String getID() {
+            return ID;
+        }
+
+        @Override
+        void calculateBounds(StageBounds stageBounds, PVector stageCenter) {
+            leftBottomFront.set(
+                    stageBounds.getLeft(),
+                    stageBounds.getBottom(),
+                    stageCenter.z);
+
+            rightTopBack.set(
+                    stageBounds.getRight(),
+                    stageBounds.getTop(),
+                    stageBounds.getBack());
+        }
+    }
+
+    public static class RightBackZone extends RectStageZone {
+        public static final String ID = "Right Back";
+
+        @Override
+        public String getID() {
+            return ID;
+        }
+
+        @Override
+        void calculateBounds(StageBounds stageBounds, PVector stageCenter) {
+            leftBottomFront.set(
+                    stageCenter.x,
+                    stageBounds.getBottom(),
+                    stageCenter.z);
+
+            rightTopBack.set(
+                    stageBounds.getRight(),
+                    stageBounds.getTop(),
+                    stageBounds.getBack());
+        }
+    }
+
+    public abstract static class RectStageZone implements StageZone {
+
+        final PVector leftBottomFront = new PVector();
+        final PVector rightTopBack = new PVector();
 
         public boolean isWithinBounds(PVector position) {
             if (position.x < leftBottomFront.x && position.x > rightTopBack.x) { // left-to-right
@@ -78,49 +206,10 @@ public class Stage {
 
         public void updateStageBounds(StageBounds stageBounds) {
             PVector stageCenter = stageBounds.getCenter();
-            if (stageZoneType == LEFT_FRONT) {
-                leftBottomFront.set(
-                        stageBounds.getLeft(),
-                        stageBounds.getBottom(),
-                        stageBounds.getFront());
-
-                rightTopBack.set(
-                        stageCenter.x,
-                        stageBounds.getTop(), // note that we don't bother with top/bottom. Todo: different types of zones that incorporate Y.
-                        stageCenter.z);
-
-            } else if (stageZoneType == RIGHT_FRONT) {
-                leftBottomFront.set(
-                        stageCenter.x,
-                        stageBounds.getBottom(),
-                        stageBounds.getFront());
-
-                rightTopBack.set(
-                        stageBounds.getRight(),
-                        stageBounds.getTop(),
-                        stageCenter.z);
-            } else if (stageZoneType == LEFT_BACK) {
-                leftBottomFront.set(
-                        stageBounds.getLeft(),
-                        stageBounds.getBottom(),
-                        stageCenter.z);
-
-                rightTopBack.set(
-                        stageBounds.getRight(),
-                        stageBounds.getTop(),
-                        stageBounds.getBack());
-            } else if (stageZoneType == RIGHT_BACK) {
-                leftBottomFront.set(
-                        stageCenter.x,
-                        stageBounds.getBottom(),
-                        stageCenter.z);
-
-                rightTopBack.set(
-                        stageBounds.getRight(),
-                        stageBounds.getTop(),
-                        stageBounds.getBack());
-            }
+            calculateBounds(stageBounds, stageCenter);
         }
+
+        abstract void calculateBounds(StageBounds stageBounds, PVector stageCenter);
 
         PVector getLeftBottomFront() {
             return leftBottomFront;

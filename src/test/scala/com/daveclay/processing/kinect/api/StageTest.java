@@ -32,6 +32,7 @@ public class StageTest {
     @Before
     public void setUp() {
         stage = new Stage();
+        stage.setupDefaultStageZones();
 
         // random space, somewhat like kinect numbers
         frontLeftBottom.set(left, bottom, front);
