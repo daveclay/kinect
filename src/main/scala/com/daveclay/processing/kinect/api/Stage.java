@@ -83,7 +83,7 @@ public class Stage {
                 rightTopBack.set(
                         stageCenter.x,
                         stageBounds.getTop(), // note that we don't bother with top/bottom. Todo: different types of zones that incorporate Y.
-                        stageBounds.getBack());
+                        stageCenter.z);
 
             } else if (stageZoneType == RIGHT_FRONT) {
                 leftBottomFront.set(stageCenter.x, stageCenter.y, stageBounds.getRight());

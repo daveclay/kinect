@@ -56,8 +56,21 @@ public class StageZoneTest {
     public void shouldBeWithinFrontLeftZone() {
         givenTheStageIsCalibrated();
         position.set(left - 50, top - 50, front + 50);
-
         assertThat(stageZone.isWithinBounds(position), equalTo(true));
+    }
+
+    @Test
+    public void shouldNotBeWithinFrontLeftZoneWhenPositionIsInBack() {
+        givenTheStageIsCalibrated();
+        position.set(left - 50, top - 50, back - 10);
+        assertThat(stageZone.isWithinBounds(position), equalTo(false));
+    }
+
+    @Test
+    public void shouldNotBeWithinFrontLeftZoneWhenPositionIsTooFarRight() {
+        givenTheStageIsCalibrated();
+        position.set(right + 50, top - 50, front + 50);
+        assertThat(stageZone.isWithinBounds(position), equalTo(false));
     }
 
     private void givenTheStageIsCalibrated() {
