@@ -186,6 +186,15 @@ public class BodyLocator extends PApplet implements UserListener {
         private final Stage.LeftBackZone leftBackZone;
         private final Stage.RightBackZone rightBackZone;
 
+        float left;
+        float right;
+        float front;
+        float back;
+        float realWorldWidth;
+        float realWorldDepth;
+        float centerRadius;
+        PVector center;
+
         public StageMonitor(Stage stage,
                             PVector position,
                             LogSketch logSketch,
@@ -219,14 +228,14 @@ public class BodyLocator extends PApplet implements UserListener {
         @Override
         public void draw() {
             // real-life values:
-            float left = stageBounds.getLeft();
-            float right = stageBounds.getRight();
-            float front = stageBounds.getFront();
-            float back = stageBounds.getBack();
-            float realWorldWidth = stageBounds.getWidth();
-            float realWorldDepth = stageBounds.getDepth();
-            float centerRadius = centerZone.getCenterRadius();
-            PVector center = stageBounds.getCenter();
+            left = stageBounds.getLeft();
+            right = stageBounds.getRight();
+            front = stageBounds.getFront();
+            back = stageBounds.getBack();
+            realWorldWidth = stageBounds.getWidth();
+            realWorldDepth = stageBounds.getDepth();
+            centerRadius = centerZone.getCenterRadius();
+            center = stageBounds.getCenter();
 
             logSketch.log("Within Center", centerZone.isWithinBounds(position));
             logSketch.log("Within Left Front", leftFrontZone.isWithinBounds(position));
@@ -235,30 +244,51 @@ public class BodyLocator extends PApplet implements UserListener {
             logSketch.log("Within Right Back", rightBackZone.isWithinBounds(position));
 
             // mapped values:
-            float mappedVerticalCenterRadius = map(centerRadius, 0, realWorldDepth, 0, height);
-            float mappedHorizontalCenterRadius = map(centerRadius, 0, realWorldWidth, 0, width);
             float mappedPositionX = map(position.x, left, right, 0, width);
             float mappedPositionZ = map(position.z, front, back, 0, height);
-            float mappedCenterX = map(center.x, left, right, 0, width);
-            float mappedCenterZ = map(center.z, front, back, 0, height);
 
             background(100);
             stroke(255, 255, 255);
 
-            if (stage.isWithinCenter(position)) {
-                fill(0, 255, 0);
-            } else {
-                fill(255, 0, 0);
-            }
-            ellipse(mappedCenterX, mappedCenterZ, mappedHorizontalCenterRadius, mappedVerticalCenterRadius);
+            drawMappedZone(leftFrontZone, position);
+            drawMappedZone(rightFrontZone, position);
+            drawMappedZone(leftBackZone, position);
+            drawMappedZone(rightBackZone, position);
+            drawCenterZone();
+
             strokeWeight(2);
             rect(mappedPositionX, mappedPositionZ, 10, 10);
         }
-    }
 
-    public void drawMappedZone(Stage.RectStageZone stageZone) {
-        PVector leftBottomFront = stageZone.getLeftBottomFront();
-        PVector rightTopBack = stageZone.getRightTopBack();
+        private void drawCenterZone() {
+            float mappedVerticalCenterRadius = map(centerRadius, 0, realWorldDepth, 0, height);
+            float mappedHorizontalCenterRadius = map(centerRadius, 0, realWorldWidth, 0, width);
+            float mappedCenterX = map(center.x, left, right, 0, width);
+            float mappedCenterZ = map(center.z, front, back, 0, height);
+            setFill(centerZone, position);
+            ellipse(mappedCenterX, mappedCenterZ, mappedHorizontalCenterRadius, mappedVerticalCenterRadius);
+        }
+
+        void setFill(Stage.StageZone stageZone, PVector position) {
+            if (stageZone.isWithinBounds(position)) {
+                fill(0, 255, 0);
+            } else {
+                fill(100);
+            }
+        }
+
+        public void drawMappedZone(Stage.RectStageZone stageZone, PVector position) {
+            PVector leftBottomFront = stageZone.getLeftBottomFront();
+
+            float mappedX = map(leftBottomFront.x, stageBounds.getLeft(), stageBounds.getRight(), 0, width);
+            float mappedY = map(leftBottomFront.z, stageBounds.getFront(), stageBounds.getBack(), 0, height);
+
+            float mappedWidth = map(stageZone.getWidth(), 0, realWorldWidth, 0, width);
+            float mappedDepth = map(stageZone.getDepth(), 0, realWorldDepth, 0, height);
+
+            setFill(stageZone, position);
+            rect(mappedX, mappedY, mappedWidth, mappedDepth);
+        }
     }
 }
 

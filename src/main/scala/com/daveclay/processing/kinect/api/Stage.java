@@ -228,5 +228,13 @@ public class Stage {
         public PVector getRightTopBack() {
             return rightTopBack;
         }
+
+        public float getDepth() {
+            return rightTopBack.z - leftBottomFront.z;
+        }
+
+        public float getWidth() {
+            return Math.abs(leftBottomFront.x) + Math.abs(rightTopBack.x);
+        }
     }
 }
