@@ -220,13 +220,17 @@ public class BodyLocator extends PApplet implements UserListener {
             logSketch.logRoundedFloat("mappedX", mappedX);
             logSketch.logRoundedFloat("mappedZ", mappedZ);
 
-            PVector vector = position.get();
-            vector.sub(center);
-            logSketch.logVector("within", vector);
-            logSketch.logRoundedFloat("within-tolerance", vector.mag());
+            float centerRadius = 200f;
+
+            float mappedCenterX = map(center.x, left, right, 0, width);
+            float mappedCenterZ = map(center.z, front, back, 0, height);
+
+            float mappedCenterRadius = map(centerRadius, left, right, 0, width);
 
             stroke(255, 255, 255);
-            if (VectorMath.isWithin(center, position, 80)) {
+            ellipse(mappedCenterX, mappedCenterZ, mappedCenterRadius, mappedCenterRadius);
+
+            if (VectorMath.isWithin(center, position, 200)) {
                 fill(0, 255, 0);
             } else {
                 fill(255, 0, 0);
