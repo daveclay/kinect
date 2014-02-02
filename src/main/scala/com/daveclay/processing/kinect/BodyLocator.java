@@ -6,6 +6,7 @@ import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.kinect.api.Stage;
 import com.daveclay.processing.kinect.api.StageBounds;
+import com.daveclay.processing.kinect.api.StageMonitor;
 import com.daveclay.processing.kinect.api.UserListener;
 import processing.core.PApplet;
 import processing.core.PVector;
