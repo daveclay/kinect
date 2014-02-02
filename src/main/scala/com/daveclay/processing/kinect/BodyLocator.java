@@ -27,7 +27,6 @@ public class BodyLocator extends SingleUserTrackingSketch {
 
     HandBox leftHandBox;
     HandBox rightHandBox;
-    LogSketch logSketch;
     Stage stage;
 
     public BodyLocator(LogSketch logSketch) {
@@ -41,33 +40,24 @@ public class BodyLocator extends SingleUserTrackingSketch {
         return stage;
     }
 
-    public void setup() {
-        super.setup();
+    @Override
+    public void setupUserTrackingSketch() {
         kinect.enableDepth();
         kinect.enableRGB();
         kinect.setMirror(true);
         kinect.alternativeViewPointDepthToImage();
-
-        size(640, 480, OPENGL);
-        stroke(255, 0, 0);
-        strokeWeight(5);
 
         leftHandBox = new HandBox();
         leftHandBox.color = color(255, 120, 0);
 
         rightHandBox = new HandBox();
         rightHandBox.color = color(0, 80, 255);
+        size(640, 480, OPENGL);
     }
 
-    public void draw() {
-        kinect.update();
+    @Override
+    public void drawUserTrackingSketch() {
         background(kinect.rgbImage());
-
-        calculateUserData();
-        user.convertRealWorld3DToProjective2D();
-
-        logSketch.logVector("WTF", user.getCenterOfMass());
-
         drawLineBetweenHands();
         drawDebugInfo();
     }

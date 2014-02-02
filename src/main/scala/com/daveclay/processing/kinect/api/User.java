@@ -3,21 +3,20 @@ package com.daveclay.processing.kinect.api;
 import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.VectorMath;
-import processing.core.PApplet;
 import processing.core.PVector;
 
 public class User {
 
-    SimpleOpenNI kinect;
-    LogSketch logSketch;
-    Integer userId;
-    PVector centerOfMass = new PVector();
-    PVector leftHandPosition3d = new PVector();
-    PVector rightHandPosition3d = new PVector();
+    private SimpleOpenNI kinect;
+    private LogSketch logSketch;
+    private Integer userId;
+    private PVector centerOfMass = new PVector();
+    private PVector leftHandPosition3d = new PVector();
+    private PVector rightHandPosition3d = new PVector();
 
     // if we're translating, but don't bother by default.
-    PVector leftHandPosition2d = new PVector();
-    PVector rightHandPosition2d = new PVector();
+    private PVector leftHandPosition2d = new PVector();
+    private PVector rightHandPosition2d = new PVector();
 
     /**
      * Kinda required, but isn't available at construction time.
