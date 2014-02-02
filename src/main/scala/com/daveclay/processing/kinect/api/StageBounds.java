@@ -1,30 +1,40 @@
 package com.daveclay.processing.kinect.api;
 
+import com.daveclay.processing.api.VectorMath;
 import processing.core.PVector;
 
 public class StageBounds {
+
     private float front = Integer.MAX_VALUE; // positive
-    private float back = 0f; // also positive, but bigger.
+    private float back = 0; // also positive, but bigger.
     private float right = Integer.MAX_VALUE; // right goes negative
     private float left = 0; // left goes positive
+    private float bottom = Integer.MAX_VALUE;
+    private float top = 0;
 
     private boolean ignoreZeros = true;
 
-    public void track(PVector location) {
-        if (ignoreZeros && isZero(location)) {
+    public void updatePosition(PVector position) {
+        if (ignoreZeros && isZero(position)) {
             return;
         }
-        if (location.z < front) {
-            front = location.z;
+        if (position.z < front) {
+            front = position.z;
         }
-        if (location.z > back) {
-            back = location.z;
+        if (position.z > back) {
+            back = position.z;
         }
-        if (location.x < right) {
-            right = location.x;
+        if (position.x < right) {
+            right = position.x;
         }
-        if (location.x > left) {
-            left = location.x;
+        if (position.x > left) {
+            left = position.x;
+        }
+        if (position.y < bottom) {
+            bottom = position.y;
+        }
+        if (position.y > top) {
+            top = position.y;
         }
     }
 
@@ -39,13 +49,22 @@ public class StageBounds {
     public PVector getCenter(PVector result) {
         float z = (back + front) / 2;
         float x = (left + right) / 2;
+        float y = (top + bottom) / 2;
 
         if (result != null) {
-            result.set(x, 0, z);
+            result.set(x, y, z);
             return result;
         } else {
-            return new PVector(x, 0, z);
+            return new PVector(x, y, z);
         }
+    }
+
+    public float getBottom() {
+        return bottom;
+    }
+
+    public float getTop() {
+        return top;
     }
 
     public float getFront() {

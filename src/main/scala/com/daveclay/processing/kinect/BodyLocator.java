@@ -9,13 +9,6 @@ import com.daveclay.processing.kinect.api.UserListener;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-/**
- *
- _newUserMethod          = getMethodRef(obj,"onNewUser",new Class[] { SimpleOpenNI.class,int.class });
- _lostUserMethod         = getMethodRef(obj,"onLostUser",new Class[] { SimpleOpenNI.class,int.class });
- _outOfSceneUserMethod   = getMethodRef(obj,"onOutOfSceneUser",new Class[] { SimpleOpenNI.class,int.class });
- _visibleUserMethod      = getMethodRef(obj,"onVisibleUser",new Class[] { SimpleOpenNI.class,int.class });
- */
 public class BodyLocator extends PApplet implements UserListener {
 
     public static void main(String[] args) {
@@ -108,7 +101,7 @@ public class BodyLocator extends PApplet implements UserListener {
         for (int userId : userList) {
             if (kinect.isTrackingSkeleton(userId) && userId == currentlyTrackingUserId) {
                 determineVectorsForUser(userId);
-                stageBounds.track(centerOfMass);
+                stageBounds.updatePosition(centerOfMass);
                 drawLineBetweenHands();
             }
         }

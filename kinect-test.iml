@@ -28,12 +28,17 @@
     <orderEntry type="library" name="opencv-247" level="application" />
     <orderEntry type="library" name="gstreamer-java" level="application" />
     <orderEntry type="library" name="minim" level="application" />
+    <orderEntry type="library" name="core" level="application" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.10.2" level="project" />
+    <orderEntry type="library" name="Maven: org.processing:core:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:jogl-all:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:gluegen-rt:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:gluegen-rt:natives-macosx-universal:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:jogl-all:natives-macosx-universal:2.0.3" level="project" />
-    <orderEntry type="library" name="core" level="application" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.8.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.9" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-all:1.1" level="project" />
   </component>
 </module>
 
