@@ -8,7 +8,7 @@ public class StageMonitor extends PApplet {
 
     private final Stage stage;
     private final LogSketch logSketch;
-    private final PVector position;
+    private final User user;
     private final int width;
     private final int height;
     private final StageBounds stageBounds;
@@ -18,6 +18,7 @@ public class StageMonitor extends PApplet {
     private final Stage.LeftBackZone leftBackZone;
     private final Stage.RightBackZone rightBackZone;
 
+    PVector position;
     float left;
     float right;
     float front;
@@ -28,14 +29,14 @@ public class StageMonitor extends PApplet {
     PVector center;
 
     public StageMonitor(Stage stage,
-                        PVector position,
+                        User user,
                         LogSketch logSketch,
                         int width,
                         int height) {
         this.width = width;
         this.height = height;
         this.logSketch = logSketch;
-        this.position = position;
+        this.user = user;
         this.stage = stage;
 
         centerZone = (Stage.CenterZone) stage.getStageZoneById(Stage.CenterZone.ID);
@@ -48,8 +49,8 @@ public class StageMonitor extends PApplet {
 
     public StageMonitor(Stage stage,
                         LogSketch logSketch,
-                        PVector position) {
-        this(stage, position, logSketch, 400, 400);
+                        User user) {
+        this(stage, user, logSketch, 400, 400);
     }
 
     @Override
@@ -60,6 +61,7 @@ public class StageMonitor extends PApplet {
     @Override
     public void draw() {
         // real-life values:
+        position = user.getCenterOfMass();
         left = stageBounds.getLeft();
         right = stageBounds.getRight();
         front = stageBounds.getFront();

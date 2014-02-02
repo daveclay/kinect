@@ -8,7 +8,7 @@ import SimpleOpenNI.SimpleOpenNI;
  _outOfSceneUserMethod   = getMethodRef(obj,"onOutOfSceneUser",new Class[] { SimpleOpenNI.class,int.class });
  _visibleUserMethod      = getMethodRef(obj,"onVisibleUser",new Class[] { SimpleOpenNI.class,int.class });
  */
-public interface UserListener {
+public interface UserTracking {
     public void onNewUser(SimpleOpenNI curContext, int userId);
     public void onLostUser(SimpleOpenNI kinect, int userId);
 }
