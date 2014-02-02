@@ -257,20 +257,29 @@ public class BodyLocator extends PApplet implements UserListener {
             drawCenterZone();
 
             strokeWeight(2);
+            fill(100);
             rect(mappedPositionX, mappedPositionZ, 10, 10);
         }
 
         private void drawCenterZone() {
-            float mappedVerticalCenterRadius = map(centerRadius, 0, realWorldDepth, 0, height);
-            float mappedHorizontalCenterRadius = map(centerRadius, 0, realWorldWidth, 0, width);
+            float mappedVerticalCenterRadius = map(centerRadius, 0, realWorldDepth, 0, height) * 2;
+            float mappedHorizontalCenterRadius = map(centerRadius, 0, realWorldWidth, 0, width) * 2;
             float mappedCenterX = map(center.x, left, right, 0, width);
             float mappedCenterZ = map(center.z, front, back, 0, height);
-            setFill(centerZone, position);
+            setCenterFill(position);
             ellipse(mappedCenterX, mappedCenterZ, mappedHorizontalCenterRadius, mappedVerticalCenterRadius);
         }
 
-        void setFill(Stage.StageZone stageZone, PVector position) {
-            if (stageZone.isWithinBounds(position)) {
+        void setCenterFill(PVector position) {
+            if (centerZone.isWithinBounds(position)) {
+                fill(0, 255, 0);
+            } else {
+                fill(100);
+            }
+        }
+
+        void setRectFill(Stage.RectStageZone stageZone, PVector position) {
+            if (!centerZone.isWithinBounds(position) && stageZone.isWithinBounds(position) ) {
                 fill(0, 255, 0);
             } else {
                 fill(100);
@@ -280,13 +289,13 @@ public class BodyLocator extends PApplet implements UserListener {
         public void drawMappedZone(Stage.RectStageZone stageZone, PVector position) {
             PVector leftBottomFront = stageZone.getLeftBottomFront();
 
-            float mappedX = map(leftBottomFront.x, stageBounds.getLeft(), stageBounds.getRight(), 0, width);
-            float mappedY = map(leftBottomFront.z, stageBounds.getFront(), stageBounds.getBack(), 0, height);
+            float mappedX = map(leftBottomFront.x, stageBounds.getLeft(), stageBounds.getRight(), 0, width - 2); // leave room for the bounds.
+            float mappedY = map(leftBottomFront.z, stageBounds.getFront(), stageBounds.getBack(), 0, height - 2);
 
             float mappedWidth = map(stageZone.getWidth(), 0, realWorldWidth, 0, width);
             float mappedDepth = map(stageZone.getDepth(), 0, realWorldDepth, 0, height);
 
-            setFill(stageZone, position);
+            setRectFill(stageZone, position);
             rect(mappedX, mappedY, mappedWidth, mappedDepth);
         }
     }

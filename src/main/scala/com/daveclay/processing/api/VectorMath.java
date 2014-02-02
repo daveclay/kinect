@@ -13,8 +13,8 @@ public class VectorMath {
     }
 
     public static boolean isWithin(PVector center, PVector location, float radius) {
-        return Math.pow(center.x - location.x, 2)
-               + Math.pow(center.y - location.y, 2)
-               + Math.pow(center.z - location.z, 2) <= Math.pow(radius, 2);
+        return Math.pow(location.x - center.x, 2)
+               + Math.pow(location.y - center.y, 2)
+               + Math.pow(location.z - center.z, 2) <= Math.pow(radius, 2);
     }
 }
