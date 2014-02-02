@@ -12,9 +12,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StageZoneTest {
+public class StageTest {
 
-    private Stage.StageZone leftFrontStageZone;
     private Stage stage;
     private float front = 800;
     private float back = 2300;
@@ -29,13 +28,10 @@ public class StageZoneTest {
     private PVector backRightTop = new PVector();
 
     private PVector position;
-    private StageBounds stageBounds;
 
     @Before
     public void setUp() {
         stage = new Stage();
-        leftFrontStageZone = new Stage.StageZone(Stage.LEFT_FRONT);
-        stageBounds = new StageBounds();
 
         // random space, somewhat like kinect numbers
         frontLeftBottom.set(left, bottom, front);
@@ -47,37 +43,45 @@ public class StageZoneTest {
     }
 
     @Test
-    public void shouldHaveCorrectCorners() {
-        givenTheStageIsCalibrated();
-        PVector zoneLeftFrontBottom = leftFrontStageZone.getLeftBottomFront();
-        assertThat(zoneLeftFrontBottom.x, equalTo(frontLeftBottom.x));
-    }
-
-    @Test
     public void shouldBeWithinFrontLeftZone() {
         givenTheStageIsCalibrated();
         position.set(left - 50, top - 50, front + 50);
-        assertThat(leftFrontStageZone.isWithinBounds(position), equalTo(true));
+        assertThat(stage.isWithinLeftFront(position), equalTo(true));
     }
 
     @Test
-    public void shouldNotBeWithinFrontLeftZoneWhenPositionIsInBack() {
+    public void shouldBeWithinFrontRightZone() {
         givenTheStageIsCalibrated();
-        position.set(left - 50, top - 50, back - 10);
-        assertThat(leftFrontStageZone.isWithinBounds(position), equalTo(false));
+        position.set(right + 50, top - 50, front + 10);
+        assertThat(stage.isWithinLeftFront(position), equalTo(false));
+        assertThat(stage.isWithinRightFront(position), equalTo(true));
     }
 
     @Test
-    public void shouldNotBeWithinFrontLeftZoneWhenPositionIsTooFarRight() {
+    public void shouldBeWithinBackLeftZone() {
         givenTheStageIsCalibrated();
-        position.set(right + 50, top - 50, front + 50);
-        assertThat(leftFrontStageZone.isWithinBounds(position), equalTo(false));
+        position.set(left - 50, top - 50, back - 50);
+        assertThat(stage.isWithinLeftBack(position), equalTo(true));
+    }
+
+    @Test
+    public void shouldBeWithinBackRightZone() {
+        givenTheStageIsCalibrated();
+        position.set(right + 50, top - 50, back - 50);
+        assertThat(stage.isWithinRightBack(position), equalTo(true));
+        assertThat(stage.isWithinCenterZone(position), equalTo(false));
+    }
+
+    @Test
+    public void shouldBeWithinCenter() {
+        givenTheStageIsCalibrated();
+        position.set(left + right, top - 50, (back + front) / 2);
+        assertThat(stage.isWithinCenterZone(position), equalTo(true));
     }
 
     private void givenTheStageIsCalibrated() {
         for (PVector position: Arrays.asList(frontLeftBottom, frontRightBottom, backLeftTop, backRightTop)) {
-            stageBounds.updatePosition(position);
+            stage.updatePosition(position);
         }
-        leftFrontStageZone.updateStageBounds(stageBounds);
     }
 }

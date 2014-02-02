@@ -3,6 +3,8 @@ package com.daveclay.processing.kinect.api;
 import com.daveclay.processing.api.VectorMath;
 import processing.core.PVector;
 
+import java.util.Arrays;
+
 public class Stage {
 
     static final int LEFT_FRONT = 1;
@@ -23,7 +25,9 @@ public class Stage {
 
     public void updatePosition(PVector position) {
         stageBounds.updatePosition(position);
-        leftFrontZone.updateStageBounds(stageBounds);
+        for (StageZone stageZone: Arrays.asList(leftFrontZone, rightFrontZone, leftBackZone, rightBackZone)) {
+            stageZone.updateStageBounds(stageBounds);
+        }
     }
 
     public float getCenterRadius() {
@@ -39,15 +43,15 @@ public class Stage {
         return leftFrontZone.isWithinBounds(position);
     }
 
-    public boolean isWithRightFront(PVector position) {
+    public boolean isWithinRightFront(PVector position) {
         return rightFrontZone.isWithinBounds(position);
     }
 
-    public boolean isWithLeftBack(PVector position) {
+    public boolean isWithinLeftBack(PVector position) {
         return leftBackZone.isWithinBounds(position);
     }
 
-    public boolean isWithRightBack(PVector position) {
+    public boolean isWithinRightBack(PVector position) {
         return rightBackZone.isWithinBounds(position);
     }
 
@@ -86,7 +90,35 @@ public class Stage {
                         stageCenter.z);
 
             } else if (stageZoneType == RIGHT_FRONT) {
-                leftBottomFront.set(stageCenter.x, stageCenter.y, stageBounds.getRight());
+                leftBottomFront.set(
+                        stageCenter.x,
+                        stageBounds.getBottom(),
+                        stageBounds.getFront());
+
+                rightTopBack.set(
+                        stageBounds.getRight(),
+                        stageBounds.getTop(),
+                        stageCenter.z);
+            } else if (stageZoneType == LEFT_BACK) {
+                leftBottomFront.set(
+                        stageBounds.getLeft(),
+                        stageBounds.getBottom(),
+                        stageCenter.z);
+
+                rightTopBack.set(
+                        stageBounds.getRight(),
+                        stageBounds.getTop(),
+                        stageBounds.getBack());
+            } else if (stageZoneType == RIGHT_BACK) {
+                leftBottomFront.set(
+                        stageCenter.x,
+                        stageBounds.getBottom(),
+                        stageCenter.z);
+
+                rightTopBack.set(
+                        stageBounds.getRight(),
+                        stageBounds.getTop(),
+                        stageBounds.getBack());
             }
         }
 
