@@ -91,8 +91,8 @@ public class BodyLocator extends PApplet implements UserListener {
         if (currentlyTrackingUserId != null) {
             logSketch.logVector("CoM", centerOfMass);
             StageBounds stageBounds = stage.getStageBounds();
-            logSketch.logVector("Center", stageBounds.getCenter());
             /*
+            logSketch.logVector("Center", stageBounds.getCenter());
             logSketch.logRoundedFloat("Left", stageBounds.getLeft());
             logSketch.logRoundedFloat("Right", stageBounds.getRight());
             logSketch.logRoundedFloat("Nearest", stageBounds.getFront());
@@ -130,9 +130,7 @@ public class BodyLocator extends PApplet implements UserListener {
 
     void drawLineBetweenHands() {
         pushMatrix();
-        translate(width, 0);
-
-
+        translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
         stroke(120);
         strokeWeight(2);
         line(leftHandPosition2d.x, leftHandPosition2d.y,
@@ -243,12 +241,10 @@ public class BodyLocator extends PApplet implements UserListener {
             logSketch.log("Within Left Back", leftBackZone.isWithinBounds(position));
             logSketch.log("Within Right Back", rightBackZone.isWithinBounds(position));
 
-            // mapped values:
-            float mappedPositionX = map(position.x, left, right, 0, width);
-            float mappedPositionZ = map(position.z, front, back, 0, height);
 
             background(100);
             stroke(255, 255, 255);
+            strokeWeight(2);
 
             drawMappedZone(leftFrontZone, position);
             drawMappedZone(rightFrontZone, position);
@@ -256,7 +252,12 @@ public class BodyLocator extends PApplet implements UserListener {
             drawMappedZone(rightBackZone, position);
             drawCenterZone();
 
-            strokeWeight(2);
+            drawPosition(position);
+        }
+
+        void drawPosition(PVector position) {
+            float mappedPositionX = map(position.x, left, right, 0, width);
+            float mappedPositionZ = map(position.z, front, back, 0, height);
             fill(100);
             rect(mappedPositionX, mappedPositionZ, 10, 10);
         }
