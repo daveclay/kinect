@@ -14,13 +14,13 @@ import static org.junit.Assert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class StageTest {
 
-    private Stage stage;
+    private Stage stage = new Stage();
     private float front = 800;
     private float back = 2300;
     private float left = 600;
     private float right = -300;
-    private float top = 400;
-    private float bottom = 50;
+    private float top = -80;
+    private float bottom = -300;
 
     private PVector frontLeftBottom = new PVector();
     private PVector frontRightBottom = new PVector();
@@ -31,7 +31,6 @@ public class StageTest {
 
     @Before
     public void setUp() {
-        stage = new Stage();
         stage.setupDefaultStageZones();
 
         // random space, somewhat like kinect numbers
@@ -70,14 +69,15 @@ public class StageTest {
         givenTheStageIsCalibrated();
         position.set(right + 50, top - 50, back - 50);
         assertThat(stage.isWithinRightBack(position), equalTo(true));
-        assertThat(stage.isWithinCenterZone(position), equalTo(false));
+        assertThat(stage.isWithinLeftBack(position), equalTo(false));
+        assertThat(stage.isWithinCenter(position), equalTo(false));
     }
 
     @Test
     public void shouldBeWithinCenter() {
         givenTheStageIsCalibrated();
         position.set(left + right, top - 50, (back + front) / 2);
-        assertThat(stage.isWithinCenterZone(position), equalTo(true));
+        assertThat(stage.isWithinCenter(position), equalTo(true));
     }
 
     private void givenTheStageIsCalibrated() {

@@ -4,6 +4,7 @@ import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.VectorMath;
+import com.daveclay.processing.kinect.api.Stage;
 import com.daveclay.processing.kinect.api.StageBounds;
 import com.daveclay.processing.kinect.api.UserListener;
 import processing.core.PApplet;
@@ -16,7 +17,7 @@ public class BodyLocator extends PApplet implements UserListener {
         LogSketch logSketch = new LogSketch();
         BodyLocator bodyLocator = new BodyLocator(logSketch);
         StageMonitor stageMonitor = new StageMonitor(
-                bodyLocator.getStageBounds(),
+                bodyLocator.getStage(),
                 logSketch,
                 bodyLocator.getPosition());
 
@@ -24,7 +25,7 @@ public class BodyLocator extends PApplet implements UserListener {
 
         logSketch.frame.setLocation(0, 100);
         bodyLocator.frame.setLocation(logSketch.getWidth() + 10, 100);
-        stageMonitor.frame.setLocation(0, logSketch.getHeight() + 10);
+        stageMonitor.frame.setLocation(100, logSketch.getHeight() + 10);
     }
 
     SimpleOpenNI  kinect;
@@ -40,16 +41,19 @@ public class BodyLocator extends PApplet implements UserListener {
     PVector leftHandPosition2d = new PVector();
     PVector rightHandPosition2d = new PVector();
 
-    StageBounds stageBounds = new StageBounds();
-
     LogSketch logSketch;
 
+    Stage stage;
+
     public BodyLocator(LogSketch logSketch) {
+        this.stage = new Stage();
+        stage.setupDefaultStageZones();
+
         this.logSketch = logSketch;
     }
 
-    public StageBounds getStageBounds() {
-        return stageBounds;
+    public Stage getStage() {
+        return stage;
     }
 
     public PVector getPosition() {
@@ -86,11 +90,14 @@ public class BodyLocator extends PApplet implements UserListener {
     public void drawDebugInfo() {
         if (currentlyTrackingUserId != null) {
             logSketch.logVector("CoM", centerOfMass);
+            StageBounds stageBounds = stage.getStageBounds();
             logSketch.logVector("Center", stageBounds.getCenter());
+            /*
             logSketch.logRoundedFloat("Left", stageBounds.getLeft());
             logSketch.logRoundedFloat("Right", stageBounds.getRight());
             logSketch.logRoundedFloat("Nearest", stageBounds.getFront());
             logSketch.logRoundedFloat("Furthest", stageBounds.getBack());
+            */
             logSketch.logVector("Left Hand", leftHandPosition2d);
             logSketch.logVector("Right Hand", rightHandPosition2d);
         }
@@ -101,7 +108,7 @@ public class BodyLocator extends PApplet implements UserListener {
         for (int userId : userList) {
             if (kinect.isTrackingSkeleton(userId) && userId == currentlyTrackingUserId) {
                 determineVectorsForUser(userId);
-                stageBounds.updatePosition(centerOfMass);
+                stage.updatePosition(centerOfMass);
                 drawLineBetweenHands();
             }
         }
@@ -166,13 +173,20 @@ public class BodyLocator extends PApplet implements UserListener {
     }
 
     public static class StageMonitor extends PApplet {
-        private final StageBounds stageBounds;
+
+        private final Stage stage;
         private final LogSketch logSketch;
         private final PVector position;
         private final int width;
         private final int height;
+        private final StageBounds stageBounds;
+        private final Stage.CenterZone centerZone;
+        private final Stage.LeftFrontZone leftFrontZone;
+        private final Stage.RightFrontZone rightFrontZone;
+        private final Stage.LeftBackZone leftBackZone;
+        private final Stage.RightBackZone rightBackZone;
 
-        public StageMonitor(StageBounds stageBounds,
+        public StageMonitor(Stage stage,
                             PVector position,
                             LogSketch logSketch,
                             int width,
@@ -181,13 +195,20 @@ public class BodyLocator extends PApplet implements UserListener {
             this.height = height;
             this.logSketch = logSketch;
             this.position = position;
-            this.stageBounds = stageBounds;
+            this.stage = stage;
+
+            centerZone = (Stage.CenterZone) stage.getStageZoneById(Stage.CenterZone.ID);
+            leftFrontZone = (Stage.LeftFrontZone) stage.getStageZoneById(Stage.LeftFrontZone.ID);
+            rightFrontZone = (Stage.RightFrontZone) stage.getStageZoneById(Stage.RightFrontZone.ID);
+            leftBackZone = (Stage.LeftBackZone) stage.getStageZoneById(Stage.LeftBackZone.ID);
+            rightBackZone = (Stage.RightBackZone) stage.getStageZoneById(Stage.RightBackZone.ID);
+            stageBounds = stage.getStageBounds();
         }
 
-        public StageMonitor(StageBounds stageBounds,
+        public StageMonitor(Stage stage,
                             LogSketch logSketch,
                             PVector position) {
-            this(stageBounds, position, logSketch, 400, 400);
+            this(stage, position, logSketch, 400, 400);
         }
 
         @Override
@@ -197,41 +218,47 @@ public class BodyLocator extends PApplet implements UserListener {
 
         @Override
         public void draw() {
-            background(100);
-
+            // real-life values:
             float left = stageBounds.getLeft();
             float right = stageBounds.getRight();
             float front = stageBounds.getFront();
             float back = stageBounds.getBack();
+            float realWorldWidth = stageBounds.getWidth();
+            float realWorldDepth = stageBounds.getDepth();
+            float centerRadius = centerZone.getCenterRadius();
             PVector center = stageBounds.getCenter();
 
-            // TODO: draw the box proportionally?
+            logSketch.log("Within Center", centerZone.isWithinBounds(position));
+            logSketch.log("Within Left Front", leftFrontZone.isWithinBounds(position));
+            logSketch.log("Within Right Front", rightFrontZone.isWithinBounds(position));
+            logSketch.log("Within Left Back", leftBackZone.isWithinBounds(position));
+            logSketch.log("Within Right Back", rightBackZone.isWithinBounds(position));
 
-            float mappedX = map(position.x, left, right, 0, width);
-            float mappedZ = map(position.z, front, back, 0, height);
-
-            logSketch.logRoundedFloat("mappedX", mappedX);
-            logSketch.logRoundedFloat("mappedZ", mappedZ);
-
-            float centerRadius = 200f;
-
+            // mapped values:
+            float mappedVerticalCenterRadius = map(centerRadius, 0, realWorldDepth, 0, height);
+            float mappedHorizontalCenterRadius = map(centerRadius, 0, realWorldWidth, 0, width);
+            float mappedPositionX = map(position.x, left, right, 0, width);
+            float mappedPositionZ = map(position.z, front, back, 0, height);
             float mappedCenterX = map(center.x, left, right, 0, width);
             float mappedCenterZ = map(center.z, front, back, 0, height);
 
-            float mappedCenterRadius = map(centerRadius, left, right, 0, width);
-
+            background(100);
             stroke(255, 255, 255);
-            ellipse(mappedCenterX, mappedCenterZ, mappedCenterRadius, mappedCenterRadius);
 
-            if (VectorMath.isWithin(center, position, 200)) {
+            if (stage.isWithinCenter(position)) {
                 fill(0, 255, 0);
             } else {
                 fill(255, 0, 0);
             }
-
+            ellipse(mappedCenterX, mappedCenterZ, mappedHorizontalCenterRadius, mappedVerticalCenterRadius);
             strokeWeight(2);
-            rect(mappedX, mappedZ, 10, 10);
+            rect(mappedPositionX, mappedPositionZ, 10, 10);
         }
+    }
+
+    public void drawMappedZone(Stage.RectStageZone stageZone) {
+        PVector leftBottomFront = stageZone.getLeftBottomFront();
+        PVector rightTopBack = stageZone.getRightTopBack();
     }
 }
 

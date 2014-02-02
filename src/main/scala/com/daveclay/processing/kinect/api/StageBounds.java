@@ -1,6 +1,5 @@
 package com.daveclay.processing.kinect.api;
 
-import com.daveclay.processing.api.VectorMath;
 import processing.core.PVector;
 
 public class StageBounds {
@@ -81,5 +80,13 @@ public class StageBounds {
 
     public float getLeft() {
         return left;
+    }
+
+    public float getDepth() {
+        return back - front;
+    }
+
+    public float getWidth() {
+        return Math.abs(left) + Math.abs(right);
     }
 }

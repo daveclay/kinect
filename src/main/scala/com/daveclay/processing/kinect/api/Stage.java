@@ -38,12 +38,16 @@ public class Stage {
         }
     }
 
+    public StageZone getStageZoneById(String ID) {
+        return stageZoneById.get(ID);
+    }
+
     public boolean isWithinZone(String zoneID, PVector position) {
         StageZone zone = stageZoneById.get(zoneID);
         return zone != null && zone.isWithinBounds(position);
     }
 
-    public boolean isWithinCenterZone(PVector position) {
+    public boolean isWithinCenter(PVector position) {
         return isWithinZone(CenterZone.ID, position);
     }
 
@@ -160,7 +164,7 @@ public class Stage {
                     stageCenter.z);
 
             rightTopBack.set(
-                    stageBounds.getRight(),
+                    stageCenter.x,
                     stageBounds.getTop(),
                     stageBounds.getBack());
         }
@@ -192,16 +196,22 @@ public class Stage {
 
         final PVector leftBottomFront = new PVector();
         final PVector rightTopBack = new PVector();
+        boolean ignoreYAxis = true;
+
+        public boolean isWithinXAxis(PVector position) {
+            return position.x < leftBottomFront.x && position.x > rightTopBack.x;
+        }
+
+        public boolean isWithinYAxis(PVector position) {
+            return ignoreYAxis || (position.y < leftBottomFront.y && position.y > rightTopBack.y);
+        }
+
+        public boolean isWithinZAxis(PVector position) {
+            return position.z < rightTopBack.z && position.z > leftBottomFront.z;
+        }
 
         public boolean isWithinBounds(PVector position) {
-            if (position.x < leftBottomFront.x && position.x > rightTopBack.x) { // left-to-right
-                if (position.y > leftBottomFront.y && position.y < rightTopBack.y) { // top-to-bottom
-                    if (position.z < rightTopBack.z && position.z > leftBottomFront.z) { // front-to-back
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return isWithinXAxis(position) && isWithinYAxis(position) && isWithinZAxis(position);
         }
 
         public void updateStageBounds(StageBounds stageBounds) {
@@ -211,11 +221,11 @@ public class Stage {
 
         abstract void calculateBounds(StageBounds stageBounds, PVector stageCenter);
 
-        PVector getLeftBottomFront() {
+        public PVector getLeftBottomFront() {
             return leftBottomFront;
         }
 
-        PVector getRightTopBack() {
+        public PVector getRightTopBack() {
             return rightTopBack;
         }
     }

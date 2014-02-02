@@ -56,4 +56,8 @@ public class LogSketch extends PApplet {
             y += yIncrement;
         }
     }
+
+    public void log(String key, boolean value) {
+        log(key, value ? "YES": "NO");
+    }
 }
