@@ -31,7 +31,11 @@ public class LogSketch extends PApplet {
         size(width, height);
     }
 
-    public void logRoundedFloat(String label, float value) {
+    public void logRounded(String label, double value) {
+        log(label, Double.toString(Math.round(value)));
+    }
+
+    public void logRounded(String label, float value) {
         log(label, Integer.toString(Math.round(value)));
     }
 

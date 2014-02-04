@@ -12,9 +12,13 @@ public class VectorMath {
         return v;
     }
 
-    public static boolean isWithin(PVector center, PVector location, float radius) {
+    public static double getDistanceSquared(PVector center, PVector location) {
         return Math.pow(location.x - center.x, 2)
-               + Math.pow(location.y - center.y, 2)
-               + Math.pow(location.z - center.z, 2) <= Math.pow(radius, 2);
+                + Math.pow(location.y - center.y, 2)
+                + Math.pow(location.z - center.z, 2);
+    }
+
+    public static boolean isWithin(PVector center, PVector location, float radius) {
+        return getDistanceSquared(center, location) <= Math.pow(radius, 2);
     }
 }

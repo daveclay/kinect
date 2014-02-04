@@ -3,6 +3,7 @@ package com.daveclay.processing.kinect;
 import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
+import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.kinect.api.SingleUserTrackingSketch;
 import com.daveclay.processing.kinect.api.Stage;
 import com.daveclay.processing.kinect.api.StageMonitor;
@@ -60,28 +61,29 @@ public class BodyLocator extends SingleUserTrackingSketch {
     @Override
     protected void drawUserTrackingSketch() {
         setKinectRGBImageAsBackground();
-        drawLineBetweenHands();
-        drawDebugInfo();
-    }
-
-    public void drawDebugInfo() {
         if (user.isCurrentlyTracking()) {
-            logSketch.logVector("CoM", user.getCenterOfMass());
-            logSketch.logVector("Left Hand", user.getLeftHandPositionMirrored2D());
-            logSketch.logVector("Right Hand", user.getRightHandPositionMirrored2D());
-            /*
-            StageBounds stageBounds = stage.getStageBounds();
-            logSketch.logVector("Center", stageBounds.getCenter());
-            logSketch.logRoundedFloat("Left", stageBounds.getLeft());
-            logSketch.logRoundedFloat("Right", stageBounds.getRight());
-            logSketch.logRoundedFloat("Nearest", stageBounds.getFront());
-            logSketch.logRoundedFloat("Furthest", stageBounds.getBack());
-            */
+            logSketch.log("Is Hand Out", ! VectorMath.isWithin(user.getLeftHandPosition3d(), user.getCenterOfMass(), 450));
+            user.convertRealWorld3DToProjective2D();
+            drawLineBetweenHands();
+            drawDebugInfo();
         }
     }
 
+    public void drawDebugInfo() {
+        logSketch.logVector("CoM", user.getCenterOfMass());
+        logSketch.logVector("Left Hand", user.getLeftHandPositionMirrored2D());
+        logSketch.logVector("Right Hand", user.getRightHandPositionMirrored2D());
+        /*
+        StageBounds stageBounds = stage.getStageBounds();
+        logSketch.logVector("Center", stageBounds.getCenter());
+        logSketch.logRounded("Left", stageBounds.getLeft());
+        logSketch.logRounded("Right", stageBounds.getRight());
+        logSketch.logRounded("Nearest", stageBounds.getFront());
+        logSketch.logRounded("Furthest", stageBounds.getBack());
+        */
+    }
+
     void drawLineBetweenHands() {
-        user.convertRealWorld3DToProjective2D();
         pushMatrix();
         translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
         stroke(120);
