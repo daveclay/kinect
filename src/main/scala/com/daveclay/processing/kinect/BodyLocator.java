@@ -81,6 +81,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
     }
 
     void drawLineBetweenHands() {
+        user.convertRealWorld3DToProjective2D();
         pushMatrix();
         translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
         stroke(120);

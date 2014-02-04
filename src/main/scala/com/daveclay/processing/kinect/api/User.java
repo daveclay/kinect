@@ -31,12 +31,12 @@ public class User {
 
     public void updateData() {
         if (isCurrentlyTracking()) {
-            logSketch.log("FUCK", "Tracking: " + userId);
+            logSketch.log("Tracking", "User " + userId);
             kinect.getCoM(userId, centerOfMass);
             kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_HAND, leftHandPosition3d);
             kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_HAND, rightHandPosition3d);
         } else {
-            logSketch.log("FUCK", "NOT FUCKING TRACKING: " + userId);
+            logSketch.log("Tracking", "None");
         }
     }
 

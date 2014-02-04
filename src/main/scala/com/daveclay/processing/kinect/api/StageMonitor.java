@@ -62,6 +62,8 @@ public class StageMonitor extends PApplet {
     public void draw() {
         // real-life values:
         position = user.getCenterOfMass();
+        stage.updatePosition(position);
+
         left = stageBounds.getLeft();
         right = stageBounds.getRight();
         front = stageBounds.getFront();
@@ -71,6 +73,7 @@ public class StageMonitor extends PApplet {
         centerRadius = centerZone.getCenterRadius();
         center = stageBounds.getCenter();
 
+        logSketch.logVector("Position", position);
         logSketch.log("Within Center", centerZone.isWithinBounds(position));
         logSketch.log("Within Left Front", leftFrontZone.isWithinBounds(position));
         logSketch.log("Within Right Front", rightFrontZone.isWithinBounds(position));
