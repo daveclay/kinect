@@ -5,20 +5,16 @@ import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.VectorMath;
 import processing.core.PVector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
 
     private SimpleOpenNI kinect;
     private LogSketch logSketch;
     private Integer userId;
-    private PVector centerOfMass = new PVector();
-    private PVector leftHandPosition3d = new PVector();
-    private PVector rightHandPosition3d = new PVector();
-    private PVector leftShoulderPosition3d = new PVector();
-    private PVector rightShoulderPosition3d = new PVector();
 
-    // if we're translating, but don't bother by default.
-    private PVector leftHandPosition2d = new PVector();
-    private PVector rightHandPosition2d = new PVector();
+    private SkeletonData skeletonData = new SkeletonData();
 
     /**
      * Kinda required, but isn't available at construction time.
@@ -33,18 +29,8 @@ public class User {
 
     public void updateData() {
         if (isCurrentlyTracking()) {
-            kinect.getCoM(userId, centerOfMass);
-            kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_HAND, leftHandPosition3d);
-            kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_HAND, rightHandPosition3d);
-            kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, leftShoulderPosition3d);
-            kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, rightShoulderPosition3d);
+            skeletonData.updatePositions();
         }
-    }
-
-    public void convertRealWorld3DToProjective2D() {
-        // switch from 3D "real world" to 2D "projection"
-        kinect.convertRealWorldToProjective(leftHandPosition3d, leftHandPosition2d);
-        kinect.convertRealWorldToProjective(rightHandPosition3d, rightHandPosition2d);
     }
 
     public void lost() {
@@ -61,57 +47,81 @@ public class User {
         return userId;
     }
 
-    public PVector getCenterOfMass() {
-        return centerOfMass;
-    }
-
-    public PVector getLeftHandPosition3d() {
-        return leftHandPosition3d;
-    }
-
-    public PVector getRightHandPosition3d() {
-        return rightHandPosition3d;
-    }
-
-    public PVector getLeftHandPosition2d() {
-        return leftHandPosition2d;
-    }
-
-    public PVector getRightHandPosition2d() {
-        return rightHandPosition2d;
-    }
-
-    public PVector getLeftHandPositionMirrored2D() {
-        return VectorMath.reflectVertically(leftHandPosition2d);
-    }
-
-    public PVector getRightHandPositionMirrored2D() {
-        return VectorMath.reflectVertically(rightHandPosition2d);
-    }
-
-    public PVector getLeftShoulderPosition3d() {
-        return leftShoulderPosition3d;
-    }
-
-    public PVector getRightShoulderPosition3d() {
-        return rightShoulderPosition3d;
-    }
-
-    public boolean isLeftHandExtended(float threshold) {
-        return ! VectorMath.isWithin(getLeftHandPosition3d(), getLeftShoulderPosition3d(), threshold);
-    }
-
-    public boolean isRightHandExtended(float threshold) {
-        return ! VectorMath.isWithin(getRightHandPosition3d(), getRightShoulderPosition3d(), threshold);
-    }
-
-    public boolean isWithinDistanceFromCenterOfMass(PVector position, float threshold) {
-        return VectorMath.isWithin(position, getCenterOfMass(), threshold);
+    public SkeletonData getSkeletonData() {
+        return skeletonData;
     }
 
     public void startTrackingWithUserId(int userId) {
         this.userId = userId;
         kinect.startTrackingSkeleton(userId);
         System.out.println(this + ": start tracking userId " + userId);
+    }
+
+    public class SkeletonData {
+
+        final PVector centerOfMass = new PVector();
+        final Joint head = new Joint(SimpleOpenNI.SKEL_HEAD);
+        final Joint neck = new Joint(SimpleOpenNI.SKEL_NECK);
+        final Joint torso = new Joint(SimpleOpenNI.SKEL_TORSO);
+        final Joint leftShoulder = new Joint(SimpleOpenNI.SKEL_LEFT_SHOULDER);
+        final Joint leftElbow = new Joint(SimpleOpenNI.SKEL_LEFT_ELBOW);
+        final Joint leftHand = new Joint(SimpleOpenNI.SKEL_LEFT_HAND);
+        final Joint leftFingertip = new Joint(SimpleOpenNI.SKEL_LEFT_FINGERTIP);
+        final Joint rightShoulder = new Joint(SimpleOpenNI.SKEL_RIGHT_SHOULDER);
+        final Joint rightElbow = new Joint(SimpleOpenNI.SKEL_RIGHT_ELBOW);
+        final Joint rightHand = new Joint(SimpleOpenNI.SKEL_RIGHT_HAND);
+        final Joint rightFingertip = new Joint(SimpleOpenNI.SKEL_RIGHT_FINGERTIP);
+        final Joint leftHip = new Joint(SimpleOpenNI.SKEL_LEFT_HIP);
+        final Joint leftKnee = new Joint(SimpleOpenNI.SKEL_LEFT_KNEE);
+        final Joint leftFoot = new Joint(SimpleOpenNI.SKEL_LEFT_FOOT);
+        final Joint rightHip = new Joint(SimpleOpenNI.SKEL_RIGHT_HIP);
+        final Joint rightKnee = new Joint(SimpleOpenNI.SKEL_RIGHT_KNEE);
+        final Joint rightFoot = new Joint(SimpleOpenNI.SKEL_RIGHT_FOOT);
+
+        final List<Joint> joints = new ArrayList<Joint>();
+        {
+            joints.add(head);
+            joints.add(neck);
+            joints.add(torso);
+            joints.add(leftShoulder);
+            joints.add(leftElbow);
+            joints.add(leftHand);
+            joints.add(leftFingertip);
+            joints.add(rightShoulder);
+            joints.add(rightElbow);
+            joints.add(rightHand);
+            joints.add(rightFingertip);
+            joints.add(leftHip);
+            joints.add(leftKnee);
+            joints.add(leftFoot);
+            joints.add(rightHip);
+            joints.add(rightKnee);
+            joints.add(rightFoot);
+        }
+
+        public PVector convertRealWorldToProjective(Joint joint) {
+            PVector converted = new PVector();
+            kinect.convertRealWorldToProjective(joint.position, converted);
+            return converted;
+        }
+
+        private void updatePositions() {
+            for (Joint joint : joints) {
+                kinect.getJointPositionSkeleton(userId, joint.id, joint.position);
+            }
+            kinect.getCoM(userId, centerOfMass);
+        }
+
+        public boolean isLeftHandExtended(float threshold) {
+            return ! VectorMath.isWithin(leftHand.position, leftShoulder.position, threshold);
+        }
+
+        public boolean isRightHandExtended(float threshold) {
+            return ! VectorMath.isWithin(rightHand.position, rightShoulder.position, threshold);
+        }
+
+        public boolean isWithinDistanceFromCenterOfMass(PVector position, float threshold) {
+            return VectorMath.isWithin(position, centerOfMass, threshold);
+        }
     }
 }
