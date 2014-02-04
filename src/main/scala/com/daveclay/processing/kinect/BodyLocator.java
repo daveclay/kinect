@@ -147,9 +147,11 @@ public class BodyLocator extends SingleUserTrackingSketch {
     }
 
     public void drawDebugInfo() {
+        /*
         logSketch.logVector("CoM", user.getCenterOfMass());
         logSketch.logVector("Left Hand", user.getLeftHandPositionMirrored2D());
         logSketch.logVector("Right Hand", user.getRightHandPositionMirrored2D());
+        */
     }
 
     void drawLineBetweenHands() {

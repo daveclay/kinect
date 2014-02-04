@@ -13,6 +13,8 @@ public class User {
     private PVector centerOfMass = new PVector();
     private PVector leftHandPosition3d = new PVector();
     private PVector rightHandPosition3d = new PVector();
+    private PVector leftShoulderPosition3d = new PVector();
+    private PVector rightShoulderPosition3d = new PVector();
 
     // if we're translating, but don't bother by default.
     private PVector leftHandPosition2d = new PVector();
@@ -34,6 +36,8 @@ public class User {
             kinect.getCoM(userId, centerOfMass);
             kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_HAND, leftHandPosition3d);
             kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_HAND, rightHandPosition3d);
+            kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, leftShoulderPosition3d);
+            kinect.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, rightShoulderPosition3d);
         }
     }
 
@@ -85,12 +89,20 @@ public class User {
         return VectorMath.reflectVertically(rightHandPosition2d);
     }
 
+    public PVector getLeftShoulderPosition3d() {
+        return leftShoulderPosition3d;
+    }
+
+    public PVector getRightShoulderPosition3d() {
+        return rightShoulderPosition3d;
+    }
+
     public boolean isLeftHandExtended(float threshold) {
-        return ! isWithinDistanceFromCenterOfMass(getLeftHandPosition3d(), threshold);
+        return ! VectorMath.isWithin(getLeftHandPosition3d(), getLeftShoulderPosition3d(), threshold);
     }
 
     public boolean isRightHandExtended(float threshold) {
-        return ! isWithinDistanceFromCenterOfMass(getRightHandPosition3d(), threshold);
+        return ! VectorMath.isWithin(getRightHandPosition3d(), getRightShoulderPosition3d(), threshold);
     }
 
     public boolean isWithinDistanceFromCenterOfMass(PVector position, float threshold) {
