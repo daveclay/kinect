@@ -5,12 +5,12 @@ public class Point2D {
     //int x, y;
     double x, y;
 
-    Point2D() {
+    public Point2D() {
         this.x = 0;
         this.y = 0;
     }
 
-    Point2D(double x, double y) {
+    public Point2D(double x, double y) {
         this.x = x;
         this.y = y;
     }

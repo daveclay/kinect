@@ -16,7 +16,7 @@ public class GestureTestSketch extends PApplet {
 
     @Override
     public void setup() {
-        geometricRecognizer.loadDefaultTemplates();
+        geometricRecognizer.loadDefaultGestures();
         size(1024, 768);
     }
 

@@ -3,11 +3,17 @@ package com.daveclay.processing.kinect;
 import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
-import com.daveclay.processing.api.VectorMath;
+import com.daveclay.processing.gestures.GeometricRecognizer;
+import com.daveclay.processing.gestures.GestureData;
+import com.daveclay.processing.gestures.Point2D;
+import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.api.SingleUserTrackingSketch;
 import com.daveclay.processing.kinect.api.Stage;
 import com.daveclay.processing.kinect.api.StageMonitor;
 import processing.core.PVector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BodyLocator extends SingleUserTrackingSketch {
 
@@ -29,6 +35,56 @@ public class BodyLocator extends SingleUserTrackingSketch {
     HandBox leftHandBox;
     HandBox rightHandBox;
     Stage stage;
+    GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
+    {
+        geometricRecognizer.addTemplate("Rectangle", GestureData.getGestureRectangle());
+        geometricRecognizer.addTemplate("V", GestureData.getGestureV());
+        geometricRecognizer.addTemplate("Circle", GestureData.getGestureCircle());
+        geometricRecognizer.addTemplate("Caret", GestureData.getGestureCaret());
+    }
+    GestureRecorder gestureRecorder = new GestureRecorder(geometricRecognizer);
+
+    public static class GestureRecorder {
+        private GeometricRecognizer recognizer = new GeometricRecognizer();
+        private boolean recording = false;
+        private List<Point2D> points = new ArrayList<Point2D>();
+        private GestureRecognizedHandler gestureRecognizedHandler;
+
+        public GestureRecorder(GeometricRecognizer geometricRecognizer) {
+            this.recognizer = geometricRecognizer;
+        }
+
+        public void addPoint(PVector position) {
+            addPoint(position.x, position.y);
+        }
+
+        public void addPoint(double x, double y) {
+            if (recording) {
+                points.add(new Point2D(x, y));
+            }
+        }
+
+        public void startRecording() {
+            recording = true;
+        }
+
+        public void stopRecording() {
+            recording = false;
+            if (gestureRecognizedHandler != null) {
+                RecognitionResult result = recognizer.recognize(points);
+                gestureRecognizedHandler.gestureRecognized(result);
+            }
+            points.clear();
+        }
+
+        public void onGestureRecognized(GestureRecognizedHandler gestureRecognizedHandler) {
+            this.gestureRecognizedHandler = gestureRecognizedHandler;
+        }
+    }
+
+    public static interface GestureRecognizedHandler {
+        public void gestureRecognized(RecognitionResult gesture);
+    }
 
     public BodyLocator(LogSketch logSketch) {
         this.stage = new Stage();
@@ -60,12 +116,21 @@ public class BodyLocator extends SingleUserTrackingSketch {
         onLeftHandExtended(new HandExtendedHandler() {
             @Override
             public void onHandExtended() {
-                logSketch.log("Left Hand Gesture", "Extended.");
+                //logSketch.log("Left Hand Gesture", "Extended.");
+                gestureRecorder.startRecording();
             }
 
             @Override
             public void onHandRetracted() {
-                logSketch.log("Left Hand Gesture", "Retracted.");
+                // logSketch.log("Left Hand Gesture", "Retracted.");
+                gestureRecorder.stopRecording();
+            }
+        });
+
+        gestureRecorder.onGestureRecognized(new GestureRecognizedHandler() {
+            @Override
+            public void gestureRecognized(RecognitionResult gesture) {
+                logSketch.log("Gesture", gesture.name + " " + gesture.score);
             }
         });
     }
@@ -75,6 +140,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
         setKinectRGBImageAsBackground();
         if (user.isCurrentlyTracking()) {
             user.convertRealWorld3DToProjective2D();
+            gestureRecorder.addPoint(user.getLeftHandPosition3d());
             drawLineBetweenHands();
             drawDebugInfo();
         }
@@ -84,14 +150,6 @@ public class BodyLocator extends SingleUserTrackingSketch {
         logSketch.logVector("CoM", user.getCenterOfMass());
         logSketch.logVector("Left Hand", user.getLeftHandPositionMirrored2D());
         logSketch.logVector("Right Hand", user.getRightHandPositionMirrored2D());
-        /*
-        StageBounds stageBounds = stage.getStageBounds();
-        logSketch.logVector("Center", stageBounds.getCenter());
-        logSketch.logRounded("Left", stageBounds.getLeft());
-        logSketch.logRounded("Right", stageBounds.getRight());
-        logSketch.logRounded("Nearest", stageBounds.getFront());
-        logSketch.logRounded("Furthest", stageBounds.getBack());
-        */
     }
 
     void drawLineBetweenHands() {
