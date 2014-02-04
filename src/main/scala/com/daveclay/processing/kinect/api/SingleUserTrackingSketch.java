@@ -10,6 +10,9 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
     protected User user;
     protected LogSketch logSketch;
 
+    private boolean wasHandExtended = false;
+    private HandExtendedHandler handExtendedHandler;
+
     public SingleUserTrackingSketch() {
         this.user = new User();
     }
@@ -56,6 +59,16 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
         for (int userId : userList) {
             if (Integer.valueOf(userId).equals(user.getUserId())) {
                 user.updateData();
+
+                if (handExtendedHandler != null) {
+                    boolean leftHandCurrentlyExtended = user.isLeftHandExtended(450);
+                    if (wasHandExtended && !leftHandCurrentlyExtended) {
+                        handExtendedHandler.onHandRetracted();
+                    } else if (!wasHandExtended && leftHandCurrentlyExtended) {
+                        handExtendedHandler.onHandExtended();
+                    }
+                    wasHandExtended = leftHandCurrentlyExtended;
+                }
             }
         }
     }
@@ -74,5 +87,14 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
         if (Integer.valueOf(userId).equals(user.getUserId())) {
             user.lost();
         }
+    }
+
+    public void onLeftHandExtended(HandExtendedHandler handExtendedHandler) {
+        this.handExtendedHandler = handExtendedHandler;
+    }
+
+    public static interface HandExtendedHandler {
+        void onHandExtended();
+        void onHandRetracted();
     }
 }

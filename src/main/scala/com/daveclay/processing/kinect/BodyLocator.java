@@ -56,13 +56,24 @@ public class BodyLocator extends SingleUserTrackingSketch {
         rightHandBox = new HandBox();
         rightHandBox.color = color(0, 80, 255);
         size(640, 480, OPENGL);
+
+        onLeftHandExtended(new HandExtendedHandler() {
+            @Override
+            public void onHandExtended() {
+                logSketch.log("Left Hand Gesture", "Extended.");
+            }
+
+            @Override
+            public void onHandRetracted() {
+                logSketch.log("Left Hand Gesture", "Retracted.");
+            }
+        });
     }
 
     @Override
     protected void drawUserTrackingSketch() {
         setKinectRGBImageAsBackground();
         if (user.isCurrentlyTracking()) {
-            logSketch.log("Is Hand Out", ! VectorMath.isWithin(user.getLeftHandPosition3d(), user.getCenterOfMass(), 450));
             user.convertRealWorld3DToProjective2D();
             drawLineBetweenHands();
             drawDebugInfo();

@@ -85,6 +85,18 @@ public class User {
         return VectorMath.reflectVertically(rightHandPosition2d);
     }
 
+    public boolean isLeftHandExtended(float threshold) {
+        return ! isWithinDistanceFromCenterOfMass(getLeftHandPosition3d(), threshold);
+    }
+
+    public boolean isRightHandExtended(float threshold) {
+        return ! isWithinDistanceFromCenterOfMass(getRightHandPosition3d(), threshold);
+    }
+
+    public boolean isWithinDistanceFromCenterOfMass(PVector position, float threshold) {
+        return VectorMath.isWithin(position, getCenterOfMass(), threshold);
+    }
+
     public void startTrackingWithUserId(int userId) {
         this.userId = userId;
         kinect.startTrackingSkeleton(userId);
