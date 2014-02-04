@@ -139,8 +139,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
     protected void drawUserTrackingSketch() {
         setKinectRGBImageAsBackground();
         if (user.isCurrentlyTracking()) {
-            user.convertRealWorld3DToProjective2D();
-            gestureRecorder.addPoint(user.getLeftHandPosition3d());
+            gestureRecorder.addPoint(user.getSkeletonData().leftHand.position);
             drawLineBetweenHands();
             drawDebugInfo();
         }

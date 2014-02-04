@@ -59,24 +59,24 @@ public class User {
 
     public class SkeletonData {
 
-        final PVector centerOfMass = new PVector();
-        final Joint head = new Joint(SimpleOpenNI.SKEL_HEAD);
-        final Joint neck = new Joint(SimpleOpenNI.SKEL_NECK);
-        final Joint torso = new Joint(SimpleOpenNI.SKEL_TORSO);
-        final Joint leftShoulder = new Joint(SimpleOpenNI.SKEL_LEFT_SHOULDER);
-        final Joint leftElbow = new Joint(SimpleOpenNI.SKEL_LEFT_ELBOW);
-        final Joint leftHand = new Joint(SimpleOpenNI.SKEL_LEFT_HAND);
-        final Joint leftFingertip = new Joint(SimpleOpenNI.SKEL_LEFT_FINGERTIP);
-        final Joint rightShoulder = new Joint(SimpleOpenNI.SKEL_RIGHT_SHOULDER);
-        final Joint rightElbow = new Joint(SimpleOpenNI.SKEL_RIGHT_ELBOW);
-        final Joint rightHand = new Joint(SimpleOpenNI.SKEL_RIGHT_HAND);
-        final Joint rightFingertip = new Joint(SimpleOpenNI.SKEL_RIGHT_FINGERTIP);
-        final Joint leftHip = new Joint(SimpleOpenNI.SKEL_LEFT_HIP);
-        final Joint leftKnee = new Joint(SimpleOpenNI.SKEL_LEFT_KNEE);
-        final Joint leftFoot = new Joint(SimpleOpenNI.SKEL_LEFT_FOOT);
-        final Joint rightHip = new Joint(SimpleOpenNI.SKEL_RIGHT_HIP);
-        final Joint rightKnee = new Joint(SimpleOpenNI.SKEL_RIGHT_KNEE);
-        final Joint rightFoot = new Joint(SimpleOpenNI.SKEL_RIGHT_FOOT);
+        public final PVector centerOfMass = new PVector();
+        public final Joint head = new Joint(SimpleOpenNI.SKEL_HEAD);
+        public final Joint neck = new Joint(SimpleOpenNI.SKEL_NECK);
+        public final Joint torso = new Joint(SimpleOpenNI.SKEL_TORSO);
+        public final Joint leftShoulder = new Joint(SimpleOpenNI.SKEL_LEFT_SHOULDER);
+        public final Joint leftElbow = new Joint(SimpleOpenNI.SKEL_LEFT_ELBOW);
+        public final Joint leftHand = new Joint(SimpleOpenNI.SKEL_LEFT_HAND);
+        public final Joint leftFingertip = new Joint(SimpleOpenNI.SKEL_LEFT_FINGERTIP);
+        public final Joint rightShoulder = new Joint(SimpleOpenNI.SKEL_RIGHT_SHOULDER);
+        public final Joint rightElbow = new Joint(SimpleOpenNI.SKEL_RIGHT_ELBOW);
+        public final Joint rightHand = new Joint(SimpleOpenNI.SKEL_RIGHT_HAND);
+        public final Joint rightFingertip = new Joint(SimpleOpenNI.SKEL_RIGHT_FINGERTIP);
+        public final Joint leftHip = new Joint(SimpleOpenNI.SKEL_LEFT_HIP);
+        public final Joint leftKnee = new Joint(SimpleOpenNI.SKEL_LEFT_KNEE);
+        public final Joint leftFoot = new Joint(SimpleOpenNI.SKEL_LEFT_FOOT);
+        public final Joint rightHip = new Joint(SimpleOpenNI.SKEL_RIGHT_HIP);
+        public final Joint rightKnee = new Joint(SimpleOpenNI.SKEL_RIGHT_KNEE);
+        public final Joint rightFoot = new Joint(SimpleOpenNI.SKEL_RIGHT_FOOT);
 
         final List<Joint> joints = new ArrayList<Joint>();
         {
