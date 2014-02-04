@@ -61,7 +61,7 @@ public class StageMonitor extends PApplet {
     @Override
     public void draw() {
         // real-life values:
-        position = user.getCenterOfMass();
+        position = user.centerOfMass;
         stage.updatePosition(position);
 
         left = stageBounds.getLeft();

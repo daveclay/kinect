@@ -14,7 +14,46 @@ public class User {
     private LogSketch logSketch;
     private Integer userId;
 
-    private SkeletonData skeletonData = new SkeletonData();
+    public final PVector centerOfMass = new PVector();
+    public final Joint head = new Joint(SimpleOpenNI.SKEL_HEAD);
+    public final Joint neck = new Joint(SimpleOpenNI.SKEL_NECK);
+    public final Joint torso = new Joint(SimpleOpenNI.SKEL_TORSO);
+    public final Joint leftShoulder = new Joint(SimpleOpenNI.SKEL_LEFT_SHOULDER);
+    public final Joint leftElbow = new Joint(SimpleOpenNI.SKEL_LEFT_ELBOW);
+    public final Joint leftHand = new Joint(SimpleOpenNI.SKEL_LEFT_HAND);
+    public final Joint leftFingertip = new Joint(SimpleOpenNI.SKEL_LEFT_FINGERTIP);
+    public final Joint rightShoulder = new Joint(SimpleOpenNI.SKEL_RIGHT_SHOULDER);
+    public final Joint rightElbow = new Joint(SimpleOpenNI.SKEL_RIGHT_ELBOW);
+    public final Joint rightHand = new Joint(SimpleOpenNI.SKEL_RIGHT_HAND);
+    public final Joint rightFingertip = new Joint(SimpleOpenNI.SKEL_RIGHT_FINGERTIP);
+    public final Joint leftHip = new Joint(SimpleOpenNI.SKEL_LEFT_HIP);
+    public final Joint leftKnee = new Joint(SimpleOpenNI.SKEL_LEFT_KNEE);
+    public final Joint leftFoot = new Joint(SimpleOpenNI.SKEL_LEFT_FOOT);
+    public final Joint rightHip = new Joint(SimpleOpenNI.SKEL_RIGHT_HIP);
+    public final Joint rightKnee = new Joint(SimpleOpenNI.SKEL_RIGHT_KNEE);
+    public final Joint rightFoot = new Joint(SimpleOpenNI.SKEL_RIGHT_FOOT);
+
+    final List<Joint> joints = new ArrayList<Joint>();
+    {
+        joints.add(head);
+        joints.add(neck);
+        joints.add(torso);
+        joints.add(leftShoulder);
+        joints.add(leftElbow);
+        joints.add(leftHand);
+        joints.add(leftFingertip);
+        joints.add(rightShoulder);
+        joints.add(rightElbow);
+        joints.add(rightHand);
+        joints.add(rightFingertip);
+        joints.add(leftHip);
+        joints.add(leftKnee);
+        joints.add(leftFoot);
+        joints.add(rightHip);
+        joints.add(rightKnee);
+        joints.add(rightFoot);
+    }
+
 
     /**
      * Kinda required, but isn't available at construction time.
@@ -29,7 +68,10 @@ public class User {
 
     public void updateData() {
         if (isCurrentlyTracking()) {
-            skeletonData.updatePositions();
+            for (Joint joint : joints) {
+                kinect.getJointPositionSkeleton(userId, joint.id, joint.position);
+            }
+            kinect.getCoM(userId, centerOfMass);
         }
     }
 
@@ -47,8 +89,10 @@ public class User {
         return userId;
     }
 
-    public SkeletonData getSkeletonData() {
-        return skeletonData;
+    public PVector convertRealWorldToProjective(Joint joint) {
+        PVector converted = new PVector();
+        kinect.convertRealWorldToProjective(joint.position, converted);
+        return converted;
     }
 
     public void startTrackingWithUserId(int userId) {
@@ -57,71 +101,15 @@ public class User {
         System.out.println(this + ": start tracking userId " + userId);
     }
 
-    public class SkeletonData {
+    public boolean isLeftHandExtended(float threshold) {
+        return ! VectorMath.isWithin(leftHand.position, leftShoulder.position, threshold);
+    }
 
-        public final PVector centerOfMass = new PVector();
-        public final Joint head = new Joint(SimpleOpenNI.SKEL_HEAD);
-        public final Joint neck = new Joint(SimpleOpenNI.SKEL_NECK);
-        public final Joint torso = new Joint(SimpleOpenNI.SKEL_TORSO);
-        public final Joint leftShoulder = new Joint(SimpleOpenNI.SKEL_LEFT_SHOULDER);
-        public final Joint leftElbow = new Joint(SimpleOpenNI.SKEL_LEFT_ELBOW);
-        public final Joint leftHand = new Joint(SimpleOpenNI.SKEL_LEFT_HAND);
-        public final Joint leftFingertip = new Joint(SimpleOpenNI.SKEL_LEFT_FINGERTIP);
-        public final Joint rightShoulder = new Joint(SimpleOpenNI.SKEL_RIGHT_SHOULDER);
-        public final Joint rightElbow = new Joint(SimpleOpenNI.SKEL_RIGHT_ELBOW);
-        public final Joint rightHand = new Joint(SimpleOpenNI.SKEL_RIGHT_HAND);
-        public final Joint rightFingertip = new Joint(SimpleOpenNI.SKEL_RIGHT_FINGERTIP);
-        public final Joint leftHip = new Joint(SimpleOpenNI.SKEL_LEFT_HIP);
-        public final Joint leftKnee = new Joint(SimpleOpenNI.SKEL_LEFT_KNEE);
-        public final Joint leftFoot = new Joint(SimpleOpenNI.SKEL_LEFT_FOOT);
-        public final Joint rightHip = new Joint(SimpleOpenNI.SKEL_RIGHT_HIP);
-        public final Joint rightKnee = new Joint(SimpleOpenNI.SKEL_RIGHT_KNEE);
-        public final Joint rightFoot = new Joint(SimpleOpenNI.SKEL_RIGHT_FOOT);
+    public boolean isRightHandExtended(float threshold) {
+        return ! VectorMath.isWithin(rightHand.position, rightShoulder.position, threshold);
+    }
 
-        final List<Joint> joints = new ArrayList<Joint>();
-        {
-            joints.add(head);
-            joints.add(neck);
-            joints.add(torso);
-            joints.add(leftShoulder);
-            joints.add(leftElbow);
-            joints.add(leftHand);
-            joints.add(leftFingertip);
-            joints.add(rightShoulder);
-            joints.add(rightElbow);
-            joints.add(rightHand);
-            joints.add(rightFingertip);
-            joints.add(leftHip);
-            joints.add(leftKnee);
-            joints.add(leftFoot);
-            joints.add(rightHip);
-            joints.add(rightKnee);
-            joints.add(rightFoot);
-        }
-
-        public PVector convertRealWorldToProjective(Joint joint) {
-            PVector converted = new PVector();
-            kinect.convertRealWorldToProjective(joint.position, converted);
-            return converted;
-        }
-
-        private void updatePositions() {
-            for (Joint joint : joints) {
-                kinect.getJointPositionSkeleton(userId, joint.id, joint.position);
-            }
-            kinect.getCoM(userId, centerOfMass);
-        }
-
-        public boolean isLeftHandExtended(float threshold) {
-            return ! VectorMath.isWithin(leftHand.position, leftShoulder.position, threshold);
-        }
-
-        public boolean isRightHandExtended(float threshold) {
-            return ! VectorMath.isWithin(rightHand.position, rightShoulder.position, threshold);
-        }
-
-        public boolean isWithinDistanceFromCenterOfMass(PVector position, float threshold) {
-            return VectorMath.isWithin(position, centerOfMass, threshold);
-        }
+    public boolean isWithinDistanceFromCenterOfMass(PVector position, float threshold) {
+        return VectorMath.isWithin(position, centerOfMass, threshold);
     }
 }
