@@ -1,5 +1,6 @@
 package com.daveclay.processing.kinect;
 
+import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.kinect.api.SingleUserTrackingSketch;
@@ -10,7 +11,6 @@ import processing.core.PVector;
 public class BodyLocator extends SingleUserTrackingSketch {
 
     public static void main(String[] args) {
-
         LogSketch logSketch = new LogSketch();
         BodyLocator bodyLocator = new BodyLocator(logSketch);
         StageMonitor stageMonitor = new StageMonitor(
@@ -41,12 +41,14 @@ public class BodyLocator extends SingleUserTrackingSketch {
     }
 
     @Override
-    public void setupUserTrackingSketch() {
-        kinect.enableDepth();
+    protected void configureKinect(SimpleOpenNI kinect) {
         kinect.enableRGB();
         kinect.setMirror(true);
         kinect.alternativeViewPointDepthToImage();
+    }
 
+    @Override
+    protected void setupUserTrackingSketch() {
         leftHandBox = new HandBox();
         leftHandBox.color = color(255, 120, 0);
 
@@ -56,8 +58,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
     }
 
     @Override
-    public void drawUserTrackingSketch() {
-        background(kinect.rgbImage());
+    protected void drawUserTrackingSketch() {
+        setKinectRGBImageAsBackground();
         drawLineBetweenHands();
         drawDebugInfo();
     }

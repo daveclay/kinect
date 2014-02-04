@@ -6,7 +6,19 @@ public class SketchRunner {
 
     public static void run(PApplet... pApplets) {
         for (PApplet pApplet : pApplets) {
-            PApplet.runSketch(new String[] { pApplet.getClass().getName() }, pApplet);
+            runSketch(pApplet);
         }
+    }
+
+    public static void runSketchFullScreen(PApplet pApplet, int display) {
+
+    }
+
+    public static void runSketch(PApplet pApplet) {
+        String[] args = {
+                pApplet.getClass().getName()
+        };
+
+        PApplet.runSketch(args, pApplet);
     }
 }

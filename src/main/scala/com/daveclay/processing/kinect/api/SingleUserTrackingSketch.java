@@ -6,7 +6,7 @@ import processing.core.PApplet;
 
 public abstract class SingleUserTrackingSketch extends PApplet implements UserTracking {
 
-    protected SimpleOpenNI kinect;
+    private SimpleOpenNI kinect;
     protected User user;
     protected LogSketch logSketch;
 
@@ -15,29 +15,41 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
     }
 
     public final void setup() {
-        System.out.println("setup start.");
         kinect = new SimpleOpenNI(this);
-        user.setKinect(kinect);
+
+        // required to enable user tracking
+        kinect.enableDepth();
         kinect.enableUser();
+
+        configureKinect(kinect);
+        user.setKinect(kinect);
         setupUserTrackingSketch();
-        System.out.println("setup complete.");
     }
 
-    public abstract void setupUserTrackingSketch();
-
-    public final void draw() {
-        System.out.println("draw start.");
-        kinect.update();
-        calculateUserData();
-        drawUserTrackingSketch();
-        System.out.println("draw complete.");
+    public void setKinectRGBImageAsBackground() {
+        background(kinect.rgbImage());
     }
 
-    public abstract void drawUserTrackingSketch();
+    public SimpleOpenNI getKinect() {
+        return kinect;
+    }
 
     public User getUser() {
         return user;
     }
+
+    protected void configureKinect(SimpleOpenNI kinect) {
+    }
+
+    protected abstract void setupUserTrackingSketch();
+
+    public final void draw() {
+        kinect.update();
+        calculateUserData();
+        drawUserTrackingSketch();
+    }
+
+    protected abstract void drawUserTrackingSketch();
 
     public void calculateUserData() {
         int[] userList = kinect.getUsers();
