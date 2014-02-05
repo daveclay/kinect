@@ -98,29 +98,13 @@ public class GeometricRecognizer {
     }
 
     public void loadDefaultGestures() {
-        addTemplate("Arrow", GestureData.getGestureArrow());
-        addTemplate("Caret", GestureData.getGestureCaret());
-        addTemplate("CheckMark", GestureData.getGestureCheckMark());
-        addTemplate("Circle", GestureData.getGestureCircle());
-        addTemplate("Delete", GestureData.getGestureDelete());
-        addTemplate("Diamond", GestureData.getGestureDiamond());
-        //addTemplate("LeftCurlyBrace", samples.getGestureLeftCurlyBrace());
-        addTemplate("LeftSquareBracket", GestureData.getGestureLeftSquareBracket());
-        addTemplate("LeftToRightLine", GestureData.getGestureLeftToRightLine());
-        addTemplate("LineDownDiagonal", GestureData.getGestureLineDownDiagonal());
-        addTemplate("Pigtail", GestureData.getGesturePigtail());
-        addTemplate("QuestionMark", GestureData.getGestureQuestionMark());
-        addTemplate("Rectangle", GestureData.getGestureRectangle());
-        //addTemplate("RightCurlyBrace", samples.getGestureRightCurlyBrace());
-        addTemplate("RightSquareBracket", GestureData.getGestureRightSquareBracket());
-        addTemplate("RightToLeftLine", GestureData.getGestureRightToLeftLine());
-        addTemplate("RightToLeftLine2", GestureData.getGestureRightToLeftLine2());
-        addTemplate("RightToLeftSlashDown", GestureData.getGestureRightToLeftSlashDown());
-        addTemplate("Spiral", GestureData.getGestureSpiral());
-        addTemplate("Star", GestureData.getGestureStar());
-        addTemplate("Triangle", GestureData.getGestureTriangle());
-        addTemplate("V", GestureData.getGestureV());
-        addTemplate("X", GestureData.getGestureX());
+        for (GestureTemplate gestureTemplate : GestureData.getAll()) {
+            addTemplate(gestureTemplate.name, gestureTemplate.points);
+        }
+    }
+
+    public List<GestureTemplate> getNormalizedTemplates() {
+        return templates;
     }
 
     public void addTemplate(String name, List<Point2D> points) {
@@ -357,16 +341,6 @@ public class GeometricRecognizer {
             this.y = y;
             this.width = width;
             this.height = height;
-        }
-    }
-
-    public static class GestureTemplate {
-        String name;
-        List<Point2D> points;
-
-        public GestureTemplate(String name, List<Point2D> points) {
-            this.name = name;
-            this.points = points;
         }
     }
 

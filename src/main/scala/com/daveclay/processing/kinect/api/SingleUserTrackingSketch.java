@@ -61,7 +61,7 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
                 user.updateData();
 
                 if (handExtendedHandler != null) {
-                    boolean leftHandCurrentlyExtended = user.isLeftHandExtended(450);
+                    boolean leftHandCurrentlyExtended = user.isLeftHandExtended(490); // adjustment... somehow
                     if (wasHandExtended && !leftHandCurrentlyExtended) {
                         handExtendedHandler.onHandRetracted();
                     } else if (!wasHandExtended && leftHandCurrentlyExtended) {

@@ -125,11 +125,13 @@ public class User {
     }
 
     public boolean isLeftHandExtended(float threshold) {
-        return ! VectorMath.isWithin(leftHand.position, leftShoulder.position, threshold);
+        double distance = Math.sqrt(VectorMath.getDistanceSquared(leftHand.position, torso.position));
+        logSketch.logRounded("Distance", distance);
+        return ! VectorMath.isWithin(leftHand.position, torso.position, threshold);
     }
 
     public boolean isRightHandExtended(float threshold) {
-        return ! VectorMath.isWithin(rightHand.position, rightShoulder.position, threshold);
+        return ! VectorMath.isWithin(rightHand.position, torso.position, threshold);
     }
 
     public boolean isWithinDistanceFromCenterOfMass(PVector position, float threshold) {

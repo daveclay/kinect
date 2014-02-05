@@ -4,6 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GestureData {
+
+    public static List<GestureTemplate> getAll() {
+        List<GestureTemplate> templates = new ArrayList<GestureTemplate>();
+        templates.add(new GestureTemplate("Arrow", GestureData.getGestureArrow()));
+        templates.add(new GestureTemplate("Caret", GestureData.getGestureCaret()));
+        templates.add(new GestureTemplate("CheckMark", GestureData.getGestureCheckMark()));
+        templates.add(new GestureTemplate("Circle", GestureData.getGestureCircle()));
+        templates.add(new GestureTemplate("Delete", GestureData.getGestureDelete()));
+        templates.add(new GestureTemplate("Diamond", GestureData.getGestureDiamond()));
+        //templates.add(new GestureTemplate("LeftCurlyBrace", samples.getGestureLeftCurlyBrace()));
+        templates.add(new GestureTemplate("LeftSquareBracket", GestureData.getGestureLeftSquareBracket()));
+        templates.add(new GestureTemplate("LeftToRightLine", GestureData.getGestureLeftToRightLine()));
+        templates.add(new GestureTemplate("LineDownDiagonal", GestureData.getGestureLineDownDiagonal()));
+        templates.add(new GestureTemplate("Pigtail", GestureData.getGesturePigtail()));
+        templates.add(new GestureTemplate("QuestionMark", GestureData.getGestureQuestionMark()));
+        templates.add(new GestureTemplate("Rectangle", GestureData.getGestureRectangle()));
+        //templates.add(new GestureTemplate("RightCurlyBrace", samples.getGestureRightCurlyBrace()));
+        templates.add(new GestureTemplate("RightSquareBracket", GestureData.getGestureRightSquareBracket()));
+        templates.add(new GestureTemplate("RightToLeftLine", GestureData.getGestureRightToLeftLine()));
+        templates.add(new GestureTemplate("RightToLeftLine2", GestureData.getGestureRightToLeftLine2()));
+        templates.add(new GestureTemplate("RightToLeftSlashDown", GestureData.getGestureRightToLeftSlashDown()));
+        templates.add(new GestureTemplate("Spiral", GestureData.getGestureSpiral()));
+        templates.add(new GestureTemplate("Star", GestureData.getGestureStar()));
+        templates.add(new GestureTemplate("Triangle", GestureData.getGestureTriangle()));
+        templates.add(new GestureTemplate("V", GestureData.getGestureV()));
+        templates.add(new GestureTemplate("X", GestureData.getGestureX()));
+
+        return templates;
+    }
+
     public static List<Point2D> getGestureArrow() {
         List<Point2D> path = new ArrayList<Point2D>();
         path.add(new Point2D(68, 222));
