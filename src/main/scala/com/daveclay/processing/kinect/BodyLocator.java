@@ -13,6 +13,9 @@ import com.daveclay.processing.kinect.api.Stage;
 import com.daveclay.processing.kinect.api.StageMonitor;
 import processing.core.PVector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BodyLocator extends SingleUserTrackingSketch {
 
     public static void main(String[] args) {
@@ -39,6 +42,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
         geometricRecognizer.addTemplate("Caret", GestureData.getGestureCaret());
     }
     GestureRecorder gestureRecorder = new GestureRecorder(geometricRecognizer);
+
+    List<PVector> drawingPoints = new ArrayList<PVector>();
     boolean drawing;
 
     public BodyLocator(LogSketch logSketch) {
@@ -71,14 +76,15 @@ public class BodyLocator extends SingleUserTrackingSketch {
         onLeftHandExtended(new HandExtendedHandler() {
             @Override
             public void onHandExtended() {
-                //logSketch.log("Left Hand Gesture", "Extended.");
+                logSketch.log("Left Hand Gesture", "Extended.");
                 gestureRecorder.startRecording();
                 drawing = true;
+                drawingPoints.clear();
             }
 
             @Override
             public void onHandRetracted() {
-                // logSketch.log("Left Hand Gesture", "Retracted.");
+                logSketch.log("Left Hand Gesture", "Retracted.");
                 gestureRecorder.stopRecording();
                 drawing = false;
             }
@@ -107,17 +113,14 @@ public class BodyLocator extends SingleUserTrackingSketch {
         PVector leftHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.leftHand);
         PVector rightHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.rightHand);
 
-        logSketch.logVector("CoM", user.centerOfMass);
-        logSketch.logVector("Left Hand", leftHandPosition2d);
-        logSketch.logVector("Right Hand", rightHandPosition2d);
-
-        /*
         if (drawing) {
+            drawingPoints.add(leftHandPosition2d);
             stroke(2);
             fill(255, 100, 0);
-            ellipse(leftHandPosition2d.x, leftHandPosition2d.y, 10, 10);
+            for (PVector point : drawingPoints) {
+                ellipse(point.x, point.y, 10, 10);
+            }
         }
-        */
 
         stroke(120);
         strokeWeight(2);
