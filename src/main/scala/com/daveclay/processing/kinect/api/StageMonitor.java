@@ -73,13 +73,14 @@ public class StageMonitor extends PApplet {
         centerRadius = centerZone.getCenterRadius();
         center = stageBounds.getCenter();
 
-        logSketch.logVector("Position", position);
+        logSketch.logVector("Stage Position", position);
+        /*
         logSketch.log("Within Center", centerZone.isWithinBounds(position));
         logSketch.log("Within Left Front", leftFrontZone.isWithinBounds(position));
         logSketch.log("Within Right Front", rightFrontZone.isWithinBounds(position));
         logSketch.log("Within Left Back", leftBackZone.isWithinBounds(position));
         logSketch.log("Within Right Back", rightBackZone.isWithinBounds(position));
-
+        */
 
         background(100);
         stroke(255, 255, 255);

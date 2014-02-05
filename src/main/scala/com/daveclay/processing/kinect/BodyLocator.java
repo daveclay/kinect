@@ -35,12 +35,11 @@ public class BodyLocator extends SingleUserTrackingSketch {
     Stage stage;
     GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
     {
-        geometricRecognizer.addTemplate("Rectangle", GestureData.getGestureRectangle());
-        geometricRecognizer.addTemplate("V", GestureData.getGestureV());
         geometricRecognizer.addTemplate("Circle", GestureData.getGestureCircle());
         geometricRecognizer.addTemplate("Caret", GestureData.getGestureCaret());
     }
     GestureRecorder gestureRecorder = new GestureRecorder(geometricRecognizer);
+    boolean drawing;
 
     public BodyLocator(LogSketch logSketch) {
         this.stage = new Stage();
@@ -74,12 +73,14 @@ public class BodyLocator extends SingleUserTrackingSketch {
             public void onHandExtended() {
                 //logSketch.log("Left Hand Gesture", "Extended.");
                 gestureRecorder.startRecording();
+                drawing = true;
             }
 
             @Override
             public void onHandRetracted() {
                 // logSketch.log("Left Hand Gesture", "Retracted.");
                 gestureRecorder.stopRecording();
+                drawing = false;
             }
         });
 
@@ -97,25 +98,29 @@ public class BodyLocator extends SingleUserTrackingSketch {
         if (user.isCurrentlyTracking()) {
             gestureRecorder.addPoint(user.leftHand.position);
             drawLineBetweenHands();
-            drawDebugInfo();
         }
-    }
-
-    public void drawDebugInfo() {
-        /*
-        logSketch.logVector("CoM", user.getCenterOfMass());
-        logSketch.logVector("Left Hand", user.getLeftHandPositionMirrored2D());
-        logSketch.logVector("Right Hand", user.getRightHandPositionMirrored2D());
-        */
     }
 
     void drawLineBetweenHands() {
         pushMatrix();
         translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
+        PVector leftHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.leftHand);
+        PVector rightHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.rightHand);
+
+        logSketch.logVector("CoM", user.centerOfMass);
+        logSketch.logVector("Left Hand", leftHandPosition2d);
+        logSketch.logVector("Right Hand", rightHandPosition2d);
+
+        /*
+        if (drawing) {
+            stroke(2);
+            fill(255, 100, 0);
+            ellipse(leftHandPosition2d.x, leftHandPosition2d.y, 10, 10);
+        }
+        */
+
         stroke(120);
         strokeWeight(2);
-        PVector leftHandPosition2d = user.convertRealWorldToProjective(user.leftHand);
-        PVector rightHandPosition2d = user.convertRealWorldToProjective(user.rightHand);
         line(leftHandPosition2d.x, leftHandPosition2d.y,
                 rightHandPosition2d.x, rightHandPosition2d.y);
         leftHandBox.drawAt(leftHandPosition2d);
