@@ -39,7 +39,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
     GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
     {
         geometricRecognizer.addTemplate("Circle", GestureData.getGestureCircle());
-        geometricRecognizer.addTemplate("Caret", GestureData.getGestureCaret());
+        geometricRecognizer.addTemplate("QuestionMark", GestureData.getGestureQuestionMark());
     }
     GestureRecorder gestureRecorder = new GestureRecorder(geometricRecognizer);
 
@@ -101,6 +101,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
     @Override
     protected void drawUserTrackingSketch() {
         setKinectRGBImageAsBackground();
+        logSketch.logRounded("FPS", frameRate);
         if (user.isCurrentlyTracking()) {
             gestureRecorder.addPoint(user.leftHand.position);
             drawLineBetweenHands();

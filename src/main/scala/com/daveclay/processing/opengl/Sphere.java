@@ -31,7 +31,7 @@ public class Sphere { // { extends PApplet {
         processing.textureMode(PConstants.NORMAL);
     }
 
-    float[] mercatorPoint(float R, float x, float y){
+    static float[] mercatorPoint(float R, float x, float y){
 
         float[] thisPoint = new float[3];
         float phi = x*2* PConstants.PI;

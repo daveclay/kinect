@@ -31,11 +31,19 @@ public class GestureTemplatesSketch extends PApplet {
         GestureTemplate gestureTemplate = normalizedTemplates.get(gestureIndex);
 
         fill(80);
+        stroke(80);
         textSize(20);
         text(gestureTemplate.name, 10, 20);
+
+        stroke(2);
         translate(width / 2, height / 2);
+        Point2D previous = null;
         for (Point2D point : gestureTemplate.points) {
-            ellipse((float) point.x, (float) point.y, 5, 5);
+            if (previous != null) {
+                line(previous.fx, previous.fy, point.fx, point.fy);
+            }
+            previous = point;
+            ellipse((float) point.x, (float) point.y, 2, 2);
         }
     }
 
