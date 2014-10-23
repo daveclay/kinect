@@ -1,6 +1,7 @@
 package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
+import com.daveclay.NativeLibrary;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.gestures.GeometricRecognizer;
@@ -13,12 +14,34 @@ import com.daveclay.processing.kinect.api.Stage;
 import com.daveclay.processing.kinect.api.StageMonitor;
 import processing.core.PVector;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BodyLocator extends SingleUserTrackingSketch {
 
     public static void main(String[] args) {
+        /*
+        try {
+            NativeLibrary.loadLibraryFromJar("/libSimpleOpenNI.jnilib");
+            NativeLibrary.loadLibraryFromJar("/libSimpleOpenNI64.so");
+            NativeLibrary.loadLibraryFromJar("/libFreenectDriver.dylib");
+            NativeLibrary.loadLibraryFromJar("/libNiTE2.dylib");
+            NativeLibrary.loadLibraryFromJar("/libOniFile.dylib");
+            NativeLibrary.loadLibraryFromJar("/libOpenNI2.dylib");
+            NativeLibrary.loadLibraryFromJar("/libPS1080.dylib");
+            NativeLibrary.loadLibraryFromJar("/libPSLink.dylib");
+            NativeLibrary.loadLibraryFromJar("/libboost_system-mt.dylib");
+            NativeLibrary.loadLibraryFromJar("/libboost_thread-mt.dylib");
+            NativeLibrary.loadLibraryFromJar("/libfreenect.0.1.2.dylib");
+            NativeLibrary.loadLibraryFromJar("/libusb-1.0.0.dylib");
+        } catch (IOException err) {
+            err.printStackTrace();
+            return;
+        }
+        */
+
+
         LogSketch logSketch = new LogSketch();
         BodyLocator bodyLocator = new BodyLocator(logSketch);
         StageMonitor stageMonitor = new StageMonitor(

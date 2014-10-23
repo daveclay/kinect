@@ -81,6 +81,8 @@
             <version>2.0.3</version>
             <classifier>natives-macosx-universal</classifier>
 		</dependency>
+		<!--
+			 The SimpleOpenNI.jar file looks for the jni lib and the native libs relative to its directory, so this doesn't work.
         <dependency>
             <groupId>simple-openni</groupId>
             <artifactId>simple-openni</artifactId>
@@ -91,6 +93,7 @@
 			<artifactId>simple-openni-native-macosx</artifactId>
 			<version>1.96</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>nu.pattern</groupId>
 			<artifactId>opencv</artifactId>
