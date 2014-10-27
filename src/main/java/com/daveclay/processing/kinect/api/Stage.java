@@ -1,6 +1,7 @@
 package com.daveclay.processing.kinect.api;
 
 import com.daveclay.processing.api.VectorMath;
+import com.daveclay.processing.kinect.BodyLocator;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -10,9 +11,14 @@ import java.util.Map;
 
 public class Stage {
 
+    private final List<BodyLocator.Listener> listeners = new ArrayList<BodyLocator.Listener>();
     private final StageBounds stageBounds = new StageBounds();
     private Map<String, StageZone> stageZoneById = new HashMap<String, StageZone>();
     private List<StageZone> stageZones = new ArrayList<StageZone>();
+
+    public void addListener(BodyLocator.Listener listener) {
+        this.listeners.add(listener);
+    }
 
     public void addStageZone(StageZone stageZone) {
         this.stageZones.add(stageZone);
@@ -31,10 +37,24 @@ public class Stage {
         addStageZone(new RightBackZone());
     }
 
+    private StageZone currentStageZone = null;
+
     public void updatePosition(PVector position) {
-        stageBounds.updatePosition(position);
+        stageBounds.expandStageBounds(position);
+        boolean positionEventFired = false;
         for (StageZone stageZone : stageZones) {
             stageZone.updateStageBounds(stageBounds);
+            if ( ! positionEventFired && stageZone != currentStageZone && stageZone.isWithinBounds(position)) {
+                fireEvent(stageZone);
+                currentStageZone = stageZone;
+                positionEventFired = true;
+            }
+        }
+    }
+
+    private void fireEvent(StageZone stageZone) {
+        for (BodyLocator.Listener listener : this.listeners) {
+            listener.userDidEnteredZone(stageZone);
         }
     }
 

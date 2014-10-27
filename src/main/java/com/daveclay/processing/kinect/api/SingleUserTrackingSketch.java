@@ -13,8 +13,12 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
     private boolean wasHandExtended = false;
     private HandExtendedHandler handExtendedHandler;
 
+    public SingleUserTrackingSketch(User user) {
+        this.user = user;
+    }
+
     public SingleUserTrackingSketch() {
-        this.user = new User();
+        this(new User());
     }
 
     public final void setup() {

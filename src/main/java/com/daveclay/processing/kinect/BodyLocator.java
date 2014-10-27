@@ -1,7 +1,6 @@
 package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
-import com.daveclay.NativeLibrary;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.gestures.GeometricRecognizer;
@@ -12,42 +11,42 @@ import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.api.SingleUserTrackingSketch;
 import com.daveclay.processing.kinect.api.Stage;
 import com.daveclay.processing.kinect.api.StageMonitor;
+import com.daveclay.processing.kinect.api.User;
+import com.daveclay.server.presentation.PresentationServer;
+import com.daveclay.server.presentation.PresentationWebSocketListener;
 import processing.core.PVector;
 
-import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BodyLocator extends SingleUserTrackingSketch {
 
+    /**
+     * To run this, the SimpleOpenNI.jar must be in the same distribution folder with the "osx" .so
+     * native library (libraries?)
+     */
     public static void main(String[] args) {
-        /*
-        try {
-            NativeLibrary.loadLibraryFromJar("/libSimpleOpenNI.jnilib");
-            NativeLibrary.loadLibraryFromJar("/libSimpleOpenNI64.so");
-            NativeLibrary.loadLibraryFromJar("/libFreenectDriver.dylib");
-            NativeLibrary.loadLibraryFromJar("/libNiTE2.dylib");
-            NativeLibrary.loadLibraryFromJar("/libOniFile.dylib");
-            NativeLibrary.loadLibraryFromJar("/libOpenNI2.dylib");
-            NativeLibrary.loadLibraryFromJar("/libPS1080.dylib");
-            NativeLibrary.loadLibraryFromJar("/libPSLink.dylib");
-            NativeLibrary.loadLibraryFromJar("/libboost_system-mt.dylib");
-            NativeLibrary.loadLibraryFromJar("/libboost_thread-mt.dylib");
-            NativeLibrary.loadLibraryFromJar("/libfreenect.0.1.2.dylib");
-            NativeLibrary.loadLibraryFromJar("/libusb-1.0.0.dylib");
-        } catch (IOException err) {
-            err.printStackTrace();
-            return;
-        }
-        */
-
-
         LogSketch logSketch = new LogSketch();
-        BodyLocator bodyLocator = new BodyLocator(logSketch);
+
+        User user = new User();
+        Stage stage = new Stage();
+        BodyLocator bodyLocator = new BodyLocator(user, stage, logSketch);
+
         StageMonitor stageMonitor = new StageMonitor(
-                bodyLocator.getStage(),
+                stage,
                 logSketch,
-                bodyLocator.getUser());
+                user);
+
+        try {
+            PresentationServer presentationServer = new PresentationServer(12345);
+            presentationServer.start();
+            PresentationWebSocketListener listener = new PresentationWebSocketListener(presentationServer);
+            bodyLocator.setListener(listener);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
 
         SketchRunner.run(logSketch, bodyLocator, stageMonitor);
 
@@ -56,6 +55,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
         stageMonitor.frame.setLocation(100, logSketch.getHeight() + 10);
     }
 
+    Listener listener;
     HandBox leftHandBox;
     HandBox rightHandBox;
     Stage stage;
@@ -69,11 +69,17 @@ public class BodyLocator extends SingleUserTrackingSketch {
     List<PVector> drawingPoints = new ArrayList<PVector>();
     boolean drawing;
 
-    public BodyLocator(LogSketch logSketch) {
-        this.stage = new Stage();
+    public BodyLocator(User user, Stage stage, LogSketch logSketch) {
+        super(user);
+        this.stage = stage;
         stage.setupDefaultStageZones();
         this.logSketch = logSketch;
         user.setLogSketch(logSketch);
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+        this.stage.addListener(listener);
     }
 
     public Stage getStage() {
@@ -116,6 +122,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
         gestureRecorder.onGestureRecognized(new GestureRecognizedHandler() {
             @Override
             public void gestureRecognized(RecognitionResult gesture) {
+                listener.gestureWasRecognized(gesture);
                 logSketch.log("Gesture", gesture.name + " " + gesture.score);
             }
         });
@@ -124,6 +131,10 @@ public class BodyLocator extends SingleUserTrackingSketch {
     @Override
     protected void drawUserTrackingSketch() {
         setKinectRGBImageAsBackground();
+
+        PVector position = user.centerOfMass;
+        stage.updatePosition(position);
+
         logSketch.logRounded("FPS", frameRate);
         if (user.isCurrentlyTracking()) {
             gestureRecorder.addPoint(user.leftHand.position);
@@ -168,6 +179,24 @@ public class BodyLocator extends SingleUserTrackingSketch {
             fill(red(color), blue(color), green(color), (int) (alpha * .03));
             stroke(red(color), blue(color), green(color), alpha);
             rect(center.x, center.y, size, size);
+        }
+    }
+
+    public static interface Listener {
+
+        void gestureWasRecognized(RecognitionResult gesture);
+
+        void userDidEnteredZone(Stage.StageZone stageZone);
+    }
+
+    public static class NoopListener implements Listener {
+
+        @Override
+        public void gestureWasRecognized(RecognitionResult gesture) {
+        }
+
+        @Override
+        public void userDidEnteredZone(Stage.StageZone stageZone) {
         }
     }
 }

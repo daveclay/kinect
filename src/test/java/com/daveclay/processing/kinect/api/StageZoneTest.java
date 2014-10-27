@@ -76,7 +76,7 @@ public class StageZoneTest {
 
     private void givenTheStageIsCalibrated() {
         for (PVector position: Arrays.asList(frontLeftBottom, frontRightBottom, backLeftTop, backRightTop)) {
-            stageBounds.updatePosition(position);
+            stageBounds.expandStageBounds(position);
         }
         leftFrontStageZone.updateStageBounds(stageBounds);
     }

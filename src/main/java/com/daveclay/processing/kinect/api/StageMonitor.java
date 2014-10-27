@@ -1,6 +1,8 @@
 package com.daveclay.processing.kinect.api;
 
 import com.daveclay.processing.api.LogSketch;
+import com.daveclay.processing.gestures.RecognitionResult;
+import com.daveclay.processing.kinect.BodyLocator;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -18,15 +20,17 @@ public class StageMonitor extends PApplet {
     private final Stage.LeftBackZone leftBackZone;
     private final Stage.RightBackZone rightBackZone;
 
-    PVector position;
-    float left;
-    float right;
-    float front;
-    float back;
-    float realWorldWidth;
-    float realWorldDepth;
-    float centerRadius;
-    PVector center;
+    private Stage.StageZone currentStageZone;
+
+    private PVector position;
+    private float left;
+    private float right;
+    private float front;
+    private float back;
+    private float realWorldWidth;
+    private float realWorldDepth;
+    private float centerRadius;
+    private PVector center;
 
     public StageMonitor(Stage stage,
                         User user,
@@ -38,6 +42,19 @@ public class StageMonitor extends PApplet {
         this.logSketch = logSketch;
         this.user = user;
         this.stage = stage;
+
+        this.currentStageZone = null;
+
+        stage.addListener(new BodyLocator.Listener() {
+            @Override
+            public void gestureWasRecognized(RecognitionResult gesture) {
+            }
+
+            @Override
+            public void userDidEnteredZone(Stage.StageZone stageZone) {
+                StageMonitor.this.currentStageZone = stageZone;
+            }
+        });
 
         centerZone = (Stage.CenterZone) stage.getStageZoneById(Stage.CenterZone.ID);
         leftFrontZone = (Stage.LeftFrontZone) stage.getStageZoneById(Stage.LeftFrontZone.ID);
@@ -61,9 +78,6 @@ public class StageMonitor extends PApplet {
     @Override
     public void draw() {
         // real-life values:
-        position = user.centerOfMass;
-        stage.updatePosition(position);
-
         left = stageBounds.getLeft();
         right = stageBounds.getRight();
         front = stageBounds.getFront();
@@ -73,7 +87,9 @@ public class StageMonitor extends PApplet {
         centerRadius = centerZone.getCenterRadius();
         center = stageBounds.getCenter();
 
+        position = user.centerOfMass;
         logSketch.logVector("Stage Position", position);
+
         /*
         logSketch.log("Within Center", centerZone.isWithinBounds(position));
         logSketch.log("Within Left Front", leftFrontZone.isWithinBounds(position));
@@ -86,10 +102,10 @@ public class StageMonitor extends PApplet {
         stroke(255, 255, 255);
         strokeWeight(2);
 
-        drawMappedZone(leftFrontZone, position);
-        drawMappedZone(rightFrontZone, position);
-        drawMappedZone(leftBackZone, position);
-        drawMappedZone(rightBackZone, position);
+        drawMappedZone(leftFrontZone);
+        drawMappedZone(rightFrontZone);
+        drawMappedZone(leftBackZone);
+        drawMappedZone(rightBackZone);
         drawCenterZone();
 
         drawPosition(position);
@@ -107,27 +123,11 @@ public class StageMonitor extends PApplet {
         float mappedHorizontalCenterRadius = map(centerRadius, 0, realWorldWidth, 0, width) * 2;
         float mappedCenterX = map(center.x, left, right, 0, width);
         float mappedCenterZ = map(center.z, front, back, 0, height);
-        setCenterFill(position);
+        setFill(centerZone);
         ellipse(mappedCenterX, mappedCenterZ, mappedHorizontalCenterRadius, mappedVerticalCenterRadius);
     }
 
-    void setCenterFill(PVector position) {
-        if (centerZone.isWithinBounds(position)) {
-            fill(0, 255, 0);
-        } else {
-            fill(100);
-        }
-    }
-
-    void setRectFill(Stage.RectStageZone stageZone, PVector position) {
-        if (!centerZone.isWithinBounds(position) && stageZone.isWithinBounds(position) ) {
-            fill(0, 255, 0);
-        } else {
-            fill(100);
-        }
-    }
-
-    public void drawMappedZone(Stage.RectStageZone stageZone, PVector position) {
+    public void drawMappedZone(Stage.RectStageZone stageZone) {
         PVector leftBottomFront = stageZone.getLeftBottomFront();
 
         float mappedX = map(leftBottomFront.x, stageBounds.getLeft(), stageBounds.getRight(), 0, width - 2); // leave room for the bounds.
@@ -136,7 +136,15 @@ public class StageMonitor extends PApplet {
         float mappedWidth = map(stageZone.getWidth(), 0, realWorldWidth, 0, width);
         float mappedDepth = map(stageZone.getDepth(), 0, realWorldDepth, 0, height);
 
-        setRectFill(stageZone, position);
+        setFill(stageZone);
         rect(mappedX, mappedY, mappedWidth, mappedDepth);
+    }
+
+    void setFill(Stage.StageZone stageZone) {
+        if (stageZone == this.currentStageZone) {
+            fill(0, 255, 0);
+        } else {
+            fill(100);
+        }
     }
 }

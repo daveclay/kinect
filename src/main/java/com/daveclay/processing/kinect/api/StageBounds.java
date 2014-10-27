@@ -13,7 +13,7 @@ public class StageBounds {
 
     private boolean ignoreZeros = true;
 
-    public void updatePosition(PVector position) {
+    public void expandStageBounds(PVector position) {
         if (ignoreZeros && isZero(position)) {
             return;
         }

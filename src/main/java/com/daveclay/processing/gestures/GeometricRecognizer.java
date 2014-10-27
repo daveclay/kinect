@@ -7,6 +7,9 @@ import java.util.List;
  * Ported from:
  * http://www-users.cs.umn.edu/~wetzel/
  * http://depts.washington.edu/aimgroup/proj/dollar/others/cpp.bw.zip
+ *
+ * For a list of gesture diagrams:
+ * https://depts.washington.edu/aimgroup/proj/dollar/
  */
 public class GeometricRecognizer {
 
