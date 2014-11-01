@@ -59,14 +59,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
     HandBox leftHandBox;
     HandBox rightHandBox;
     Stage stage;
+    GestureData gestureData = new GestureData(GestureData.GESTURE_DIR);
     GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
-    {
-        geometricRecognizer.addTemplate("Circle", GestureData.getGestureCircle());
-        geometricRecognizer.addTemplate("LeftToRightLine", GestureData.getGestureLeftToRightLine());
-        geometricRecognizer.addTemplate("RightToLeftLine", GestureData.getGestureRightToLeftLine());
-        geometricRecognizer.addTemplate("RightToLeftLine", GestureData.getGestureRightToLeftLine2());
-        geometricRecognizer.addTemplate("Slash", GestureData.getGestureRightToLeftSlashDown());
-    }
     GestureRecorder gestureRecorder = new GestureRecorder(geometricRecognizer);
 
     List<PVector> drawingPoints = new ArrayList<PVector>();
@@ -74,6 +68,15 @@ public class BodyLocator extends SingleUserTrackingSketch {
 
     public BodyLocator(User user, Stage stage, LogSketch logSketch) {
         super(user);
+
+        gestureData.load();
+
+        geometricRecognizer.addTemplate("Circle", gestureData.getByName("Circle"));
+        geometricRecognizer.addTemplate("LeftToRightLine", gestureData.getByName("LeftToRightLine"));
+        geometricRecognizer.addTemplate("RightToLeftLine", gestureData.getByName("RightToLeftLine"));
+        geometricRecognizer.addTemplate("RightToLeftLine", gestureData.getByName("RightToLeftLine2"));
+        geometricRecognizer.addTemplate("Slash", gestureData.getByName("RightToLeftSlashDown"));
+
         this.stage = stage;
         stage.setupDefaultStageZones();
         this.logSketch = logSketch;

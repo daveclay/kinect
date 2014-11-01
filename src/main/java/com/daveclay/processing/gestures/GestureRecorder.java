@@ -20,7 +20,7 @@ public class GestureRecorder {
         addPoint(position.x, position.y);
     }
 
-    public void addPoint(double x, double y) {
+    public void addPoint(float x, float y) {
         if (recording) {
             points.add(new Point2D(x, y));
         }

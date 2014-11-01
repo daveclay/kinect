@@ -1,0 +1,69 @@
+html, body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+#swiper {
+    height: 100%;
+}
+.swiper-container {
+    height: 100%;
+}
+
+.swiper-slide {
+    height: 100%;
+    width: 100%;
+}
+
+.swiper-wrapper {
+    height: 100%;
+}
+
+.column1 .slide1 {
+    background-color: #AD71BD;
+}
+.column1 .slide2 {
+    background-color: #7B3A8D;
+}
+.column1 .slide3 {
+    background-color: #501760;
+    color: white;
+}
+
+.column2 .slide1 {
+    background-color: #719DB9;
+}
+.column2 .slide2 {
+    background-color: #3B6A88;
+}
+.column2 .slide3 {
+    background-color: #18425D;
+    color: white;
+}
+
+.column3 .slide1 {
+    background-color: #F3FC93;
+}
+.column3 .slide2 {
+    background-color: #C7D252;
+}
+.column3 .slide3 {
+    background-color: #858F1E;
+}
+
+.column4 .slide1 {
+    background-color: #FFD095;
+}
+.column4 .slide2 {
+    background-color: #D59C54;
+}
+.column4 .slide3 {
+    background-color: #B77F39;
+}
+
+
+.touch {
+    width: 20px;
+    height: 20px;
+    background: red;
+}

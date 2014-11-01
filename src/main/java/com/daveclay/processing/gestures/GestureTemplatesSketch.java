@@ -1,10 +1,8 @@
 package com.daveclay.processing.gestures;
 
 import com.daveclay.processing.api.SketchRunner;
-import com.sun.org.apache.regexp.internal.recompile;
 import processing.core.PApplet;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GestureTemplatesSketch extends PApplet {
@@ -22,7 +20,9 @@ public class GestureTemplatesSketch extends PApplet {
         super.setup();
         size(1024, 768);
         background(200);
-        recognizer.loadDefaultGestures();
+        GestureData gestureData = new GestureData(GestureData.GESTURE_DIR);
+        gestureData.load();
+        recognizer.addTemplates(gestureData.getAll());
         normalizedTemplates = recognizer.getNormalizedTemplates();
     }
 
@@ -40,10 +40,10 @@ public class GestureTemplatesSketch extends PApplet {
         Point2D previous = null;
         for (Point2D point : gestureTemplate.points) {
             if (previous != null) {
-                line(previous.fx, previous.fy, point.fx, point.fy);
+                line(previous.x, previous.y, point.x, point.y);
             }
             previous = point;
-            ellipse((float) point.x, (float) point.y, 2, 2);
+            ellipse(point.x, point.y, 2, 2);
         }
     }
 

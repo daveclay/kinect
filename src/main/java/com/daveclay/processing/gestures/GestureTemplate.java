@@ -10,4 +10,20 @@ public class GestureTemplate {
         this.name = name;
         this.points = points;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Point2D> getPoints() {
+        return points;
+    }
+
+    public void setPoints(List<Point2D> points) {
+        this.points = points;
+    }
 }
