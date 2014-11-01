@@ -10,7 +10,7 @@ public class LogSketch extends PApplet {
 
     private final int width;
     private final int height;
-    private int fontSize = 23;
+    private int fontSize = 40;
     private Map<String, String> lines = new LinkedHashMap<String, String>();
 
     public LogSketch(int width, int height) {
@@ -19,7 +19,7 @@ public class LogSketch extends PApplet {
     }
 
     public LogSketch() {
-        this(640, 480);
+        this(800, 480);
     }
 
     public void setFontSize(int fontSize) {
@@ -36,7 +36,15 @@ public class LogSketch extends PApplet {
     }
 
     public void logRounded(String label, float value) {
-        log(label, Integer.toString(Math.round(value)));
+        logRounded(label, "", value);
+    }
+
+    public void logRounded(String label, String prefix, double value) {
+        log(label, prefix + " " + Long.toString(Math.round(value)));
+    }
+
+    public void logRounded(String label, String prefix, float value) {
+        log(label, prefix + " " + Integer.toString(Math.round(value)));
     }
 
     public void logVector(String label, PVector vector) {

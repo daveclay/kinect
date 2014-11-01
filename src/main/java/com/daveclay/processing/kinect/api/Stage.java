@@ -1,7 +1,7 @@
 package com.daveclay.processing.kinect.api;
 
 import com.daveclay.processing.api.VectorMath;
-import com.daveclay.processing.kinect.BodyLocator;
+import com.daveclay.processing.kinect.bodylocator.BodyLocator;
 import processing.core.PVector;
 
 import java.util.ArrayList;

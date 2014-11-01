@@ -2,7 +2,7 @@ package com.daveclay.processing.kinect.api;
 
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.gestures.RecognitionResult;
-import com.daveclay.processing.kinect.BodyLocator;
+import com.daveclay.processing.kinect.bodylocator.BodyLocator;
 import processing.core.PApplet;
 import processing.core.PVector;
 

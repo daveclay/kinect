@@ -1,7 +1,7 @@
 package com.daveclay.server.presentation;
 
 import com.daveclay.processing.gestures.RecognitionResult;
-import com.daveclay.processing.kinect.BodyLocator;
+import com.daveclay.processing.kinect.bodylocator.BodyLocator;
 import com.daveclay.processing.kinect.api.Stage;
 
 public class PresentationWebSocketListener implements BodyLocator.Listener {

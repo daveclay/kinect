@@ -1,4 +1,4 @@
-package com.daveclay.processing.kinect;
+package com.daveclay.processing.kinect.bodylocator;
 
 import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.api.LogSketch;
@@ -62,7 +62,10 @@ public class BodyLocator extends SingleUserTrackingSketch {
     GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
     {
         geometricRecognizer.addTemplate("Circle", GestureData.getGestureCircle());
-        geometricRecognizer.addTemplate("QuestionMark", GestureData.getGestureQuestionMark());
+        geometricRecognizer.addTemplate("LeftToRightLine", GestureData.getGestureLeftToRightLine());
+        geometricRecognizer.addTemplate("RightToLeftLine", GestureData.getGestureRightToLeftLine());
+        geometricRecognizer.addTemplate("RightToLeftLine", GestureData.getGestureRightToLeftLine2());
+        geometricRecognizer.addTemplate("Slash", GestureData.getGestureRightToLeftSlashDown());
     }
     GestureRecorder gestureRecorder = new GestureRecorder(geometricRecognizer);
 
@@ -123,7 +126,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
             @Override
             public void gestureRecognized(RecognitionResult gesture) {
                 listener.gestureWasRecognized(gesture);
-                logSketch.log("Gesture", gesture.name + " " + gesture.score);
+                logSketch.logRounded("Gesture", gesture.name, gesture.score * 100d);
             }
         });
     }
