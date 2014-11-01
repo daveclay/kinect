@@ -17,7 +17,6 @@
     <orderEntry type="library" name="Maven: org.processing:jogl-all:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:gluegen-rt:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:gluegen-rt:natives-macosx-universal:2.0.3" level="project" />
-    <orderEntry type="library" name="Maven: org.processing:jogl-all:natives-macosx-universal:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: nu.pattern:opencv:2.4.9-7" level="project" />
     <orderEntry type="library" name="Maven: ddf:minim-java:2.0.2" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.soundlibs:tritonus-share:0.3.7-2" level="project" />

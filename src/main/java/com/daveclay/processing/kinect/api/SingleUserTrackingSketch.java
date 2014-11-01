@@ -12,6 +12,7 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
 
     private boolean wasHandExtended = false;
     private HandExtendedHandler handExtendedHandler;
+    private int handExtensionThresholdRadius = 490;
 
     public SingleUserTrackingSketch(User user) {
         this.user = user;
@@ -31,6 +32,10 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
         configureKinect(kinect);
         user.setKinect(kinect);
         setupUserTrackingSketch();
+    }
+
+    public void setHandExtensionThresholdRadius(int handExtensionThresholdRadius) {
+        this.handExtensionThresholdRadius = handExtensionThresholdRadius;
     }
 
     public void setKinectRGBImageAsBackground() {
@@ -65,7 +70,7 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
                 user.updateData();
 
                 if (handExtendedHandler != null) {
-                    boolean leftHandCurrentlyExtended = user.isLeftHandExtended(490); // adjustment... somehow
+                    boolean leftHandCurrentlyExtended = user.isLeftHandExtended(handExtensionThresholdRadius);
                     if (wasHandExtended && !leftHandCurrentlyExtended) {
                         handExtendedHandler.onHandRetracted();
                     } else if (!wasHandExtended && leftHandCurrentlyExtended) {

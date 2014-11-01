@@ -61,6 +61,12 @@
         </dependency>
         <dependency>
             <groupId>org.processing</groupId>
+            <artifactId>jogl-all</artifactId>
+            <version>2.0.3</version>
+            <classifier>natives-macosx-universal</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.processing</groupId>
             <artifactId>gluegen-rt</artifactId>
             <version>2.0.3</version>
         </dependency>
@@ -70,17 +76,6 @@
             <classifier>natives-macosx-universal</classifier>
             <version>2.0.3</version>
         </dependency>
-        <dependency>
-            <groupId>org.processing</groupId>
-            <artifactId>jogl-all</artifactId>
-            <version>2.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.processing</groupId>
-            <artifactId>jogl-all</artifactId>
-            <version>2.0.3</version>
-            <classifier>natives-macosx-universal</classifier>
-		</dependency>
 		<!--
 			 The SimpleOpenNI.jar file looks for the jni lib and the native libs relative to its directory, so this doesn't work.
         <dependency>
