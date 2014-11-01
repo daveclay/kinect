@@ -2,16 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="21ebe86e-9d9b-4991-b5cf-caaac4f4e72c" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_processing_jogl_all_natives_macosx_universal_2_0_3.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GeometricRecognizer.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GeometricRecognizer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureData.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureRecorder.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureRecorder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureTemplate.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureTemplate.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureTemplatesSketch.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureTemplatesSketch.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/Point2D.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/Point2D.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kinect-test.iml" afterPath="$PROJECT_DIR$/kinect-test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationServer.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationServer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationWebSocketListener.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationWebSocketListener.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/gestures/RightToLeftSlashDown.json" afterPath="$PROJECT_DIR$/src/main/resources/gestures/RightToLeftSlashDown.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/gesturedata.html" afterPath="$PROJECT_DIR$/src/main/webapp/gesturedata.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="kinect-test.iws" />
@@ -35,12 +30,39 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="BodyLocator.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="BodyLocator.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.28503564" vertical-offset="1008" max-vertical-offset="3376">
-              <caret line="78" column="0" selection-start-line="78" selection-start-column="0" selection-end-line="78" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="136" max-vertical-offset="3472">
+              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PresentationWebSocketListener.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationWebSocketListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="720">
+              <caret line="19" column="18" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PresentationServer.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationServer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1760">
+              <caret line="17" column="20" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
+              <folding>
+                <element signature="e#757#758#0" expanded="true" />
+                <element signature="e#811#812#0" expanded="true" />
+                <element signature="e#871#872#0" expanded="true" />
+                <element signature="e#901#902#0" expanded="true" />
+                <element signature="e#951#952#0" expanded="true" />
+                <element signature="e#991#992#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -49,7 +71,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureData.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="310" max-vertical-offset="1152">
-              <caret line="55" column="56" selection-start-line="55" selection-start-column="56" selection-end-line="55" selection-end-column="56" />
+              <caret line="52" column="4" selection-start-line="52" selection-start-column="4" selection-end-line="52" selection-end-column="4" />
               <folding>
                 <element signature="e#899#916#0" expanded="true" />
                 <element signature="e#996#1021#0" expanded="true" />
@@ -72,11 +94,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gesturedata.html" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="gesturedata.html" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/webapp/gesturedata.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-5.5652175" vertical-offset="0" max-vertical-offset="288">
-              <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.38190955" vertical-offset="32" max-vertical-offset="2992">
+              <caret line="21" column="32" selection-start-line="21" selection-start-column="32" selection-end-line="21" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RightToLeftSlashDown.json" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/gestures/RightToLeftSlashDown.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="2064">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -99,8 +131,6 @@
         <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/api/StageBounds.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/ExampleWebSockerServer.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationKinectServer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationServer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationWebSocketListener.java" />
         <option value="$PROJECT_DIR$/src/main/chat.html" />
         <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/BodyLocator.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/api/Stage.java" />
@@ -116,10 +146,13 @@
         <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureRecorder.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/Point2D.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureData.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureTemplatesSketch.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GeometricRecognizer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationServer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureData.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationWebSocketListener.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/gestures/RightToLeftSlashDown.json" />
         <option value="$PROJECT_DIR$/src/main/webapp/gesturedata.html" />
       </list>
     </option>
@@ -329,6 +362,62 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="kinect-test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="kinect" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="daveclay" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="kinect-test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="kinect" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="daveclay" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="presentation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
     </panes>
@@ -354,6 +443,7 @@
     <property name="restartRequiresConfirmation" value="true" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
+    <property name="LayoutCode.rearrangeEntriesJSON" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -739,17 +829,18 @@
       <workItem from="1413992764513" duration="1450000" />
       <workItem from="1414024816118" duration="2605000" />
       <workItem from="1414077167966" duration="1499000" />
-      <workItem from="1414337858477" duration="17055000" />
+      <workItem from="1414337858477" duration="19054000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22609000" />
+    <option name="totallyTimeSpent" value="24608000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="26" y="27" width="1538" height="965" extended-state="0" />
     <editor active="true" />
     <layout>
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" x="126" y="127" width="1338" height="765" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -981,29 +1072,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="749" max-vertical-offset="1568">
-          <caret line="79" column="23" selection-start-line="79" selection-start-column="23" selection-end-line="79" selection-end-column="23" />
-          <folding>
-            <element signature="e#548#549#0" expanded="true" />
-            <element signature="e#602#603#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/RecognitionResult.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="288">
           <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationWebSocketListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="480">
-          <caret line="6" column="26" selection-start-line="6" selection-start-column="26" selection-end-line="6" selection-end-column="26" />
           <folding />
         </state>
       </provider>
@@ -1214,26 +1286,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/gesturedata.html">
+    <entry file="jar://$MAVEN_REPOSITORY$/org/java-websocket/Java-WebSocket/1.3.0/Java-WebSocket-1.3.0.jar!/org/java_websocket/WebSocket.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.5652175" vertical-offset="0" max-vertical-offset="288">
-          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+        <state vertical-scroll-proportion="-8.32" vertical-offset="64" max-vertical-offset="1120">
+          <caret line="18" column="9" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/websocket-test.html">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1088">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="136" max-vertical-offset="3472">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationWebSocketListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="720">
+          <caret line="19" column="18" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/server/presentation/PresentationServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1760">
+          <caret line="17" column="20" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
+          <folding>
+            <element signature="e#757#758#0" expanded="true" />
+            <element signature="e#811#812#0" expanded="true" />
+            <element signature="e#871#872#0" expanded="true" />
+            <element signature="e#901#902#0" expanded="true" />
+            <element signature="e#951#952#0" expanded="true" />
+            <element signature="e#991#992#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="310" max-vertical-offset="1152">
-          <caret line="55" column="56" selection-start-line="55" selection-start-column="56" selection-end-line="55" selection-end-column="56" />
+          <caret line="52" column="4" selection-start-line="52" selection-start-column="4" selection-end-line="52" selection-end-column="4" />
           <folding>
             <element signature="e#899#916#0" expanded="true" />
             <element signature="e#996#1021#0" expanded="true" />
@@ -1245,10 +1340,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java">
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/websocket-test.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.28503564" vertical-offset="1008" max-vertical-offset="3376">
-          <caret line="78" column="0" selection-start-line="78" selection-start-column="0" selection-end-line="78" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1088">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/gestures/RightToLeftSlashDown.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="806">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/gesturedata.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.38190955" vertical-offset="32" max-vertical-offset="2992">
+          <caret line="21" column="32" selection-start-line="21" selection-start-column="32" selection-end-line="21" selection-end-column="32" />
           <folding />
         </state>
       </provider>

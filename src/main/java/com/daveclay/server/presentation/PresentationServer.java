@@ -14,12 +14,23 @@ import org.java_websocket.server.WebSocketServer;
 
 public class PresentationServer extends WebSocketServer {
 
+    public static interface Delegate {
+        public void messageWasReceived(WebSocket conn, String message);
+        void connectionWasClosed(int code, String reason);
+    }
+
+    private Delegate delegate;
+
     public PresentationServer(int port) throws UnknownHostException {
         super( new InetSocketAddress( port ) );
     }
 
     public PresentationServer(InetSocketAddress address) {
         super(address);
+    }
+
+    public void setDelegate(Delegate delegate) {
+        this.delegate = delegate;
     }
 
     @Override
@@ -30,13 +41,12 @@ public class PresentationServer extends WebSocketServer {
 
     @Override
     public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
-        this.sendToAll( conn + " has left the room!" );
-        System.out.println( conn + " has left the room!" );
+        this.delegate.connectionWasClosed(code, reason);
     }
 
     @Override
     public void onMessage( WebSocket conn, String message ) {
-        this.sendToAll( message );
+        this.delegate.messageWasReceived(conn, message);
         System.out.println( conn + ": " + message );
     }
 

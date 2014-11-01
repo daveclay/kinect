@@ -1,15 +1,30 @@
 package com.daveclay.server.presentation;
 
+import com.daveclay.processing.gestures.GestureData;
 import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.bodylocator.BodyLocator;
 import com.daveclay.processing.kinect.api.Stage;
+import org.java_websocket.WebSocket;
 
 public class PresentationWebSocketListener implements BodyLocator.Listener {
 
     private final PresentationServer presentationServer;
 
-    public PresentationWebSocketListener(PresentationServer presentationServer) {
+    public PresentationWebSocketListener(final PresentationServer presentationServer,
+                                         final GestureData gestureData) {
         this.presentationServer = presentationServer;
+
+        presentationServer.setDelegate(new PresentationServer.Delegate() {
+            @Override
+            public void messageWasReceived(WebSocket conn, String message) {
+                if (message.equals("getGestureData")) {
+                }
+            }
+
+            @Override
+            public void connectionWasClosed(int code, String reason) {
+            }
+        });
     }
 
     @Override

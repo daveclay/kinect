@@ -28,10 +28,16 @@ public class BodyLocator extends SingleUserTrackingSketch {
      */
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
+        GestureData gestureData = new GestureData(GestureData.GESTURE_DIR);
+        gestureData.load();
 
         User user = new User();
         Stage stage = new Stage();
-        BodyLocator bodyLocator = new BodyLocator(user, stage, logSketch);
+        BodyLocator bodyLocator = new BodyLocator(
+                user,
+                gestureData,
+                stage,
+                logSketch);
 
         StageMonitor stageMonitor = new StageMonitor(
                 stage,
@@ -41,7 +47,10 @@ public class BodyLocator extends SingleUserTrackingSketch {
         try {
             PresentationServer presentationServer = new PresentationServer(12345);
             presentationServer.start();
-            PresentationWebSocketListener listener = new PresentationWebSocketListener(presentationServer);
+            PresentationWebSocketListener listener = new PresentationWebSocketListener(
+                    presentationServer,
+                    gestureData);
+
             bodyLocator.setListener(listener);
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -59,17 +68,14 @@ public class BodyLocator extends SingleUserTrackingSketch {
     HandBox leftHandBox;
     HandBox rightHandBox;
     Stage stage;
-    GestureData gestureData = new GestureData(GestureData.GESTURE_DIR);
     GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
     GestureRecorder gestureRecorder = new GestureRecorder(geometricRecognizer);
 
     List<PVector> drawingPoints = new ArrayList<PVector>();
     boolean drawing;
 
-    public BodyLocator(User user, Stage stage, LogSketch logSketch) {
+    public BodyLocator(User user, GestureData gestureData, Stage stage, LogSketch logSketch) {
         super(user);
-
-        gestureData.load();
 
         geometricRecognizer.addTemplate("Circle", gestureData.getByName("Circle"));
         geometricRecognizer.addTemplate("LeftToRightLine", gestureData.getByName("LeftToRightLine"));
