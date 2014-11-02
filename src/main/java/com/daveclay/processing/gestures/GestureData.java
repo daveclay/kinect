@@ -22,6 +22,7 @@ public class GestureData {
     private final String gestureDirectory;
     private final List<GestureTemplate> templates = new ArrayList<GestureTemplate>();
     private final Map<String, GestureTemplate> templatesByName = new HashMap<String, GestureTemplate>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public GestureData(String gestureDirectory) {
         this.gestureDirectory = gestureDirectory;
@@ -42,13 +43,16 @@ public class GestureData {
     }
 
     public void save() {
-        ObjectMapper objectMapper = new ObjectMapper();
         for (GestureTemplate gestureTemplate : getAll()) {
-            try {
-                objectMapper.writeValue(new File(gestureDirectory + gestureTemplate.name + ".json"), gestureTemplate);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            save(gestureTemplate);
+        }
+    }
+
+    public void save(GestureTemplate gestureTemplate) {
+        try {
+            objectMapper.writeValue(new File(gestureDirectory + gestureTemplate.name + ".json"), gestureTemplate);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

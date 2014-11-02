@@ -128,7 +128,7 @@ public class User {
         // double distance = Math.sqrt(VectorMath.getZDistanceSquared(leftHand.position, centerOfMass));
         // logSketch.logRounded("Left hand distance", distance);
         logSketch.logVector("Left Hand Pos", leftHand.position);
-        logSketch.logVector("COM", centerOfMass);
+        logSketch.logVector("Torso", torso.position);
         return ! VectorMath.isWithinZ(leftHand.position, torso.position, threshold);
     }
 

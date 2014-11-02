@@ -77,11 +77,11 @@ public class BodyLocator extends SingleUserTrackingSketch {
     public BodyLocator(User user, GestureData gestureData, Stage stage, LogSketch logSketch) {
         super(user);
 
-        geometricRecognizer.addTemplate("Circle", gestureData.getByName("Circle"));
-        geometricRecognizer.addTemplate("LeftToRightLine", gestureData.getByName("LeftToRightLine"));
+        //geometricRecognizer.addTemplate("Circle", gestureData.getByName("Circle"));
+        // geometricRecognizer.addTemplate("LeftToRightLine", gestureData.getByName("LeftToRightLine"));
         geometricRecognizer.addTemplate("RightToLeftLine", gestureData.getByName("RightToLeftLine"));
-        geometricRecognizer.addTemplate("RightToLeftLine", gestureData.getByName("RightToLeftLine2"));
-        geometricRecognizer.addTemplate("Slash", gestureData.getByName("RightToLeftSlashDown"));
+        // geometricRecognizer.addTemplate("RightToLeftLine", gestureData.getByName("RightToLeftLine2"));
+        //geometricRecognizer.addTemplate("Slash", gestureData.getByName("RightToLeftSlashDown"));
 
         this.stage = stage;
         stage.setupDefaultStageZones();

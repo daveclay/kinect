@@ -13,6 +13,13 @@ import java.util.List;
  */
 public class GeometricRecognizer {
 
+    public static void main(String[] args) {
+        GestureData gestureData = new GestureData(GestureData.GESTURE_DIR);
+        GeometricRecognizer recognizer = new GeometricRecognizer();
+        gestureData.load();
+        recognizer.addTemplate("LineTest", gestureData.getByName("LeftToRightLine"));
+    }
+
     private float halfDiagonal;
     private float angleRange;
     private float anglePrecision;
@@ -142,6 +149,7 @@ public class GeometricRecognizer {
                 maxY = point.y;
             }
         }
+
         Rectangle bounds = new Rectangle(minX, minY, (maxX - minX), (maxY - minY));
         return bounds;
     }
@@ -319,7 +327,7 @@ public class GeometricRecognizer {
         if (shouldIgnoreRotation) {
             angleRange = 45f;
         } else {
-            angleRange = 15f;
+            angleRange = 5f;
         }
     }
 
@@ -343,46 +351,14 @@ public class GeometricRecognizer {
         return newPoints;
     }
 
-    private static class Rectangle {
+    private class Rectangle {
         float x, y, width, height;
 
         Rectangle(float x, float y, float width, float height) {
             this.x = x;
             this.y = y;
-            this.width = width;
-            this.height = height;
-        }
-    }
-
-    public static class PathWriter {
-
-        String fileName = "savedPath.txt";
-        String gestureName = "DefaultName";
-
-        public static boolean writeToFile(List<Point2D> path, String fileName, String gestureName) {
-        /*
-            fstream file(fileName.c_str(), ios::out);
-
-            file << "List<Point2D> getGesture" << gestureName << "()" << endl;
-            file << "{" << endl;
-            file << "\t" << "List<Point2D> path;" << endl;
-            
-            List<Point2D>::const_iterator i;
-            for (i = path.begin(); i != path.end(); i++)
-            {
-                Point2D point = *i;
-                file << "\t" << "path.add(Point2D(" << point.x << ","
-                     << point.y << "));" << endl;
-            }
-
-            file << endl;
-            file << "\t" << "return path;" << endl;
-            file << "}" << endl;
-
-            file.close();
-
-            */
-            return true;
+            this.width = width < 1 ? GeometricRecognizer.this.squareSize : width;
+            this.height = height < 1 ? GeometricRecognizer.this.squareSize  : height;
         }
     }
 }
