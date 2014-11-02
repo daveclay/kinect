@@ -24,6 +24,9 @@ public class SimpleGestureRecognizerTest {
     @Before
     public void setUp() {
         recognizer = new SimpleGestureRecognizer();
+        recognizer.addRecognizerAlgorithm("Line", new SimpleGestureRecognizer.LeftToRightLineRecognizer());
+
+
         templateGestureData = new GestureDataStore(GestureDataStore.GESTURE_DIR);
         templateGestureData.load();
 
