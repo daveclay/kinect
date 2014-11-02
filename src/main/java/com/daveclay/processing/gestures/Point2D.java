@@ -1,7 +1,8 @@
 package com.daveclay.processing.gestures;
 
 public class Point2D {
-    float x, y;
+
+    public float x, y;
 
     public Point2D() {
         this(0, 0);

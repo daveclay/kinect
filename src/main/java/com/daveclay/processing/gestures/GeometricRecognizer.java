@@ -1,7 +1,15 @@
 package com.daveclay.processing.gestures;
 
+import com.daveclay.processing.gestures.utils.BoundingBox;
+import com.daveclay.processing.gestures.utils.Centroid;
+import com.daveclay.processing.gestures.utils.Distance;
+import com.daveclay.processing.gestures.utils.Score;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.daveclay.processing.gestures.utils.Distance.*;
+import static com.daveclay.processing.gestures.utils.Rotate.*;
 
 /**
  * Ported from:
@@ -48,7 +56,7 @@ public class GeometricRecognizer {
         squareSize = 250;
         //--- 1/2 max distance across a square, which is the maximum distance
         //---  a point can be from the center of the gesture
-        halfDiagonal = 0.5f * (float) Math.sqrt((250f * 250f) + (250f * 250f));
+        halfDiagonal = 0.5f * (float) Math.sqrt((squareSize * squareSize) + (squareSize * squareSize));
         //--- Before matching, we rotate the symbol the user drew so that the
         //---  start point is at degree 0 (right side of symbol). That's how
         //---  the templates are rotated so it makes matching easier
@@ -95,7 +103,7 @@ public class GeometricRecognizer {
         //---  of the square we scaled everything too)
         //--- Distance = hwo different they are
         //--- Subtract that from 1 (100%) to get the similarity
-        float score = 1f - (bestDistance / halfDiagonal);
+        float score = Score.findScore(bestDistance, halfDiagonal);
 
         //--- Make sure we actually found a good match
         //--- Sometimes we don't, like when the user doesn't draw enough points
@@ -127,49 +135,6 @@ public class GeometricRecognizer {
     public void addTemplate(String name, List<Point2D> points) {
         points = normalizePath(points);
         templates.add(new GestureTemplate(name, points));
-    }
-
-    private Rectangle boundingBox(List<Point2D> points) {
-        float minX = Float.MAX_VALUE;
-        float maxX = -Float.MAX_VALUE;
-        float minY = Float.MAX_VALUE;
-        float maxY = -Float.MAX_VALUE;
-
-        for (Point2D point : points) {
-            if (point.x < minX) {
-                minX = point.x;
-            }
-            if (point.x > maxX) {
-                maxX = point.x;
-            }
-            if (point.y < minY) {
-                minY = point.y;
-            }
-            if (point.y > maxY) {
-                maxY = point.y;
-            }
-        }
-
-        Rectangle bounds = new Rectangle(minX, minY, (maxX - minX), (maxY - minY));
-        return bounds;
-    }
-
-    private Point2D centroid(List<Point2D> points) {
-        float x = 0f, y = 0f;
-        for (Point2D point : points) {
-            x += point.x;
-            y += point.y;
-        }
-        x /= points.size();
-        y /= points.size();
-        return new Point2D(x, y);
-    }
-
-    private float getDistance(Point2D p1, Point2D p2) {
-        float dx = p2.x - p1.x;
-        float dy = p2.y - p1.y;
-        float distance = (float) Math.sqrt((dx * dx) + (dy * dy));
-        return distance;
     }
 
     private float distanceAtAngle(List<Point2D> points, GestureTemplate aTemplate, float rotation) {
@@ -231,20 +196,10 @@ public class GeometricRecognizer {
         return points;
     }
 
-    private float pathDistance(List<Point2D> pts1, List<Point2D> pts2) {
-        // assumes pts1.size == pts2.size
-
-        float distance = 0f;
-        for (int i = 0; i < pts1.size(); i++) {
-            distance += getDistance(pts1.get(i), pts2.get(i));
-        }
-        return (distance / pts1.size());
-    }
-
     private float pathLength(List<Point2D> points) {
         float distance = 0;
         for (int i = 1; i < points.size(); i++) {
-            distance += getDistance(points.get(i - 1), points.get(i));
+            distance += findDistance(points.get(i - 1), points.get(i));
         }
         return distance;
     }
@@ -259,7 +214,7 @@ public class GeometricRecognizer {
         for (int i = 1; i < points.size(); i++) {
             Point2D currentPoint = points.get(i);
             Point2D previousPoint = points.get(i - 1);
-            float d = getDistance(previousPoint, currentPoint);
+            float d = findDistance(previousPoint, currentPoint);
             if ((D + d) >= interval) {
                 float qx = previousPoint.x + ((interval - D) / d) * (currentPoint.x - previousPoint.x);
                 float qy = previousPoint.y + ((interval - D) / d) * (currentPoint.y - previousPoint.y);
@@ -280,32 +235,19 @@ public class GeometricRecognizer {
         return newPoints;
     }
 
-    private List<Point2D> rotateBy(List<Point2D> points, float rotation) {
-        Point2D c = centroid(points);
-        //--- can't name cos; creates compiler error since VC++ can't
-        //---  tell the difference between the variable and function
-        float cosine = (float)Math.cos(rotation);
-        float sine = (float) Math.sin(rotation);
-
-        List<Point2D> newPoints = new ArrayList<Point2D>();
-        for (Point2D point : points) {
-            float qx = (point.x - c.x) * cosine - (point.y - c.y) * sine + c.x;
-            float qy = (point.x - c.x) * sine + (point.y - c.y) * cosine + c.y;
-            newPoints.add(new Point2D(qx, qy));
-        }
-        return newPoints;
-    }
-
-    private List<Point2D> rotateToZero(List<Point2D> points) {
-        Point2D centroid = centroid(points);
-        Point2D point2D = points.get(0);
-        float rotation = (float)Math.atan2(centroid.y - point2D.y, centroid.x - point2D.x);
-        return rotateBy(points, -rotation);
-    }
-
+    /**
+     * This probably becomes a problem for line gestures. The incoming actual gesture contains
+     * a lot of noise, and scaling the line to a box amplifies that noise.
+     */
     private List<Point2D> scaleToSquare(List<Point2D> points) {
         //--- Figure out the smallest box that can contain the path
-        Rectangle box = boundingBox(points);
+        BoundingBox box = BoundingBox.find(points);
+        if (box.width == 0) {
+            box.width = this.squareSize;
+        }
+        if (box.height == 0) {
+            box.height = this.squareSize;
+        }
         List<Point2D> newPoints = new ArrayList<Point2D>();
         for (Point2D point : points) {
             //--- Scale the points to fit the main box
@@ -341,7 +283,7 @@ public class GeometricRecognizer {
      * of the screen
      */
     private List<Point2D> translateToOrigin(List<Point2D> points) {
-        Point2D c = centroid(points);
+        Point2D c = Centroid.centroid(points);
         List<Point2D> newPoints = new ArrayList<Point2D>();
         for (Point2D point : points) {
             float qx = point.x - c.x;
@@ -349,16 +291,5 @@ public class GeometricRecognizer {
             newPoints.add(new Point2D(qx, qy));
         }
         return newPoints;
-    }
-
-    private class Rectangle {
-        float x, y, width, height;
-
-        Rectangle(float x, float y, float width, float height) {
-            this.x = x;
-            this.y = y;
-            this.width = width < 1 ? GeometricRecognizer.this.squareSize : width;
-            this.height = height < 1 ? GeometricRecognizer.this.squareSize  : height;
-        }
     }
 }

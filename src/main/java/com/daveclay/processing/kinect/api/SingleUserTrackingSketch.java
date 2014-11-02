@@ -12,7 +12,7 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
 
     private boolean wasHandExtended = false;
     private HandExtendedHandler handExtendedHandler;
-    private int handExtensionThresholdRadius = 490;
+    private int handExtensionThresholdRadius = 350;
 
     public SingleUserTrackingSketch(User user) {
         this.user = user;

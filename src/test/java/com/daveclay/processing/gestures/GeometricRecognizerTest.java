@@ -9,11 +9,10 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GestureRecognizerTest {
+public class GeometricRecognizerTest {
 
     GeometricRecognizer recognizer;
     GestureData actualGestureData;
