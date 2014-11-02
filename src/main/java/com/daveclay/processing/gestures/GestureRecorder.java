@@ -47,8 +47,8 @@ public class GestureRecorder {
     }
 
     private void dumpPoints(List<Point2D> points) {
-        GestureData gestureData = new GestureData(GestureData.GESTURE_DIR + "../recorded/");
+        GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR + "../recorded/");
         testNumber++;
-        gestureData.save(new GestureTemplate("ActualGesture" + testNumber, points));
+        gestureDataStore.save(new GestureData("ActualGesture" + testNumber, points));
     }
 }

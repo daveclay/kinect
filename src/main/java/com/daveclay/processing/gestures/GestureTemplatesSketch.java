@@ -12,7 +12,7 @@ public class GestureTemplatesSketch extends PApplet {
     }
 
     GeometricRecognizer recognizer = new GeometricRecognizer();
-    private List<GestureTemplate> normalizedTemplates;
+    private List<GestureData> normalizedTemplates;
     private int gestureIndex = 0;
 
     @Override
@@ -20,25 +20,25 @@ public class GestureTemplatesSketch extends PApplet {
         super.setup();
         size(1024, 768);
         background(200);
-        GestureData gestureData = new GestureData(GestureData.GESTURE_DIR);
-        gestureData.load();
-        recognizer.addTemplates(gestureData.getAll());
+        GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR);
+        gestureDataStore.load();
+        recognizer.addTemplates(gestureDataStore.getAll());
         normalizedTemplates = recognizer.getNormalizedTemplates();
     }
 
     @Override
     public void draw() {
-        GestureTemplate gestureTemplate = normalizedTemplates.get(gestureIndex);
+        GestureData gestureData = normalizedTemplates.get(gestureIndex);
 
         fill(80);
         stroke(80);
         textSize(20);
-        text(gestureTemplate.name, 10, 20);
+        text(gestureData.name, 10, 20);
 
         stroke(2);
         translate(width / 2, height / 2);
         Point2D previous = null;
-        for (Point2D point : gestureTemplate.points) {
+        for (Point2D point : gestureData.points) {
             if (previous != null) {
                 line(previous.x, previous.y, point.x, point.y);
             }

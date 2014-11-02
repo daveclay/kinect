@@ -2,7 +2,6 @@ package com.daveclay.processing.gestures;
 
 import com.daveclay.processing.gestures.utils.BoundingBox;
 import com.daveclay.processing.gestures.utils.Centroid;
-import com.daveclay.processing.gestures.utils.Distance;
 import com.daveclay.processing.gestures.utils.Score;
 
 import java.util.ArrayList;
@@ -22,10 +21,10 @@ import static com.daveclay.processing.gestures.utils.Rotate.*;
 public class GeometricRecognizer {
 
     public static void main(String[] args) {
-        GestureData gestureData = new GestureData(GestureData.GESTURE_DIR);
+        GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR);
         GeometricRecognizer recognizer = new GeometricRecognizer();
-        gestureData.load();
-        recognizer.addTemplate("LineTest", gestureData.getByName("LeftToRightLine"));
+        gestureDataStore.load();
+        recognizer.addTemplate("LineTest", gestureDataStore.getPointsByName("LeftToRightLine"));
     }
 
     private float halfDiagonal;
@@ -41,7 +40,7 @@ public class GeometricRecognizer {
     private boolean shouldIgnoreRotation;
 
     //--- What we match the input shape against
-    private List<GestureTemplate> templates = new ArrayList<GestureTemplate>();
+    private List<GestureData> templates = new ArrayList<GestureData>();
 
     public GeometricRecognizer() {
         //--- How many templates do we have to compare the user's gesture against?
@@ -83,10 +82,10 @@ public class GeometricRecognizer {
         //--- That way everything will be better than that
         float bestDistance = Float.MAX_VALUE;
 
-        GestureTemplate bestMatchTemplate = null;
+        GestureData bestMatchTemplate = null;
 
         //--- Check the shape passed in against every shape in our database
-        for (GestureTemplate template : templates) {
+        for (GestureData template : templates) {
             //--- Calculate the total distance of each point in the passed in
             //---  shape against the corresponding point in the template
             //--- We'll rotate the shape a few degrees in each direction to
@@ -118,31 +117,31 @@ public class GeometricRecognizer {
     public void loadDefaultGestures() {
     }
 
-    public List<GestureTemplate> getNormalizedTemplates() {
+    public List<GestureData> getNormalizedTemplates() {
         return templates;
     }
 
-    public void addTemplates(List<GestureTemplate> all) {
-        for (GestureTemplate gestureTemplate : all) {
-            addTemplate(gestureTemplate.name, gestureTemplate.points);
+    public void addTemplates(List<GestureData> all) {
+        for (GestureData gestureData : all) {
+            addTemplate(gestureData.name, gestureData.points);
         }
     }
 
-    public void addTemplate(String name, GestureTemplate gestureTemplate) {
-        addTemplate(name, gestureTemplate.getPoints());
+    public void addTemplate(String name, GestureData gestureData) {
+        addTemplate(name, gestureData.getPoints());
     }
 
     public void addTemplate(String name, List<Point2D> points) {
         points = normalizePath(points);
-        templates.add(new GestureTemplate(name, points));
+        templates.add(new GestureData(name, points));
     }
 
-    private float distanceAtAngle(List<Point2D> points, GestureTemplate aTemplate, float rotation) {
+    private float distanceAtAngle(List<Point2D> points, GestureData aTemplate, float rotation) {
         List<Point2D> newPoints = rotateBy(points, rotation);
         return pathDistance(newPoints, aTemplate.points);
     }
 
-    private float distanceAtBestAngle(List<Point2D> points, GestureTemplate aTemplate) {
+    private float distanceAtBestAngle(List<Point2D> points, GestureData aTemplate) {
         float startRange = -angleRange;
         float endRange = angleRange;
         float x1 = goldenRatio * startRange + (1f - goldenRatio) * endRange;
@@ -191,7 +190,7 @@ public class GeometricRecognizer {
         points = scaleToSquare(points);
         //--- Move the shape until its center is at 0,0 so that everyone
         //---  is in the same coordinate system
-        points = translateToOrigin(points);
+        points = Centroid.translateToOrigin(points);
 
         return points;
     }
@@ -273,23 +272,4 @@ public class GeometricRecognizer {
         }
     }
 
-    /**
-     * Shift the points so that the center is at 0,0.
-     * That way, if everyone centers at the same place, we can measure
-     * the distance between each pair of points without worrying about
-     * where each point was originally drawn
-     * If we didn't do this, shapes drawn at the top of the screen
-     * would have a hard time matching shapes drawn at the bottom
-     * of the screen
-     */
-    private List<Point2D> translateToOrigin(List<Point2D> points) {
-        Point2D c = Centroid.centroid(points);
-        List<Point2D> newPoints = new ArrayList<Point2D>();
-        for (Point2D point : points) {
-            float qx = point.x - c.x;
-            float qy = point.y - c.y;
-            newPoints.add(new Point2D(qx, qy));
-        }
-        return newPoints;
-    }
 }

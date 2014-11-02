@@ -3,11 +3,8 @@ package com.daveclay.processing.kinect.bodylocator;
 import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
-import com.daveclay.processing.gestures.GeometricRecognizer;
-import com.daveclay.processing.gestures.GestureData;
-import com.daveclay.processing.gestures.GestureRecognizedHandler;
-import com.daveclay.processing.gestures.GestureRecorder;
-import com.daveclay.processing.gestures.RecognitionResult;
+import com.daveclay.processing.gestures.*;
+import com.daveclay.processing.gestures.GestureDataStore;
 import com.daveclay.processing.kinect.api.SingleUserTrackingSketch;
 import com.daveclay.processing.kinect.api.Stage;
 import com.daveclay.processing.kinect.api.StageMonitor;
@@ -28,14 +25,14 @@ public class BodyLocator extends SingleUserTrackingSketch {
      */
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
-        GestureData gestureData = new GestureData(GestureData.GESTURE_DIR);
-        gestureData.load();
+        GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR);
+        gestureDataStore.load();
 
         User user = new User();
         Stage stage = new Stage();
         BodyLocator bodyLocator = new BodyLocator(
                 user,
-                gestureData,
+                gestureDataStore,
                 stage,
                 logSketch);
 
@@ -49,7 +46,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
             presentationServer.start();
             PresentationWebSocketListener listener = new PresentationWebSocketListener(
                     presentationServer,
-                    gestureData);
+                    gestureDataStore);
 
             bodyLocator.setListener(listener);
         } catch (UnknownHostException e) {
@@ -74,13 +71,13 @@ public class BodyLocator extends SingleUserTrackingSketch {
     List<PVector> drawingPoints = new ArrayList<PVector>();
     boolean drawing;
 
-    public BodyLocator(User user, GestureData gestureData, Stage stage, LogSketch logSketch) {
+    public BodyLocator(User user, GestureDataStore gestureDataStore, Stage stage, LogSketch logSketch) {
         super(user);
 
-        geometricRecognizer.addTemplate("Circle", gestureData.getByName("Circle"));
-        geometricRecognizer.addTemplate("LeftToRightLine", gestureData.getByName("LeftToRightLine2"));
-        geometricRecognizer.addTemplate("RightToLeftLine", gestureData.getByName("RightToLeftLine2"));
-        //geometricRecognizer.addTemplate("Slash", gestureData.getByName("RightToLeftSlashDown"));
+        geometricRecognizer.addTemplate("Circle", gestureDataStore.getPointsByName("Circle"));
+        geometricRecognizer.addTemplate("LeftToRightLine", gestureDataStore.getPointsByName("LeftToRightLine2"));
+        geometricRecognizer.addTemplate("RightToLeftLine", gestureDataStore.getPointsByName("RightToLeftLine2"));
+        //geometricRecognizer.addTemplate("Slash", gestureData.getPointsByName("RightToLeftSlashDown"));
 
         this.stage = stage;
         stage.setupDefaultStageZones();

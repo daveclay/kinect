@@ -17,52 +17,111 @@ import static org.junit.Assert.assertThat;
 public class SimpleGestureRecognizerTest {
 
     SimpleGestureRecognizer recognizer;
-    GestureData actualGestureData;
-    GestureData templateGestureData;
+    GestureDataStore actualGestureData;
+    GestureDataStore recordedGestureData;
+    GestureDataStore templateGestureData;
 
     @Before
     public void setUp() {
         recognizer = new SimpleGestureRecognizer();
-        templateGestureData = new GestureData(GestureData.GESTURE_DIR);
+        templateGestureData = new GestureDataStore(GestureDataStore.GESTURE_DIR);
         templateGestureData.load();
 
-        actualGestureData = new GestureData(GestureData.GESTURE_DIR + "../tests/");
+        actualGestureData = new GestureDataStore(GestureDataStore.GESTURE_DIR + "../tests/");
         actualGestureData.load();
+
+        recordedGestureData = new GestureDataStore(GestureDataStore.GESTURE_DIR + "../recorded/");
+        recordedGestureData.load();
+    }
+
+    @Test
+    public void shouldNotHaveNegativeScore() {
+        List<Point2D> template = recordedGestureData.getPointsByName("ActualGesture19");
+        RecognitionResult result = recognizer.recognize(template);
+        assertThat(result.getScorePercent(), greaterThan(0));
+        System.out.println("Matched template " + result.name + " with " + result.getScorePercent() + "%");
+        assertThat(result.name, equalTo("Line"));
+    }
+
+    @Test
+    public void shouldRunThroughAllTemplateGestures() {
+
+        for (GestureData template : templateGestureData.getAll()) {
+            RecognitionResult result = recognizer.recognize(template.getPoints());
+            System.out.println("Template " + template.name + " scored " + result.name + " with " + result.getScorePercent() + "%");
+            assertThat(result.name, equalTo("Line"));
+        }
+    }
+
+    @Test
+    public void shouldRunThroughAllActualGestures() {
+
+        for (GestureData template : recordedGestureData.getAll()) {
+            RecognitionResult result = recognizer.recognize(template.getPoints());
+            System.out.println("Template " + template.name + " scored " + result.name + " with " + result.getScorePercent() + "%");
+            assertThat(result.name, equalTo("Line"));
+        }
     }
 
     @Test
     public void shouldNotMatchCirlceGesture() {
-        List<Point2D> template = templateGestureData.getByName("Circle");
-        RecognitionResult result = recognizer.recognize(template);
-        assertThat(result.getScorePercent(), lessThan(60));
-        System.out.println("Matched Cicle template " + result.name + " with " + result.getScorePercent() + "%");
+        GestureData gestureData = templateGestureData.getGestureByName("Circle");
+        RecognitionResult result = recognizer.recognize(gestureData);
+        logNotMatch(gestureData, result);
         assertThat(result.name, equalTo("Line"));
     }
 
     @Test
-    public void shouldMatchLeftToRightLineGesture() {
-        List<Point2D> template = templateGestureData.getByName("LeftToRightLine2");
-        RecognitionResult result = recognizer.recognize(template);
-        assertThat(result.getScorePercent(), greaterThan(50));
-        System.out.println("Matched Left-to-right line " + result.name + " with " + result.getScorePercent() + "%");
+    public void shouldNotMatchRightToLeftLineActualGesture() {
+        GestureData gestureData = actualGestureData.getGestureByName("RightToLeftActualGesture");
+        RecognitionResult result = recognizer.recognize(gestureData);
+        logNotMatch(gestureData, result);
         assertThat(result.name, equalTo("Line"));
     }
 
     @Test
-    public void shouldNotMatchReversedLineGesture() {
-        List<Point2D> template = templateGestureData.getByName("RightToLeftLine2");
-        RecognitionResult result = recognizer.recognize(template);
-        assertThat(result.getScorePercent(), lessThan(50));
-        System.out.println("Matched right to left " + result.name + " with " + result.getScorePercent() + "%");
+    public void shouldMatchLeftToRightLineActualGesture() {
+        GestureData gestureData = actualGestureData.getGestureByName("LeftToRightActualGesture");
+        RecognitionResult result = recognizer.recognize(gestureData);
+        logMatch(gestureData, result);
+        assertThat(result.name, equalTo("Line"));
+    }
+
+    @Test
+    public void shouldMatchLeftToRightLineTemplateGesture() {
+        GestureData gestureData = templateGestureData.getGestureByName("LeftToRightLine2");
+        RecognitionResult result = recognizer.recognize(gestureData);
+        logMatch(gestureData, result);
+        assertThat(result.name, equalTo("Line"));
+    }
+
+    @Test
+    public void shouldNotMatchReversedLineTemplateGesture() {
+        GestureData gestureData = templateGestureData.getGestureByName("RightToLeftLine2");
+        RecognitionResult result = recognizer.recognize(gestureData);
+        logNotMatch(gestureData, result);
         assertThat(result.name, equalTo("Line"));
     }
 
     @Test
     public void shouldMatchActualLineGesture() {
-        List<Point2D> template = actualGestureData.getByName("ActualGesture3");
-        RecognitionResult result = recognizer.recognize(template);
-        assertThat(result.getScorePercent(), greaterThan(50));
-        System.out.println("Matched ActualGesture2 " + result.name + " with " + result.getScorePercent() + "%");
+        GestureData gestureData = actualGestureData.getGestureByName("ActualGesture3");
+        RecognitionResult result = recognizer.recognize(gestureData);
+        logMatch(gestureData, result);
         assertThat(result.name, equalTo("Line"));
+    }
+
+    void logNotMatch(GestureData gestureData, RecognitionResult result) {
+        log(gestureData, false, result);
+        assertThat(result.getScorePercent(), lessThan(60));
+    }
+
+    void logMatch(GestureData gestureData, RecognitionResult result) {
+        log(gestureData, true, result);
+        assertThat(result.getScorePercent(), greaterThan(59));
+    }
+
+    void log(GestureData gestureData, boolean should, RecognitionResult result) {
+        System.out.println("Should " + (should ? "" : "NOT ") + "match " + gestureData.name + ": gesture matched: " + result.name + " with " + result.getScorePercent() + "%");
     }
 }

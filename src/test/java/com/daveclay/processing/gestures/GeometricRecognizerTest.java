@@ -15,26 +15,26 @@ import static org.junit.Assert.assertThat;
 public class GeometricRecognizerTest {
 
     GeometricRecognizer recognizer;
-    GestureData actualGestureData;
-    GestureData templateGestureData;
+    GestureDataStore actualGestureData;
+    GestureDataStore templateGestureData;
 
     @Before
     public void setUp() {
         recognizer = new GeometricRecognizer();
-        templateGestureData = new GestureData(GestureData.GESTURE_DIR);
+        templateGestureData = new GestureDataStore(GestureDataStore.GESTURE_DIR);
         templateGestureData.load();
 
-        actualGestureData = new GestureData(GestureData.GESTURE_DIR + "../tests/");
+        actualGestureData = new GestureDataStore(GestureDataStore.GESTURE_DIR + "../tests/");
         actualGestureData.load();
 
-        //recognizer.addTemplate("Slash", templateGestureData.getByName("RightToLeftSlashDown"));
+        //recognizer.addTemplate("Slash", templateGestureData.getPointsByName("RightToLeftSlashDown"));
     }
 
 
     @Test
     public void shouldMatchOwnReversedData() {
-        recognizer.addTemplate("Line", templateGestureData.getByName("RightToLeftLine2"));
-        List<Point2D> template = templateGestureData.getByName("LeftToRightLine2");
+        recognizer.addTemplate("Line", templateGestureData.getPointsByName("RightToLeftLine2"));
+        List<Point2D> template = templateGestureData.getPointsByName("LeftToRightLine2");
         RecognitionResult result = recognizer.recognize(template);
         assertThat(result.getScorePercent(), greaterThan(50));
         System.out.println("Matched own reversed gesture data " + result.name + " with " + result.getScorePercent() + "%");
@@ -43,8 +43,8 @@ public class GeometricRecognizerTest {
 
     @Test
     public void shouldMatchOwnData() {
-        recognizer.addTemplate("Line", templateGestureData.getByName("LeftToRightLine2"));
-        List<Point2D> template = templateGestureData.getByName("LeftToRightLine2");
+        recognizer.addTemplate("Line", templateGestureData.getPointsByName("LeftToRightLine2"));
+        List<Point2D> template = templateGestureData.getPointsByName("LeftToRightLine2");
         RecognitionResult result = recognizer.recognize(template);
         assertThat(result.getScorePercent(), greaterThan(90));
         System.out.println("Matched own gesture data " + result.name + " with " + result.getScorePercent() + "%");
@@ -53,8 +53,8 @@ public class GeometricRecognizerTest {
 
     @Test
     public void shouldMatchReverseLineGesture() {
-        recognizer.addTemplate("Line", templateGestureData.getByName("LeftToRightLine2"));
-        List<Point2D> template = actualGestureData.getByName("ActualGesture3");
+        recognizer.addTemplate("Line", templateGestureData.getPointsByName("LeftToRightLine2"));
+        List<Point2D> template = actualGestureData.getPointsByName("ActualGesture3");
         RecognitionResult result = recognizer.recognize(template);
         assertThat(result.getScorePercent(), greaterThan(50));
         System.out.println("Matched " + result.name + " with " + result.getScorePercent() + "%");
@@ -63,8 +63,8 @@ public class GeometricRecognizerTest {
 
     @Test
     public void shouldMatchLineGesture() {
-        recognizer.addTemplate("Line", templateGestureData.getByName("RightToLeftLine2"));
-        List<Point2D> template = actualGestureData.getByName("ActualGesture3");
+        recognizer.addTemplate("Line", templateGestureData.getPointsByName("RightToLeftLine2"));
+        List<Point2D> template = actualGestureData.getPointsByName("ActualGesture3");
         RecognitionResult result = recognizer.recognize(template);
         assertThat(result.getScorePercent(), greaterThan(50));
         System.out.println("Matched " + result.name + " with " + result.getScorePercent() + "%");
