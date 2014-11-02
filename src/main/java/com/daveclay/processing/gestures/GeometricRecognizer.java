@@ -327,7 +327,7 @@ public class GeometricRecognizer {
         if (shouldIgnoreRotation) {
             angleRange = 45f;
         } else {
-            angleRange = 5f;
+            angleRange = 10f;
         }
     }
 

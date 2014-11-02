@@ -11,6 +11,7 @@ public class GestureRecorder {
     private boolean recording = false;
     private List<Point2D> points = new ArrayList<Point2D>();
     private GestureRecognizedHandler gestureRecognizedHandler;
+    private int gesturePointCountThreshold = 50;
     private int testNumber;
 
     public GestureRecorder(GeometricRecognizer geometricRecognizer) {
@@ -33,7 +34,7 @@ public class GestureRecorder {
 
     public void stopRecording() {
         recording = false;
-        if (gestureRecognizedHandler != null) {
+        if (gestureRecognizedHandler != null && points.size() > this.gesturePointCountThreshold) {
             dumpPoints(points);
             RecognitionResult result = recognizer.recognize(points);
             gestureRecognizedHandler.gestureRecognized(result);
@@ -46,7 +47,7 @@ public class GestureRecorder {
     }
 
     private void dumpPoints(List<Point2D> points) {
-        GestureData gestureData = new GestureData(GestureData.GESTURE_DIR + "../tests");
+        GestureData gestureData = new GestureData(GestureData.GESTURE_DIR + "../recorded/");
         testNumber++;
         gestureData.save(new GestureTemplate("ActualGesture" + testNumber, points));
     }

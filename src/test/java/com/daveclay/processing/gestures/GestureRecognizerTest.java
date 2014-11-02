@@ -7,6 +7,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
@@ -26,15 +28,47 @@ public class GestureRecognizerTest {
         actualGestureData = new GestureData(GestureData.GESTURE_DIR + "../tests/");
         actualGestureData.load();
 
-        recognizer.addTemplate("Line", templateGestureData.getByName("RightToLeftLine2"));
-        recognizer.addTemplate("Slash", templateGestureData.getByName("RightToLeftSlashDown"));
+        //recognizer.addTemplate("Slash", templateGestureData.getByName("RightToLeftSlashDown"));
     }
 
 
     @Test
-    public void shouldHaveUpdateBounds() {
-        List<Point2D> template = actualGestureData.getByName("ActualGesture2");
+    public void shouldMatchOwnReversedData() {
+        recognizer.addTemplate("Line", templateGestureData.getByName("RightToLeftLine2"));
+        List<Point2D> template = templateGestureData.getByName("LeftToRightLine2");
         RecognitionResult result = recognizer.recognize(template);
-        assertNotNull(result);
+        assertThat(result.getScorePercent(), greaterThan(50));
+        System.out.println("Matched own reversed gesture data " + result.name + " with " + result.getScorePercent() + "%");
+        assertThat(result.name, equalTo("Line"));
+    }
+
+    @Test
+    public void shouldMatchOwnData() {
+        recognizer.addTemplate("Line", templateGestureData.getByName("LeftToRightLine2"));
+        List<Point2D> template = templateGestureData.getByName("LeftToRightLine2");
+        RecognitionResult result = recognizer.recognize(template);
+        assertThat(result.getScorePercent(), greaterThan(90));
+        System.out.println("Matched own gesture data " + result.name + " with " + result.getScorePercent() + "%");
+        assertThat(result.name, equalTo("Line"));
+    }
+
+    @Test
+    public void shouldMatchReverseLineGesture() {
+        recognizer.addTemplate("Line", templateGestureData.getByName("LeftToRightLine2"));
+        List<Point2D> template = actualGestureData.getByName("ActualGesture3");
+        RecognitionResult result = recognizer.recognize(template);
+        assertThat(result.getScorePercent(), greaterThan(50));
+        System.out.println("Matched " + result.name + " with " + result.getScorePercent() + "%");
+        assertThat(result.name, equalTo("Line"));
+    }
+
+    @Test
+    public void shouldMatchLineGesture() {
+        recognizer.addTemplate("Line", templateGestureData.getByName("RightToLeftLine2"));
+        List<Point2D> template = actualGestureData.getByName("ActualGesture3");
+        RecognitionResult result = recognizer.recognize(template);
+        assertThat(result.getScorePercent(), greaterThan(50));
+        System.out.println("Matched " + result.name + " with " + result.getScorePercent() + "%");
+        assertThat(result.name, equalTo("Line"));
     }
 }
