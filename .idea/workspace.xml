@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="21ebe86e-9d9b-4991-b5cf-caaac4f4e72c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GeometricRecognizer.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GeometricRecognizer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/gestures/LeftToRightLine2.json" afterPath="$PROJECT_DIR$/src/main/resources/gestures/LeftToRightLine2.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/Point2D.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/Point2D.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/api/SingleUserTrackingSketch.java" afterPath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/api/SingleUserTrackingSketch.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/gesturedata.html" afterPath="$PROJECT_DIR$/src/main/webapp/gesturedata.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/test/java/com/daveclay/processing/gestures/GestureRecognizerTest.java" afterPath="$PROJECT_DIR$/src/test/java/com/daveclay/processing/gestures/SimpleGestureRecognizerTest.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/.GeometricRecognizer.java.swp" afterPath="" />
     </list>
     <ignored path="kinect-test.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -103,21 +96,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GestureRecorder.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="GestureRecorder.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureRecorder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="864">
+            <state vertical-scroll-proportion="0.42200327" vertical-offset="255" max-vertical-offset="864">
               <caret line="38" column="51" selection-start-line="38" selection-start-column="51" selection-end-line="38" selection-end-column="51" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SimpleGestureRecognizerTest.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="SimpleGestureRecognizerTest.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/com/daveclay/processing/gestures/SimpleGestureRecognizerTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5714286" vertical-offset="388" max-vertical-offset="1184">
-              <caret line="46" column="42" selection-start-line="46" selection-start-column="42" selection-end-line="46" selection-end-column="42" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="356" max-vertical-offset="1184">
+              <caret line="42" column="43" selection-start-line="42" selection-start-column="43" selection-end-line="42" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -1211,16 +1204,16 @@
       <workItem from="1414887725795" duration="1922000" />
       <workItem from="1414905004146" duration="3034000" />
       <workItem from="1414908143378" duration="214000" />
-      <workItem from="1414908403699" duration="5526000" />
+      <workItem from="1414908403699" duration="5575000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41840000" />
+    <option name="totallyTimeSpent" value="41889000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="24" y="27" width="1538" height="965" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1242,7 +1235,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25668448" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25668448" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22077923" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" x="126" y="127" width="1338" height="765" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -1640,14 +1633,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureRecorder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="864">
-          <caret line="38" column="51" selection-start-line="38" selection-start-column="51" selection-end-line="38" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/kinect/bodylocator/BodyLocator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="845" max-vertical-offset="3456">
@@ -1710,8 +1695,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/com/daveclay/processing/gestures/SimpleGestureRecognizerTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5714286" vertical-offset="388" max-vertical-offset="1184">
-          <caret line="46" column="42" selection-start-line="46" selection-start-column="42" selection-end-line="46" selection-end-column="42" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="356" max-vertical-offset="1184">
+          <caret line="42" column="43" selection-start-line="42" selection-start-column="43" selection-end-line="42" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/daveclay/processing/gestures/GestureRecorder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.42200327" vertical-offset="255" max-vertical-offset="864">
+          <caret line="38" column="51" selection-start-line="38" selection-start-column="51" selection-end-line="38" selection-end-column="51" />
           <folding />
         </state>
       </provider>
