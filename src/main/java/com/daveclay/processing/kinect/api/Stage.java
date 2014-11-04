@@ -41,13 +41,17 @@ public class Stage {
 
     public void updatePosition(PVector position) {
         stageBounds.expandStageBounds(position);
-        boolean positionEventFired = false;
+        boolean foundMatchingZone = false;
         for (StageZone stageZone : stageZones) {
             stageZone.updateStageBounds(stageBounds);
-            if ( ! positionEventFired && stageZone != currentStageZone && stageZone.isWithinBounds(position)) {
-                fireEvent(stageZone);
-                currentStageZone = stageZone;
-                positionEventFired = true;
+            if ( ! foundMatchingZone && stageZone.isWithinBounds(position)) {
+                // We haven't found a matching zone yet, and this one matches.
+                foundMatchingZone = true;
+                if (stageZone != currentStageZone) {
+                    // But, only fire the event if the user has changed zones.
+                    fireEvent(stageZone);
+                    currentStageZone = stageZone;
+                }
             }
         }
     }

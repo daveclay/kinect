@@ -37,7 +37,7 @@ public class PresentationServer extends WebSocketServer {
 
     @Override
     public void onOpen( WebSocket conn, ClientHandshake handshake ) {
-        this.sendToAll("new connection: " + handshake.getResourceDescriptor());
+        this.sendToAll("{connected: \"" + handshake.getResourceDescriptor() + "\"}");
         System.out.println( conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!" );
         Executors.newSingleThreadScheduledExecutor().schedule(ping, 5, TimeUnit.SECONDS);
     }
@@ -64,7 +64,7 @@ public class PresentationServer extends WebSocketServer {
     private Runnable ping = new Runnable() {
         @Override
         public void run() {
-            sendToAll("ping");
+            sendToAll("{ ping: true }");
         }
     };
 

@@ -1,5 +1,6 @@
 package com.daveclay.processing.kinect.api;
 
+import com.daveclay.processing.kinect.bodylocator.BodyLocator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,17 +11,20 @@ import java.util.Arrays;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StageTest {
 
-    private Stage stage = new Stage();
+    private Stage stage;
     private float front = 800;
     private float back = 2300;
     private float left = 600;
     private float right = -300;
     private float top = -80;
     private float bottom = -300;
+    private float centerX = (left + right) / 2;
+    private float centerZ = (front + back) / 2;
 
     private PVector frontLeftBottom = new PVector();
     private PVector frontRightBottom = new PVector();
@@ -31,6 +35,7 @@ public class StageTest {
 
     @Before
     public void setUp() {
+        stage = new Stage();
         stage.setupDefaultStageZones();
 
         // random space, somewhat like kinect numbers
@@ -40,6 +45,67 @@ public class StageTest {
         backRightTop.set(right + 50, top - 10, 2250);
 
         position = new PVector();
+    }
+
+    @Test
+    public void shouldUpdateWhichZoneTheUserIsIn() {
+        givenTheStageIsCalibrated();
+
+        BodyLocator.Listener listener = mock(BodyLocator.Listener.class);
+        stage.addListener(listener);
+
+        position.set(centerX + 100, top - 50, centerZ + 100);
+        stage.updatePosition(position);
+        verify(listener, times(1)).userDidEnteredZone(stage.getStageZoneById("Center"));
+        reset(listener);
+        stage.updatePosition(position);
+        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Center"));
+        reset(listener);
+        position.set(left - 50, top - 50, back - 50);
+        stage.updatePosition(position);
+        verify(listener, times(1)).userDidEnteredZone(stage.getStageZoneById("Left Back"));
+        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Center"));
+    }
+
+    @Test
+    public void shouldNotPingPongBetweenZones() {
+        givenTheStageIsCalibrated();
+
+        BodyLocator.Listener listener = mock(BodyLocator.Listener.class);
+        stage.addListener(listener);
+
+        position.set(centerX + 100, top - 50, centerZ + 100);
+        stage.updatePosition(position);
+        assertThat("Should be within center zone", stage.isWithinCenter(position), equalTo(true));
+        assertThat("Should be within left back zone", stage.isWithinLeftBack(position), equalTo(true));
+
+        verify(listener, times(1)).userDidEnteredZone(stage.getStageZoneById("Center"));
+        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Left Back"));
+
+        reset(listener);
+
+        stage.updatePosition(position);
+        assertThat("Should be within center zone", stage.isWithinCenter(position), equalTo(true));
+        assertThat("Should be within left back zone", stage.isWithinLeftBack(position), equalTo(true));
+
+        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Center"));
+        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Left Back"));
+    }
+
+    @Test
+    public void shouldBeInOnlyOneZone() {
+        givenTheStageIsCalibrated();
+
+        BodyLocator.Listener listener = mock(BodyLocator.Listener.class);
+        stage.addListener(listener);
+
+        position.set(centerX + 100, top - 50, centerZ + 100);
+        stage.updatePosition(position);
+        assertThat("Should be within center zone", stage.isWithinCenter(position), equalTo(true));
+        assertThat("Should be within left back zone", stage.isWithinLeftBack(position), equalTo(true));
+
+        verify(listener, times(1)).userDidEnteredZone(stage.getStageZoneById("Center"));
+        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Left Back"));
     }
 
     @Test
@@ -76,7 +142,7 @@ public class StageTest {
     @Test
     public void shouldBeWithinCenter() {
         givenTheStageIsCalibrated();
-        position.set(left + right, top - 50, (back + front) / 2);
+        position.set(left + right, top - 50, centerZ);
         assertThat(stage.isWithinCenter(position), equalTo(true));
     }
 

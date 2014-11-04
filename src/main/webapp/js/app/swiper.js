@@ -19,6 +19,7 @@ define(function (require) {
             };
             ws.onmessage = function(e) {
                 self.log("[WebSocket#onmessage] Message: '" + e.data + "'\n");
+                console.log(e);
             };
             ws.onclose = function() {
                 self.log("[WebSocket#onclose]\n");
