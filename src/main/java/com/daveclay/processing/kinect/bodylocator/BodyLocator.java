@@ -70,6 +70,9 @@ public class BodyLocator extends SingleUserTrackingSketch {
 
     List<PVector> drawingPoints = new ArrayList<PVector>();
     boolean drawing;
+    private long lastNotification;
+    private int drawGestureRecognized;
+
 
     public BodyLocator(User user, GestureDataStore gestureDataStore, Stage stage, LogSketch logSketch) {
         super(user);
@@ -136,14 +139,28 @@ public class BodyLocator extends SingleUserTrackingSketch {
             @Override
             public void gestureRecognized(RecognitionResult gesture) {
                 listener.gestureWasRecognized(gesture);
-                logSketch.logRounded("Gesture", gesture.name, gesture.score * 100d);
+                drawGestureRecognizedAlert(true, gesture, null);
             }
 
             @Override
             public void gestureWasNotRecognized(String message) {
+                drawGestureRecognizedAlert(false, null, message);
                 logSketch.log("Gesture", message);
             }
         });
+    }
+
+    private void drawGestureRecognizedAlert(boolean recognized, RecognitionResult gesture, String message) {
+        if (recognized || drawGestureRecognized != 1 || System.currentTimeMillis() - lastNotification > 1000) {
+            drawGestureRecognized = recognized ? 1 : 2;
+            lastNotification = System.currentTimeMillis();
+
+            if (gesture != null) {
+                logSketch.logRounded("Gesture", gesture.name, gesture.score * 100d);
+            } else {
+                logSketch.log("Gesture", message);
+            }
+        }
     }
 
     @Override
@@ -157,6 +174,20 @@ public class BodyLocator extends SingleUserTrackingSketch {
         if (user.isCurrentlyTracking()) {
             gestureRecorder.addPoint(user.leftHand.position);
             drawLineBetweenHands();
+        }
+
+        if (drawGestureRecognized > 0) {
+            if (System.currentTimeMillis() - lastNotification > 1000) {
+                drawGestureRecognized = 0;
+            } else {
+                if (drawGestureRecognized == 1) {
+                    fill(0, 255, 0, 100);
+                    rect(0, 0, getWidth(), getHeight());
+                } else {
+                    fill(255, 0, 0, 100);
+                    rect(0, 0, getWidth(), getHeight());
+                }
+            }
         }
     }
 
