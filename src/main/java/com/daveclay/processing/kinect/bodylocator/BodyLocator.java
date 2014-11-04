@@ -65,8 +65,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
     HandBox leftHandBox;
     HandBox rightHandBox;
     Stage stage;
-    GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
-    GestureRecorder gestureRecorder = new GestureRecorder(geometricRecognizer);
+    AggregateGestureRecognizer gestureRecognizer = new AggregateGestureRecognizer();
+    GestureRecorder gestureRecorder = new GestureRecorder(gestureRecognizer);
 
     List<PVector> drawingPoints = new ArrayList<PVector>();
     boolean drawing;
@@ -74,10 +74,15 @@ public class BodyLocator extends SingleUserTrackingSketch {
     public BodyLocator(User user, GestureDataStore gestureDataStore, Stage stage, LogSketch logSketch) {
         super(user);
 
+        GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
         geometricRecognizer.addTemplate("Circle", gestureDataStore.getPointsByName("Circle"));
-        geometricRecognizer.addTemplate("LeftToRightLine", gestureDataStore.getPointsByName("LeftToRightLine2"));
-        geometricRecognizer.addTemplate("RightToLeftLine", gestureDataStore.getPointsByName("RightToLeftLine2"));
-        //geometricRecognizer.addTemplate("Slash", gestureData.getPointsByName("RightToLeftSlashDown"));
+
+        LineGestureRecognizer lineGestureRecognizer = new LineGestureRecognizer();
+        lineGestureRecognizer.addRecognizerAlgorithm("LeftToRightLine", LineGestureRecognizer.LEFT_TO_RIGHT_LINE_RECOGNIZER);
+        lineGestureRecognizer.addRecognizerAlgorithm("RightToLeftLine", LineGestureRecognizer.RIGHT_TO_LEFT_LINE_RECOGNIZER);
+
+        gestureRecognizer.addRecognizer(geometricRecognizer);
+        gestureRecognizer.addRecognizer(lineGestureRecognizer);
 
         this.stage = stage;
         stage.setupDefaultStageZones();
@@ -132,6 +137,11 @@ public class BodyLocator extends SingleUserTrackingSketch {
             public void gestureRecognized(RecognitionResult gesture) {
                 listener.gestureWasRecognized(gesture);
                 logSketch.logRounded("Gesture", gesture.name, gesture.score * 100d);
+            }
+
+            @Override
+            public void gestureWasNotRecognized(String message) {
+                logSketch.log("Gesture", message);
             }
         });
     }

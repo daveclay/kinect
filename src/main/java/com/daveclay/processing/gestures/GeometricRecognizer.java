@@ -18,7 +18,7 @@ import static com.daveclay.processing.gestures.utils.Rotate.*;
  * For a list of gesture diagrams:
  * https://depts.washington.edu/aimgroup/proj/dollar/
  */
-public class GeometricRecognizer {
+public class GeometricRecognizer implements GestureRecognizer {
 
     public static void main(String[] args) {
         GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR);

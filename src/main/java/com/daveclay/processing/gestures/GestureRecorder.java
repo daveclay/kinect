@@ -7,15 +7,15 @@ import java.util.List;
 
 public class GestureRecorder {
 
-    private GeometricRecognizer recognizer = new GeometricRecognizer();
+    private final GestureRecognizer recognizer;
     private boolean recording = false;
     private List<Point2D> points = new ArrayList<Point2D>();
     private GestureRecognizedHandler gestureRecognizedHandler;
     private int gesturePointCountThreshold = 50;
     private int testNumber;
 
-    public GestureRecorder(GeometricRecognizer geometricRecognizer) {
-        this.recognizer = geometricRecognizer;
+    public GestureRecorder(GestureRecognizer gestureRecognizer) {
+        this.recognizer = gestureRecognizer;
     }
 
     public void addPoint(PVector position) {
@@ -34,10 +34,14 @@ public class GestureRecorder {
 
     public void stopRecording() {
         recording = false;
-        if (gestureRecognizedHandler != null && points.size() > this.gesturePointCountThreshold) {
-            dumpPoints(points);
-            RecognitionResult result = recognizer.recognize(points);
-            gestureRecognizedHandler.gestureRecognized(result);
+        if (gestureRecognizedHandler != null) {
+            if (points.size() > this.gesturePointCountThreshold) {
+                dumpPoints(points);
+                RecognitionResult result = recognizer.recognize(points);
+                gestureRecognizedHandler.gestureRecognized(result);
+            } else {
+                gestureRecognizedHandler.gestureWasNotRecognized("Not Enough Data Points");
+            }
         }
         points.clear();
     }

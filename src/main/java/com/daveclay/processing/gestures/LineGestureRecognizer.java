@@ -4,13 +4,17 @@ import com.daveclay.processing.gestures.utils.BoundingBox;
 import com.daveclay.processing.gestures.utils.Centroid;
 import com.daveclay.processing.gestures.utils.Score;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.daveclay.processing.gestures.utils.Distance.findDistance;
 
-public class SimpleGestureRecognizer {
+public class LineGestureRecognizer implements GestureRecognizer {
+
+    public static LeftToRightLineRecognizer LEFT_TO_RIGHT_LINE_RECOGNIZER = new LeftToRightLineRecognizer();
+    public static RightToLeftLineRecognizer RIGHT_TO_LEFT_LINE_RECOGNIZER = new RightToLeftLineRecognizer();
 
     private Map<String, RecognizerAlgorithm> recognizerAlgorithmsByName = new HashMap<String, RecognizerAlgorithm>();
 

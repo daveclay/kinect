@@ -14,17 +14,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SimpleGestureRecognizerTest {
+public class LineGestureRecognizerTest {
 
-    SimpleGestureRecognizer recognizer;
+    LineGestureRecognizer recognizer;
     GestureDataStore actualGestureData;
     GestureDataStore recordedGestureData;
     GestureDataStore templateGestureData;
 
     @Before
     public void setUp() {
-        recognizer = new SimpleGestureRecognizer();
-        recognizer.addRecognizerAlgorithm("Line", new SimpleGestureRecognizer.LeftToRightLineRecognizer());
+        recognizer = new LineGestureRecognizer();
+        recognizer.addRecognizerAlgorithm("Line", new LineGestureRecognizer.LeftToRightLineRecognizer());
 
 
         templateGestureData = new GestureDataStore(GestureDataStore.GESTURE_DIR);
