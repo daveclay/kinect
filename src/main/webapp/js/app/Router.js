@@ -82,10 +82,7 @@ define(function(require) {
 
             var path = routeConfig.path;
             var name = routeConfig.name || routeConfig.path;
-            var controller = routeConfig.controller;
             var view = routeConfig.view;
-            var authRequired = routeConfig.authRequired || false;
-            var redirectTo = routeConfig.redirectTo;
 
             var callback = function() {
                 // add the view as the first argument to the controller
@@ -93,7 +90,6 @@ define(function(require) {
 
                 var requestParams = self._parseNameValueRequestParams(args);
 
-                // Call the controller run() method with the view and any arguments
                 var data = routeConfig.link.data;
                 var param = {
                     data: data,
@@ -101,20 +97,13 @@ define(function(require) {
                     requestParameters: requestParams
                 };
 
-                console.log("Calling controller for " + path + " with ", param);
-                controller.run.call(controller, param);
-
-                if (redirectTo) {
-                    self.navigate(redirectTo, { trigger: true });
-                } else {
-                    self._hideOtherViews(view);
-                    // notify the view that is to be rendered.
-                    view.render();
-                }
+                self._hideOtherViews(view);
+                // notify the view that is to be rendered.
+                view.render(param);
             };
 
             // invoke the Backbone route() method to register the function that calls
-            // the controller and page change.
+            // the page change.
             this.route(path, name, callback);
 
             if (view) {

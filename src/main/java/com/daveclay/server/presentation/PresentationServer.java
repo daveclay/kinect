@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
@@ -35,8 +37,9 @@ public class PresentationServer extends WebSocketServer {
 
     @Override
     public void onOpen( WebSocket conn, ClientHandshake handshake ) {
-        this.sendToAll( "new connection: " + handshake.getResourceDescriptor() );
+        this.sendToAll("new connection: " + handshake.getResourceDescriptor());
         System.out.println( conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!" );
+        Executors.newSingleThreadScheduledExecutor().schedule(ping, 5, TimeUnit.SECONDS);
     }
 
     @Override
@@ -57,6 +60,13 @@ public class PresentationServer extends WebSocketServer {
             // some errors like port binding failed may not be assignable to a specific websocket
         }
     }
+
+    private Runnable ping = new Runnable() {
+        @Override
+        public void run() {
+            sendToAll("ping");
+        }
+    };
 
     /**
      * Sends <var>text</var> to all currently connected WebSocket clients.
