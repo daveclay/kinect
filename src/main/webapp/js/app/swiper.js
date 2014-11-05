@@ -17,9 +17,18 @@ define(function (require) {
             ws.onopen = function() {
                 self.log("[WebSocket#onopen]\n");
             };
-            ws.onmessage = function(e) {
-                self.log("[WebSocket#onmessage] Message: '" + e.data + "'\n");
-                console.log(e);
+            ws.onmessage = function(event) {
+                var data = JSON.parse(event.data);
+                self.log("[WebSocket#onmessage] Message: '" + data + "'\n");
+                // { type: 'userGestureRecognized', data: { name: '" + gesture.name + "', score: " + gesture.score + " }}
+                // { type: 'userDidEnterZone', data: { zone: '" + stageZone.getID() + "'}}
+                if (data.type === 'userGestureRecognized') {
+                    if (data.name === 'LeftToRightLine') {
+                        self.horizontalSwiper.swipeNext();
+                    } else if (data.name === 'RightToLeftLine') {
+                        self.horizontalSwiper.swipePrev();
+                    }
+                }
             };
             ws.onclose = function() {
                 self.log("[WebSocket#onclose]\n");
@@ -28,7 +37,6 @@ define(function (require) {
         },
 
         buildSlider: function(element, mode) {
-            var self = this;
             var swiper = element.swiper({
                 watchActiveIndex: true,
                 mode: mode,
@@ -50,6 +58,8 @@ define(function (require) {
             $(window).resize(function() {
                 swiper.resizeFix(true);
             });
+
+            return swiper;
         },
 
         log: function(message) {
@@ -61,7 +71,7 @@ define(function (require) {
             var self = this;
 
             var swiper = $('body').find(".horizontal-swiper");
-            self.buildSlider($(swiper), 'horizontal');
+            self.horizontalSwiper = self.buildSlider($(swiper), 'horizontal');
 
             var swipers = $('body').find(".vertical-swiper");
             _.each(swipers, function(element) {
