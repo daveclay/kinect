@@ -83,6 +83,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
         LineGestureRecognizer lineGestureRecognizer = new LineGestureRecognizer();
         lineGestureRecognizer.addRecognizerAlgorithm("LeftToRightLine", LineGestureRecognizer.LEFT_TO_RIGHT_LINE_RECOGNIZER);
         lineGestureRecognizer.addRecognizerAlgorithm("RightToLeftLine", LineGestureRecognizer.RIGHT_TO_LEFT_LINE_RECOGNIZER);
+        lineGestureRecognizer.addRecognizerAlgorithm("BottomToTopLine", LineGestureRecognizer.BOTTOM_TO_TOP_LINE_RECOGNIZER);
+        lineGestureRecognizer.addRecognizerAlgorithm("TopToBottomLine", LineGestureRecognizer.TOP_TO_BOTTOM_LINE_RECOGNIZER);
 
         gestureRecognizer.addRecognizer(geometricRecognizer);
         gestureRecognizer.addRecognizer(lineGestureRecognizer);

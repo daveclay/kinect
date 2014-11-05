@@ -1,5 +1,6 @@
 package com.daveclay.processing.gestures;
 
+import com.daveclay.processing.gestures.utils.Rotate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +36,18 @@ public class LineGestureRecognizerTest {
 
         recordedGestureData = new GestureDataStore(GestureDataStore.GESTURE_DIR + "../recorded/");
         recordedGestureData.load();
+    }
+
+    @Test
+    public void shouldMatchVerticalLine() {
+        recognizer.addRecognizerAlgorithm("BottomToTopLine", LineGestureRecognizer.BOTTOM_TO_TOP_LINE_RECOGNIZER);
+
+        GestureData gestureData = actualGestureData.getGestureByName("LeftToRightActualGesture");
+        List<Point2D> rotated = Rotate.rotateBy(gestureData.getPoints(), 90);
+
+        RecognitionResult result = recognizer.recognize(rotated);
+        logMatch(gestureData, result);
+        assertThat(result.name, equalTo("BottomToTopLine"));
     }
 
     @Test
