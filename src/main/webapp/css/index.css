@@ -11,8 +11,15 @@ html, body {
 }
 
 .swiper-slide {
+}
+
+.slide-content {
     height: 100%;
     width: 100%;
+    text-align: center;
+    position: relative;
+    top: 45%;
+    font-size: 32px;
 }
 
 .swiper-wrapper {
@@ -24,6 +31,7 @@ html, body {
 }
 .column1 .slide2 {
     background-color: #7B3A8D;
+    color: white;
 }
 .column1 .slide3 {
     background-color: #501760;

@@ -29,11 +29,11 @@ public class PresentationWebSocketListener implements BodyLocator.Listener {
 
     @Override
     public void gestureWasRecognized(RecognitionResult gesture) {
-        presentationServer.sendToAll("{ type: 'userGestureRecognized', data: { name: '" + gesture.name + "', score: " + gesture.score + " }}");
+        presentationServer.sendToAll("{\"type\": \"userGestureRecognized\", \"data\": { \"name\": \"" + gesture.name + "\", \"score\": " + gesture.score + " }}");
     }
 
     @Override
     public void userDidEnteredZone(Stage.StageZone stageZone) {
-        presentationServer.sendToAll("{ type: 'userDidEnterZone', data: { zone: '" + stageZone.getID() + "'}}");
+        presentationServer.sendToAll("{\"type\": \"userDidEnterZone\", \"data\": { \"zone\": \"" + stageZone.getID() + "\" }}");
     }
 }

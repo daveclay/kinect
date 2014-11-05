@@ -24,13 +24,13 @@ public class ExampleWebSockerServer extends WebSocketServer {
 
     @Override
     public void onOpen( WebSocket conn, ClientHandshake handshake ) {
-        this.sendToAll( "{type: 'clientDidConnect', message: 'new connection: " + handshake.getResourceDescriptor() + "'}");
+        this.sendToAll( "{\"type\": \"clientDidConnect\", \"message\": \"new connection: " + handshake.getResourceDescriptor() + "\"}");
         System.out.println( conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!" );
     }
 
     @Override
     public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
-        this.sendToAll( "{type: 'clientDidDisconnect', message: '" + conn + " has left the room!'}" );
+        this.sendToAll( "{\"type\": \"clientDidDisconnect\", message: \"" + conn + " has left the room!\"}" );
         System.out.println( conn + " has left the room!" );
     }
 

@@ -18,21 +18,41 @@ define(function (require) {
                 self.log("[WebSocket#onopen]\n");
             };
             ws.onmessage = function(event) {
-                var data = JSON.parse(event.data);
-                self.log("[WebSocket#onmessage] Message: '" + data + "'\n");
+                var payload = JSON.parse(event.data);
+                self.log("[WebSocket#onmessage] Message: '" + payload + "'\n");
                 // { type: 'userGestureRecognized', data: { name: '" + gesture.name + "', score: " + gesture.score + " }}
                 // { type: 'userDidEnterZone', data: { zone: '" + stageZone.getID() + "'}}
-                if (data.type === 'userGestureRecognized') {
-                    if (data.name === 'LeftToRightLine') {
-                        self.horizontalSwiper.swipeNext();
-                    } else if (data.name === 'RightToLeftLine') {
-                        self.horizontalSwiper.swipePrev();
-                    }
+                if (payload.type === 'userGestureRecognized') {
+                    self.listeners[payload.data.name]();
                 }
             };
             ws.onclose = function() {
                 self.log("[WebSocket#onclose]\n");
                 ws = null;
+            };
+        },
+
+        _registerGestureListeners: function() {
+            var self = this;
+
+            self.listeners = [];
+
+            self.listeners["LeftToRightLine"] = function() {
+                self.horizontalSwiper.swipePrev();
+            };
+
+            self.listeners["RightToLeftLine"] = function() {
+                self.horizontalSwiper.swipeNext();
+            };
+
+            self.listeners["TopToBottomLine"] = function() {
+                var slideIndex = self.horizontalSwiper.activeIndex;
+                self.verticalsSwipers[slideIndex].swipeNext();
+            };
+
+            self.listeners["BottomToTopLine"] = function() {
+                var slideIndex = self.horizontalSwiper.activeIndex;
+                self.verticalsSwipers[slideIndex].swipePrev();
             };
         },
 
@@ -63,22 +83,28 @@ define(function (require) {
         },
 
         log: function(message) {
-            var existing = $('#log').find('textarea')[0].innerHTML;
-            $('#log').find('textarea')[0].innerHTML = new Date() + ": " + message + existing;
+            var existing = this.textarea.innerHTML;
+            this.textarea.innerHTML = new Date() + ": " + message + existing;
         },
 
         initialize: function() {
             var self = this;
+            var body = $('body');
 
-            var swiper = $('body').find(".horizontal-swiper");
-            self.horizontalSwiper = self.buildSlider($(swiper), 'horizontal');
+            self.textarea = $('#log').find('textarea')[0];
 
-            var swipers = $('body').find(".vertical-swiper");
-            _.each(swipers, function(element) {
-                self.buildSlider($(element), 'vertical');
+            var swiperElement = body.find(".horizontal-swiper");
+            self.horizontalSwiper = self.buildSlider($(swiperElement), 'horizontal');
+
+            self.verticalsSwipers = [];
+
+            var verticalSwiperElements = body.find(".vertical-swiper");
+            _.each(verticalSwiperElements, function(element, index) {
+                var verticalSwiper = self.buildSlider($(element), 'vertical');
+                self.verticalsSwipers.push(verticalSwiper);
             });
 
-            this.log("Hi!");
+            self._registerGestureListeners();
         }
     });
 
