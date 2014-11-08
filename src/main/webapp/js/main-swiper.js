@@ -1,10 +1,16 @@
 try {
     console.log("App.Initializing");
 
+    var onJQueryInit = function($) {
+        $(document).bind("mobileinit", function () {
+            $.event.special.swipe.scrollSupressionThreshold = 100;
+        });
+    };
+
     var initializeAppComponents = function($) {
         require([
             "app/Router",
-            "app/Grid"
+            "app/swiper"
         ], function(Router) {
             var router = Router.createRouter();
             console.log("app initialized");
@@ -45,6 +51,8 @@ try {
         ], function($) {
 
         console.log("jquery initialized");
+        onJQueryInit($);
+
         initializeAppComponents($);
     } );
 

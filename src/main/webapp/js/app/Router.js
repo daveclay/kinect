@@ -35,7 +35,9 @@ define(function(require) {
                     otherView.$el.hide();
                 }
             });
-            view.$el.show();
+            if (view.$el.show) {
+                view.$el.show();
+            }
         },
 
         _isRequestParamString: function(param) {
