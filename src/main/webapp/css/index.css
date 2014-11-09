@@ -69,13 +69,13 @@ html, body {
 }
 
 #background .center {
-    font-size: 72em;
+    font-size: 52em;
     font-family: Impact;
     width: 100%;
     height: 100%;
-    margin-left: auto;
-    margin-right: auto;
+    margin-top: 15%;
     position: relative;
+    -webkit-filter: blur(2px);
 }
 
 #stage {

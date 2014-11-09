@@ -85,7 +85,7 @@ define(function (require) {
 
             var slideX = -100 * this.slideLocation.column;
             var slideY = -100 * this.slideLocation.row;
-            var backgroundX = -68 * this.slideLocation.column;
+            var backgroundX = -35 * this.slideLocation.column;
             var backgroundY = -30 * this.slideLocation.row;
 
             this.backgroundElement.style.transform = "translate3d(" + backgroundX + "%, " + backgroundY + "%, 0)";
