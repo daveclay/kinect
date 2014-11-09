@@ -8,6 +8,8 @@ html, body {
 #logo {
     font-size: 32px;
     display: inline-block;
+    padding-top: 10px;
+    padding-left: 10px;
 }
 
 .header-title {
@@ -104,7 +106,7 @@ html, body {
 
 #slide2 {
     background-color: #40403A;
-    color: #E9CFC5;
+    color: #D4CFC5;
     transform: translate3d(100%, 0, 0);
 }
 

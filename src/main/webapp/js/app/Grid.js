@@ -67,8 +67,12 @@ define(function (require) {
             if ( ! this._isCurrentLocation(newLocation)) {
                 var slideLeaving = this._getSlideAtLocation();
                 slideLeaving.slideElement.style.opacity = 0;
+                slideLeaving.titleElement.style.transform = "translate3d(50%, 0, 0)";
                 slideLeaving.titleElement.style.opacity = 0;
                 this.slideLocation = newLocation;
+                setTimeout(function() {
+                    slideLeaving.titleElement.style.transform = "translate3d(0, 0 , 0)";
+                }, 500);
             }
 
             var x = -100 * this.slideLocation.column;
