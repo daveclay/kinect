@@ -6,6 +6,17 @@ define(function (require) {
     var mvc = require("app/mvc");
     var GestureAwareView = require("app/GestureAwareView");
 
+    HTMLElement.prototype.findChildWithClass = function(className) {
+        return _.find(this.childNodes, function(childElement) {
+            if (childElement.nodeType == 1) {
+                var classes = childElement.getAttribute("class").split(" ");
+                return _.contains(classes, className);
+            } else {
+                return false;
+            }
+        });
+    };
+
     var keys = {
         left: 37,
         right: 39,
@@ -55,22 +66,25 @@ define(function (require) {
         _moveToNewLocation: function(newLocation) {
             if ( ! this._isCurrentLocation(newLocation)) {
                 var slideLeaving = this._getSlideAtLocation();
-                slideLeaving.style.opacity = 0;
+                slideLeaving.slideElement.style.opacity = 0;
+                slideLeaving.titleElement.style.opacity = 0;
                 this.slideLocation = newLocation;
             }
 
             var x = -100 * this.slideLocation.column;
             var y = -100 * this.slideLocation.row;
 
-            var colorIndex = ((this.slides[this.slideLocation.row].length * this.slideLocation.row) + this.slideLocation.column);
-            var color = this.slideData[colorIndex];
-
-            this.stage.style.backgroundColor = color.backgroundColor;
-            this.header.style.backgroundColor = color.headerColor;
-
             var slideEntering = this._getSlideAtLocation();
-            slideEntering.style.opacity = 1;
-            slideEntering.style.color = color.color;
+            var slideElement = slideEntering.slideElement;
+            var titleElement = slideEntering.titleElement;
+
+            this.stage.style.backgroundColor = slideEntering.slideStyle.backgroundColor;
+            this.header.style.backgroundColor = slideEntering.headerStyle.backgroundColor;
+            this.header.style.color = slideEntering.headerStyle.color;
+            slideElement.style.opacity = 1;
+            slideElement.style.color = slideEntering.slideStyle.color;
+            titleElement.style.color = slideEntering.headerStyle.color;
+            titleElement.style.opacity = 1;
 
             this.slideContainer.style.transform = "translate3d(" + x + "%, " + y + "%, 0)";
         },
@@ -132,55 +146,8 @@ define(function (require) {
             GestureAwareView.prototype.constructor.apply(this, params);
             this.stage = document.getElementById("stage");
             this.header = document.getElementById("header");
+            this.titleContainer = document.getElementById("title-container");
             this.slideContainer = document.getElementById("slide-container");
-
-            this.slideData = [
-                {
-                    backgroundColor: "#CEDAD0",
-                    headerColor: "#93c900",
-                    color: "#000000"
-                },
-                {
-                    backgroundColor: "#40403A",
-                    headerColor: "#EFFE00",
-                    color: "#E9CFC5"
-                },
-                {
-                    backgroundColor: "#39353C",
-                    headerColor: "#B7EF00",
-                    color: "#FFFFFF"
-                },
-                {
-                    backgroundColor: "#B1AD9C",
-                    headerColor: "#2F058B",
-                    color: "#120E1C"
-                },
-                {
-                    backgroundColor: "#9B998F",
-                    headerColor: "#0F078E",
-                    color: "#120E1C"
-                },
-                {
-                    backgroundColor: "#858173",
-                    headerColor: "#3F048A",
-                    color: "#120E1C"
-                },
-                {
-                    backgroundColor: "#C1C696",
-                    headerColor: "#9EB007",
-                    color: "#64674A"
-                },
-                {
-                    backgroundColor: "#9CB496",
-                    headerColor: "#2C6974",
-                    color: "#333333"
-                },
-                {
-                    backgroundColor: "#69524C",
-                    color: "#ffffff",
-                    headerColor: "#B42E07"
-                }
-            ];
 
             this.rows = 3;
             this.columns = 3;
@@ -190,9 +157,30 @@ define(function (require) {
                 this.slides[row] = [];
                 for (var column = 0; column < this.columns; column++) {
                     var slideElement = document.getElementById("slide" + count);
+                    var slideHeaderElement = slideElement.findChildWithClass("header-title");
+
+                    var slideStyle = window.getComputedStyle(slideElement);
+                    var headerStyle = window.getComputedStyle(slideHeaderElement);
+
+                    this.slides[row][column] = {
+                        slideStyle: {
+                            backgroundColor: slideStyle.backgroundColor
+                        },
+                        headerStyle: {
+                            backgroundColor: headerStyle.backgroundColor,
+                            color: headerStyle.color
+                        },
+                        slideElement: slideElement,
+                        titleElement: slideHeaderElement
+                    };
+
+                    slideElement.style.background = "none";
                     slideElement.style.width = window.innerWidth + "px";
                     slideElement.style.height = window.innerHeight + "px";
-                    this.slides[row][column] = slideElement;
+                    slideHeaderElement.style.backgroundColor = "none";
+                    slideHeaderElement.style.opacity = 0;
+
+                    this.titleContainer.appendChild(slideHeaderElement);
                     count++;
                 }
             }
