@@ -11,7 +11,7 @@ public class GestureRecorder {
     private boolean recording = false;
     private List<Point2D> points = new ArrayList<Point2D>();
     private GestureRecognizedHandler gestureRecognizedHandler;
-    private int gesturePointCountThreshold = 30;
+    private int gesturePointCountThreshold = 10;
     private int testNumber;
 
     public GestureRecorder(GestureRecognizer gestureRecognizer) {
@@ -36,7 +36,7 @@ public class GestureRecorder {
         recording = false;
         if (gestureRecognizedHandler != null) {
             if (points.size() > this.gesturePointCountThreshold) {
-                dumpPoints(points);
+                // dumpPoints(points);
                 RecognitionResult result = recognizer.recognize(points);
                 gestureRecognizedHandler.gestureRecognized(result);
             } else {

@@ -5,7 +5,7 @@ try {
         require([
             "app/Router",
             "app/Grid"
-        ], function(Router) {
+        ], function(Router, Grid) {
             var router = Router.createRouter();
             console.log("app initialized");
         });
@@ -15,7 +15,6 @@ try {
         baseUrl: 'js',
         paths: {
             jquery: 'vendor/jquery-2.1.1.min',
-            fastclick: "vendor/fastclick",
             backbone: "vendor/backbone",
             iscroll: "vendor/iscroll-zoom",
             underscore: "vendor/underscore",
@@ -40,8 +39,7 @@ try {
     });
 
     require([
-        "jquery",
-        "fastclick"
+        "jquery"
         ], function($) {
 
         console.log("jquery initialized");

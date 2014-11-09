@@ -8,29 +8,38 @@
               content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi"/>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-        <link rel="stylesheet" type="text/css" href="css/index.css"/>
         <link rel="stylesheet" type="text/css" href="css/normalize.css"/>
+        <link rel="stylesheet" type="text/css" href="css/index.css"/>
+        <link rel="stylesheet" type="text/css" href="css/colors.css"/>
     </head>
     <body>
 
-        <div id="stage">
-            <div id="slide-container">
-                <div class="slide" id="slide1"><div class="slide-content">Welcome. This is Slide #1.</div></div>
-                <div class="slide" id="slide2"><div class="slide-content">Slide #2</div></div>
-                <div class="slide" id="slide3"><div class="slide-content">Slide #3</div></div>
-                <div class="slide" id="slide4"><div class="slide-content">Slide #4.</div></div>
-                <div class="slide" id="slide5"><div class="slide-content">Slide #5</div></div>
-                <div class="slide" id="slide6"><div class="slide-content">Slide #6</div></div>
-                <div class="slide" id="slide7"><div class="slide-content">Slide #7</div></div>
-                <div class="slide" id="slide8"><div class="slide-content">Slide #8</div></div>
-                <div class="slide" id="slide9"><div class="slide-content">Slide #9</div></div>
-            </div>
-        </div>
+    <div id="background"></div>
 
-        <div id="log">
-            <textarea id="log-data"></textarea>
+    <div id="stage">
+        <div id="slide-container">
+            <div class="slide" id="slide1"><div class="slide-content">Welcome.</div></div>
+            <div class="slide" id="slide2"><div class="slide-content">Slide #2</div></div>
+            <div class="slide" id="slide3"><div class="slide-content">Slide #3</div></div>
+            <div class="slide" id="slide4"><div class="slide-content">Slide #4.</div></div>
+            <div class="slide" id="slide5"><div class="slide-content">Slide #5</div></div>
+            <div class="slide" id="slide6"><div class="slide-content">Slide #6</div></div>
+            <div class="slide" id="slide7"><div class="slide-content">Slide #7</div></div>
+            <div class="slide" id="slide8"><div class="slide-content">Slide #8</div></div>
+            <div class="slide" id="slide9"><div class="slide-content">Slide #9</div></div>
         </div>
+    </div>
 
-        <script data-main="js/main" src="js/vendor/require.js"></script>
+    <div id="header">
+        <div id="logo">
+            Graffix.
+        </div>
+    </div>
+
+    <div id="log">
+        <textarea id="log-data"></textarea>
+    </div>
+
+    <script data-main="js/main" src="js/vendor/require.js"></script>
     </body>
 </html>

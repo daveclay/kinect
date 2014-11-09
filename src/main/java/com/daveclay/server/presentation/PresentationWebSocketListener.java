@@ -8,6 +8,7 @@ import org.java_websocket.WebSocket;
 
 public class PresentationWebSocketListener implements BodyLocator.Listener {
 
+    public static final String GESTURE_RECOGNIZED_TEMPLATE = "{\"type\": \"userGestureRecognized\", \"data\": { \"name\": \"%s\", \"score\": %.2f }}";
     private final PresentationServer presentationServer;
 
     public PresentationWebSocketListener(final PresentationServer presentationServer,
@@ -29,7 +30,7 @@ public class PresentationWebSocketListener implements BodyLocator.Listener {
 
     @Override
     public void gestureWasRecognized(RecognitionResult gesture) {
-        presentationServer.sendToAll("{\"type\": \"userGestureRecognized\", \"data\": { \"name\": \"" + gesture.name + "\", \"score\": " + gesture.score + " }}");
+        presentationServer.sendToAll(String.format(GESTURE_RECOGNIZED_TEMPLATE, gesture.name, gesture.score));
     }
 
     @Override

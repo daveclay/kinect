@@ -3,15 +3,22 @@ define(function (require) {
     var $ = require("jquery");
     var Backbone = require("backbone");
     var _ = require("underscore");
+    var LogView = require("app/LogView");
 
     var GestureAwareView = Backbone.View.extend({
+
         constructor: function(params) {
             Backbone.View.apply(this, params);
             this.listeners = [];
+            this.logView = new LogView();
         },
 
         on: function(gesture, callback) {
             this.listeners[gesture] = callback;
+        },
+
+        log: function(msg) {
+            this.logView.log(msg);
         },
 
         connect: function(uri) {
@@ -27,7 +34,10 @@ define(function (require) {
                 // { type: 'userGestureRecognized', data: { name: '" + gesture.name + "', score: " + gesture.score + " }}
                 // { type: 'userDidEnterZone', data: { zone: '" + stageZone.getID() + "'}}
                 if (payload.type === 'userGestureRecognized') {
-                    self.listeners[payload.data.name]();
+                    var listener = self.listeners[payload.data.name];
+                    if (listener) {
+                        listener(payload.data);
+                    }
                 }
             };
             ws.onclose = function() {

@@ -10,7 +10,6 @@ define(function (require) {
         el: $('#log'),
 
         render: function(params) {
-            this.textarea = document.getElementById("log-data");
         },
 
         log: function(message) {
@@ -19,6 +18,7 @@ define(function (require) {
         },
 
         initialize: function() {
+            this.textarea = document.getElementById("log-data");
         }
     });
 
