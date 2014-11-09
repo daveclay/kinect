@@ -18,6 +18,8 @@ define(function (require) {
     };
 
     var keys = {
+        z: 90,
+        h: 72,
         left: 37,
         right: 39,
         up: 38,
@@ -32,7 +34,16 @@ define(function (require) {
         _registerKeyListeners: function() {
             var self = this;
             document.onkeydown = function(event) {
+                self.log(event.keyCode + "\n");
                 switch (event.keyCode) {
+                    case keys.z:
+                        event.preventDefault();
+                        self.zoom();
+                        break;
+                    case keys.h:
+                        event.preventDefault();
+                        self.navigateHome();
+                        break;
                     case keys.left:
                         event.preventDefault();
                         self.navigateLeft();
@@ -67,16 +78,17 @@ define(function (require) {
             if ( ! this._isCurrentLocation(newLocation)) {
                 var slideLeaving = this._getSlideAtLocation();
                 slideLeaving.slideElement.style.opacity = 0;
-                slideLeaving.titleElement.style.transform = "translate3d(50%, 0, 0)";
+                // slideLeaving.titleElement.style.transform = "translate3d(50%, 0, 0)";
                 slideLeaving.titleElement.style.opacity = 0;
                 this.slideLocation = newLocation;
-                setTimeout(function() {
-                    slideLeaving.titleElement.style.transform = "translate3d(0, 0 , 0)";
-                }, 500);
             }
 
-            var x = -100 * this.slideLocation.column;
-            var y = -100 * this.slideLocation.row;
+            var slideX = -100 * this.slideLocation.column;
+            var slideY = -100 * this.slideLocation.row;
+            var backgroundX = -68 * this.slideLocation.column;
+            var backgroundY = -30 * this.slideLocation.row;
+
+            this.backgroundElement.style.transform = "translate3d(" + backgroundX + "%, " + backgroundY + "%, 0)";
 
             var slideEntering = this._getSlideAtLocation();
             var slideElement = slideEntering.slideElement;
@@ -90,7 +102,7 @@ define(function (require) {
             titleElement.style.color = slideEntering.headerStyle.color;
             titleElement.style.opacity = 1;
 
-            this.slideContainer.style.transform = "translate3d(" + x + "%, " + y + "%, 0)";
+            this.slideContainer.style.transform = "translate3d(" + slideX + "%, " + slideY + "%, 0)";
         },
 
         _registerGestureListeners: function() {
@@ -139,6 +151,9 @@ define(function (require) {
                 });
             };
 
+            this.zoom = function() {
+            };
+
             this.on("LeftToRightLine", this.navigateLeft);
             this.on("RightToLeftLine", this.navigateRight);
             this.on("TopToBottomLine", this.navigateUp);
@@ -148,8 +163,10 @@ define(function (require) {
 
         constructor: function(params) {
             GestureAwareView.prototype.constructor.apply(this, params);
+            this.body = document.getElementsByTagName("body")[0];
             this.stage = document.getElementById("stage");
             this.header = document.getElementById("header");
+            this.backgroundElement = document.getElementById("background");
             this.titleContainer = document.getElementById("title-container");
             this.slideContainer = document.getElementById("slide-container");
 
