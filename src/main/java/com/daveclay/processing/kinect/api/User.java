@@ -20,11 +20,11 @@ public class User {
     public Joint torso;
     public Joint leftShoulder;
     public Joint leftElbow;
-    public Joint leftHand;
+    public Joint rightHand;
     public Joint leftFingertip;
     public Joint rightShoulder;
     public Joint rightElbow;
-    public Joint rightHand;
+    public Joint leftHand;
     public Joint rightFingertip;
     public Joint leftHip;
     public Joint leftKnee;
@@ -36,7 +36,19 @@ public class User {
     private List<Joint> joints;
 
     /**
-     * Kinda required, but isn't available at construction time.
+     * Kinda very much required, but isn't available at construction time.
+     *
+     * Note that left and right are reversed: SimpleOpenNI's constants are
+     * based on the mirrored image of the data. Since most of what I use
+     * this for is gestures, and I reference those gestures back to the
+     * user, I reverse them back so that "left to right" is correct in
+     * the real world.
+     *
+     * If we're using this to render a character in the virtual world,
+     * in the character's virtual world these would have to be reversed.
+     * The character's left and right are mirrored. But, you'd have to
+     * reverse left and right if you were talking to the real world user
+     * about movements.
      */
     public void setKinect(SimpleOpenNI kinect) {
         this.kinect = kinect;
@@ -48,11 +60,11 @@ public class User {
         torso = new Joint(SimpleOpenNI.SKEL_TORSO);
         leftShoulder = new Joint(SimpleOpenNI.SKEL_LEFT_SHOULDER);
         leftElbow = new Joint(SimpleOpenNI.SKEL_LEFT_ELBOW);
-        leftHand = new Joint(SimpleOpenNI.SKEL_LEFT_HAND);
+        rightHand = new Joint(SimpleOpenNI.SKEL_LEFT_HAND);
         leftFingertip = new Joint(SimpleOpenNI.SKEL_LEFT_FINGERTIP);
         rightShoulder = new Joint(SimpleOpenNI.SKEL_RIGHT_SHOULDER);
         rightElbow = new Joint(SimpleOpenNI.SKEL_RIGHT_ELBOW);
-        rightHand = new Joint(SimpleOpenNI.SKEL_RIGHT_HAND);
+        leftHand = new Joint(SimpleOpenNI.SKEL_RIGHT_HAND);
         rightFingertip = new Joint(SimpleOpenNI.SKEL_RIGHT_FINGERTIP);
         leftHip = new Joint(SimpleOpenNI.SKEL_LEFT_HIP);
         leftKnee = new Joint(SimpleOpenNI.SKEL_LEFT_KNEE);
@@ -66,11 +78,11 @@ public class User {
         joints.add(torso);
         joints.add(leftShoulder);
         joints.add(leftElbow);
-        joints.add(leftHand);
+        joints.add(rightHand);
         joints.add(leftFingertip);
         joints.add(rightShoulder);
         joints.add(rightElbow);
-        joints.add(rightHand);
+        joints.add(leftHand);
         joints.add(rightFingertip);
         joints.add(leftHip);
         joints.add(leftKnee);
@@ -124,16 +136,18 @@ public class User {
         System.out.println(this + ": start tracking userId " + userId);
     }
 
-    public boolean isLeftHandExtended(float threshold) {
-        // double distance = Math.sqrt(VectorMath.getZDistanceSquared(leftHand.position, centerOfMass));
-        // logSketch.logRounded("Left hand distance", distance);
-        logSketch.logVector("Left Hand Pos", leftHand.position);
+    public boolean isRightHandExtended(float threshold) {
+        /*
+        double distance = Math.sqrt(VectorMath.getZDistanceSquared(rightHand.position, centerOfMass));
+        logSketch.logRounded("Left hand distance", distance);
+        logSketch.logVector("Left Hand Pos", rightHand.position);
         logSketch.logVector("Torso", torso.position);
-        return ! VectorMath.isWithinZ(leftHand.position, torso.position, threshold);
+        */
+        return ! VectorMath.isWithinZ(rightHand.position, torso.position, threshold);
     }
 
-    public boolean isRightHandExtended(float threshold) {
-        return ! VectorMath.isWithin(rightHand.position, torso.position, threshold);
+    public boolean isLeftHandExtended(float threshold) {
+        return ! VectorMath.isWithin(leftHand.position, torso.position, threshold);
     }
 
     public boolean isWithinDistanceFromCenterOfMass(PVector position, float threshold) {

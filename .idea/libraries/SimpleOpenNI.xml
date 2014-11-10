@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SimpleOpenNI">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../kinect-libs/SimpleOpenNI/library/SimpleOpenNI.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

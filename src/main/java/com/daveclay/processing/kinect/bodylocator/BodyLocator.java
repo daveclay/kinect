@@ -120,7 +120,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
         rightHandBox.color = color(0, 80, 255);
         size(640, 480, OPENGL);
 
-        onLeftHandExtended(new HandExtendedHandler() {
+        onRightHandExtended(new HandExtendedHandler() {
             @Override
             public void onHandExtended() {
                 logSketch.log("Left Hand Gesture", "Extended.");
@@ -174,7 +174,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
 
         logSketch.logRounded("FPS", frameRate);
         if (user.isCurrentlyTracking()) {
-            gestureRecorder.addPoint(user.leftHand.position);
+            gestureRecorder.addPoint(user.rightHand.position);
             drawLineBetweenHands();
         }
 
@@ -196,8 +196,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
     void drawLineBetweenHands() {
         pushMatrix();
         translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
-        PVector leftHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.leftHand);
-        PVector rightHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.rightHand);
+        PVector leftHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.rightHand);
+        PVector rightHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.leftHand);
 
         if (drawing) {
             drawingPoints.add(leftHandPosition2d);

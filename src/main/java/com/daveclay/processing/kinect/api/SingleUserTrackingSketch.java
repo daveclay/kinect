@@ -70,13 +70,13 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
                 user.updateData();
 
                 if (handExtendedHandler != null) {
-                    boolean leftHandCurrentlyExtended = user.isLeftHandExtended(handExtensionThresholdRadius);
-                    if (wasHandExtended && !leftHandCurrentlyExtended) {
+                    boolean rightHandCurrentlyExtended = user.isLeftHandExtended(handExtensionThresholdRadius);
+                    if (wasHandExtended && !rightHandCurrentlyExtended) {
                         handExtendedHandler.onHandRetracted();
-                    } else if (!wasHandExtended && leftHandCurrentlyExtended) {
+                    } else if (!wasHandExtended && rightHandCurrentlyExtended) {
                         handExtendedHandler.onHandExtended();
                     }
-                    wasHandExtended = leftHandCurrentlyExtended;
+                    wasHandExtended = rightHandCurrentlyExtended;
                 }
             }
         }
@@ -98,7 +98,7 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
         }
     }
 
-    public void onLeftHandExtended(HandExtendedHandler handExtendedHandler) {
+    public void onRightHandExtended(HandExtendedHandler handExtendedHandler) {
         this.handExtendedHandler = handExtendedHandler;
     }
 
