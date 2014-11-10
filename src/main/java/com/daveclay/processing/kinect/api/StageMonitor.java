@@ -2,7 +2,7 @@ package com.daveclay.processing.kinect.api;
 
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.gestures.RecognitionResult;
-import com.daveclay.processing.kinect.bodylocator.BodyLocator;
+import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -45,7 +45,7 @@ public class StageMonitor extends PApplet {
 
         this.currentStageZone = null;
 
-        stage.addListener(new BodyLocator.Listener() {
+        stage.addListener(new BodyLocatorListener() {
             @Override
             public void gestureWasRecognized(RecognitionResult gesture) {
             }

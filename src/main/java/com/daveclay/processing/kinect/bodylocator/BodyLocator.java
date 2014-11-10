@@ -58,7 +58,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
         stageMonitor.frame.setLocation(100, logSketch.getHeight() + 10);
     }
 
-    Listener listener;
+    BodyLocatorListener listener;
     HandBox leftHandBox;
     HandBox rightHandBox;
     Stage stage;
@@ -95,7 +95,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
         user.setLogSketch(logSketch);
     }
 
-    public void setListener(Listener listener) {
+    public void setListener(BodyLocatorListener listener) {
         this.listener = listener;
         this.stage.addListener(listener);
     }
@@ -268,14 +268,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
         }
     }
 
-    public static interface Listener {
-
-        void gestureWasRecognized(RecognitionResult gesture);
-
-        void userDidEnteredZone(Stage.StageZone stageZone);
-    }
-
-    public static class NoopListener implements Listener {
+    public static class NoopListener implements BodyLocatorListener {
 
         @Override
         public void gestureWasRecognized(RecognitionResult gesture) {

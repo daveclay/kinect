@@ -1,6 +1,6 @@
 package com.daveclay.processing.kinect.api;
 
-import com.daveclay.processing.kinect.bodylocator.BodyLocator;
+import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +51,7 @@ public class StageTest {
     public void shouldUpdateWhichZoneTheUserIsIn() {
         givenTheStageIsCalibrated();
 
-        BodyLocator.Listener listener = mock(BodyLocator.Listener.class);
+        BodyLocatorListener listener = mock(BodyLocatorListener.class);
         stage.addListener(listener);
 
         position.set(centerX + 100, top - 50, centerZ + 100);
@@ -71,7 +71,7 @@ public class StageTest {
     public void shouldNotPingPongBetweenZones() {
         givenTheStageIsCalibrated();
 
-        BodyLocator.Listener listener = mock(BodyLocator.Listener.class);
+        BodyLocatorListener listener = mock(BodyLocatorListener.class);
         stage.addListener(listener);
 
         position.set(centerX + 100, top - 50, centerZ + 100);
@@ -96,7 +96,7 @@ public class StageTest {
     public void shouldBeInOnlyOneZone() {
         givenTheStageIsCalibrated();
 
-        BodyLocator.Listener listener = mock(BodyLocator.Listener.class);
+        BodyLocatorListener listener = mock(BodyLocatorListener.class);
         stage.addListener(listener);
 
         position.set(centerX + 100, top - 50, centerZ + 100);

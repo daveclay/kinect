@@ -1,7 +1,7 @@
 package com.daveclay.processing.kinect.api;
 
 import com.daveclay.processing.api.VectorMath;
-import com.daveclay.processing.kinect.bodylocator.BodyLocator;
+import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import processing.core.PVector;
 
 import java.util.ArrayList;
@@ -11,14 +11,14 @@ import java.util.Map;
 
 public class Stage {
 
-    private final List<BodyLocator.Listener> listeners = new ArrayList<BodyLocator.Listener>();
+    private final List<BodyLocatorListener> listeners = new ArrayList<BodyLocatorListener>();
     private final StageBounds stageBounds = new StageBounds();
     private Map<String, StageZone> stageZoneById = new HashMap<String, StageZone>();
     private List<StageZone> stageZones = new ArrayList<StageZone>();
 
     // Todo: ths should be its own listener, not a BodyLocator.Listener - the stage only sends
     // stage update events, doens't care about gestures.
-    public void addListener(BodyLocator.Listener listener) {
+    public void addListener(BodyLocatorListener listener) {
         this.listeners.add(listener);
     }
 
@@ -59,7 +59,7 @@ public class Stage {
     }
 
     private void fireEvent(StageZone stageZone) {
-        for (BodyLocator.Listener listener : this.listeners) {
+        for (BodyLocatorListener listener : this.listeners) {
             listener.userDidEnteredZone(stageZone);
         }
     }

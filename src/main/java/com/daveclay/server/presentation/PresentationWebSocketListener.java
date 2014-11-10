@@ -2,11 +2,11 @@ package com.daveclay.server.presentation;
 
 import com.daveclay.processing.gestures.GestureDataStore;
 import com.daveclay.processing.gestures.RecognitionResult;
-import com.daveclay.processing.kinect.bodylocator.BodyLocator;
 import com.daveclay.processing.kinect.api.Stage;
+import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import org.java_websocket.WebSocket;
 
-public class PresentationWebSocketListener implements BodyLocator.Listener {
+public class PresentationWebSocketListener implements BodyLocatorListener {
 
     public static final String GESTURE_RECOGNIZED_TEMPLATE = "{\"type\": \"userGestureRecognized\", \"data\": { \"name\": \"%s\", \"score\": %.2f }}";
     private final PresentationServer presentationServer;
