@@ -14,7 +14,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BodyLocator extends SingleUserTrackingSketch {
+public class BodyLocator extends AbstractSingleUserTrackingSketch {
 
     /**
      * To run this, the SimpleOpenNI.jar must be in the same distribution folder with the "osx" .so

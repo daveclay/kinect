@@ -2,7 +2,7 @@ package com.daveclay.processing.kinect.api;
 
 import com.daveclay.processing.api.SketchRunner;
 
-public class TestUserTracking extends SingleUserTrackingSketch {
+public class TestUserTracking extends AbstractSingleUserTrackingSketch {
 
     public static void main(String[] args) {
         SketchRunner.run(new TestUserTracking());

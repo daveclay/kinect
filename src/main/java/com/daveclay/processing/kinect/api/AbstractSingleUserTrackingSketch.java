@@ -4,7 +4,7 @@ import SimpleOpenNI.SimpleOpenNI;
 import com.daveclay.processing.api.LogSketch;
 import processing.core.PApplet;
 
-public abstract class SingleUserTrackingSketch extends PApplet implements UserTracking {
+public abstract class AbstractSingleUserTrackingSketch extends PApplet implements UserTracking {
 
     private SimpleOpenNI kinect;
     protected User user;
@@ -17,11 +17,11 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
     private UserEnteredHandler userEnteredHandler;
     private UserWasLostHandler userWasLostHandler;
 
-    public SingleUserTrackingSketch(User user) {
+    public AbstractSingleUserTrackingSketch(User user) {
         this.user = user;
     }
 
-    public SingleUserTrackingSketch() {
+    public AbstractSingleUserTrackingSketch() {
         this(new User());
     }
 
