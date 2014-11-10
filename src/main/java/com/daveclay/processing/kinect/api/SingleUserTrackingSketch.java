@@ -11,8 +11,11 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
     protected LogSketch logSketch;
 
     private boolean wasHandExtended = false;
-    private HandExtendedHandler handExtendedHandler;
     private int handExtensionThresholdRadius = 350;
+
+    private HandExtendedHandler handExtendedHandler;
+    private UserEnteredHandler userEnteredHandler;
+    private UserWasLostHandler userWasLostHandler;
 
     public SingleUserTrackingSketch(User user) {
         this.user = user;
@@ -70,7 +73,7 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
                 user.updateData();
 
                 if (handExtendedHandler != null) {
-                    boolean rightHandCurrentlyExtended = user.isLeftHandExtended(handExtensionThresholdRadius);
+                    boolean rightHandCurrentlyExtended = user.isRightHandExtended(handExtensionThresholdRadius);
                     if (wasHandExtended && !rightHandCurrentlyExtended) {
                         handExtendedHandler.onHandRetracted();
                     } else if (!wasHandExtended && rightHandCurrentlyExtended) {
@@ -86,6 +89,9 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
         println("onNewUser( " + userId + " )");
         if ( ! user.isCurrentlyTracking()) {
             user.startTrackingWithUserId(userId);
+            if (this.userEnteredHandler != null) {
+                this.userEnteredHandler.userDidEnter(user);
+            }
         } else {
             // not bothering to track any further users.
         }
@@ -95,6 +101,9 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
         println("onLostUser( " + userId + " )");
         if (Integer.valueOf(userId).equals(user.getUserId())) {
             user.lost();
+            if (this.userWasLostHandler != null) {
+                this.userWasLostHandler.userWasLost(user);
+            }
         }
     }
 
@@ -102,8 +111,13 @@ public abstract class SingleUserTrackingSketch extends PApplet implements UserTr
         this.handExtendedHandler = handExtendedHandler;
     }
 
-    public static interface HandExtendedHandler {
-        void onHandExtended();
-        void onHandRetracted();
+    public void onUserEntered(UserEnteredHandler userEnteredHandler) {
+        this.userEnteredHandler = userEnteredHandler;
     }
+
+    public void onUserWasLost(UserWasLostHandler userWasLostHandler) {
+        // todo: support multiple handlers; the BodyLocator logic doesn't need to know about the StageMonitor.
+        this.userWasLostHandler = userWasLostHandler;
+    }
+
 }

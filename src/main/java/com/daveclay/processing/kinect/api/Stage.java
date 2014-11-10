@@ -16,6 +16,8 @@ public class Stage {
     private Map<String, StageZone> stageZoneById = new HashMap<String, StageZone>();
     private List<StageZone> stageZones = new ArrayList<StageZone>();
 
+    // Todo: ths should be its own listener, not a BodyLocator.Listener - the stage only sends
+    // stage update events, doens't care about gestures.
     public void addListener(BodyLocator.Listener listener) {
         this.listeners.add(listener);
     }

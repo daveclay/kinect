@@ -5,10 +5,7 @@ import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.gestures.*;
 import com.daveclay.processing.gestures.GestureDataStore;
-import com.daveclay.processing.kinect.api.SingleUserTrackingSketch;
-import com.daveclay.processing.kinect.api.Stage;
-import com.daveclay.processing.kinect.api.StageMonitor;
-import com.daveclay.processing.kinect.api.User;
+import com.daveclay.processing.kinect.api.*;
 import com.daveclay.server.presentation.PresentationServer;
 import com.daveclay.server.presentation.PresentationWebSocketListener;
 import processing.core.PVector;
@@ -69,12 +66,15 @@ public class BodyLocator extends SingleUserTrackingSketch {
     GestureRecorder gestureRecorder = new GestureRecorder(gestureRecognizer);
 
     List<PVector> drawingPoints = new ArrayList<PVector>();
-    boolean drawing;
+    boolean drawGestureRecording;
     private long lastNotification;
     private int drawGestureRecognized;
 
 
-    public BodyLocator(User user, GestureDataStore gestureDataStore, Stage stage, LogSketch logSketch) {
+    public BodyLocator(User user,
+                       GestureDataStore gestureDataStore,
+                       Stage stage,
+                       LogSketch logSketch) {
         super(user);
 
         GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
@@ -125,7 +125,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
             public void onHandExtended() {
                 logSketch.log("Left Hand Gesture", "Extended.");
                 gestureRecorder.startRecording();
-                drawing = true;
+                drawGestureRecording = true;
                 drawingPoints.clear();
             }
 
@@ -133,7 +133,20 @@ public class BodyLocator extends SingleUserTrackingSketch {
             public void onHandRetracted() {
                 logSketch.log("Left Hand Gesture", "Retracted.");
                 gestureRecorder.stopRecording();
-                drawing = false;
+                drawGestureRecording = false;
+            }
+        });
+
+        onUserEntered(new UserEnteredHandler() {
+            @Override
+            public void userDidEnter(User user) {
+            }
+        });
+
+        onUserWasLost(new UserWasLostHandler() {
+            @Override
+            public void userWasLost(User user) {
+
             }
         });
 
@@ -169,15 +182,38 @@ public class BodyLocator extends SingleUserTrackingSketch {
     protected void drawUserTrackingSketch() {
         setKinectRGBImageAsBackground();
 
-        PVector position = user.centerOfMass;
-        stage.updatePosition(position);
-
+        // Todo: this might be what the native kinect is getting, but it's probably not what we're getting.
         logSketch.logRounded("FPS", frameRate);
-        if (user.isCurrentlyTracking()) {
-            gestureRecorder.addPoint(user.rightHand.position);
-            drawLineBetweenHands();
-        }
 
+        updateUserDataAndDrawStuff();
+        drawGestureRecognitionNotification();
+    }
+
+    private void updateUserDataAndDrawStuff() {
+        if (user.isCurrentlyTracking()) {
+
+            PVector position = user.centerOfMass;
+            stage.updatePosition(position);
+
+            // Todo: refactor - have a gesture aware delegate doing this based on userDidEnter() callbacks.
+            // Separate the gesture recording and detection from the drawing of all this data.
+            gestureRecorder.addPoint(user.rightHand.position);
+
+            // draw user data.
+            drawUserData();
+        } else {
+            // Note that this will override the gesture recognized notification. The user will likely
+            // have seen the results of a recognized gesture, and wants to know that they should stop
+            // expecting gestures immediately if the sensor has lost them.
+            //
+            // In other words, don't allow the user to look like an idiot expecting gestures to work
+            // if we've lost them. Notify them immediately so they don't look like an idiot.
+            fill(255, 0, 0, 100);
+            rect(0, 0, getWidth(), getHeight());
+        }
+    }
+
+    private void drawGestureRecognitionNotification() {
         if (drawGestureRecognized > 0) {
             if (System.currentTimeMillis() - lastNotification > 1000) {
                 drawGestureRecognized = 0;
@@ -186,20 +222,20 @@ public class BodyLocator extends SingleUserTrackingSketch {
                     fill(0, 255, 0, 100);
                     rect(0, 0, getWidth(), getHeight());
                 } else {
-                    fill(255, 0, 0, 100);
+                    fill(255, 85, 0, 100);
                     rect(0, 0, getWidth(), getHeight());
                 }
             }
         }
     }
 
-    void drawLineBetweenHands() {
+    void drawUserData() {
         pushMatrix();
         translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
         PVector leftHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.rightHand);
         PVector rightHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.leftHand);
 
-        if (drawing) {
+        if (drawGestureRecording) {
             drawingPoints.add(leftHandPosition2d);
             stroke(2);
             fill(255, 100, 0);
@@ -210,8 +246,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
 
         stroke(120);
         strokeWeight(2);
-        line(leftHandPosition2d.x, leftHandPosition2d.y,
-                rightHandPosition2d.x, rightHandPosition2d.y);
+        line(leftHandPosition2d.x, leftHandPosition2d.y, rightHandPosition2d.x, rightHandPosition2d.y);
         leftHandBox.drawAt(leftHandPosition2d);
         rightHandBox.drawAt(rightHandPosition2d);
         popMatrix();
@@ -226,8 +261,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
 
         void drawAt(PVector position) {
             center = position;
-            strokeWeight(2);
-            fill(red(color), blue(color), green(color), (int) (alpha * .03));
+            strokeWeight(3);
+            fill(red(color), blue(color), green(color), (int) (alpha * .5));
             stroke(red(color), blue(color), green(color), alpha);
             rect(center.x, center.y, size, size);
         }
