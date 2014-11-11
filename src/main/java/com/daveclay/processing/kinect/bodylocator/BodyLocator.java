@@ -14,7 +14,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BodyLocator extends AbstractSingleUserTrackingSketch {
+public class BodyLocator extends SingleUserTrackingSketch {
 
     /**
      * To run this, the SimpleOpenNI.jar must be in the same distribution folder with the "osx" .so
@@ -70,12 +70,33 @@ public class BodyLocator extends AbstractSingleUserTrackingSketch {
     private long lastNotification;
     private int drawGestureRecognized;
 
-
     public BodyLocator(User user,
                        GestureDataStore gestureDataStore,
                        Stage stage,
                        LogSketch logSketch) {
-        super(user);
+        super(user, new UserTrackingKinectConfig() {
+            @Override
+            public void setupUserTrackingSketch(SingleUserTrackingSketch singleUserTrackingSketch) {
+                singleUserTrackingSketch.size(640, 480, OPENGL);
+                SimpleOpenNI kinect = singleUserTrackingSketch.getKinect();
+                kinect.enableRGB();
+                kinect.setMirror(true);
+                kinect.alternativeViewPointDepthToImage();
+            }
+        });
+
+        setSketchCallback(new SketchCallback() {
+            @Override
+            public void draw() {
+                drawBodyLocator();
+            }
+        });
+
+        leftHandBox = new HandBox();
+        leftHandBox.color = color(255, 120, 0);
+
+        rightHandBox = new HandBox();
+        rightHandBox.color = color(0, 80, 255);
 
         GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
         geometricRecognizer.addTemplate("Circle", gestureDataStore.getPointsByName("Circle"));
@@ -93,6 +114,8 @@ public class BodyLocator extends AbstractSingleUserTrackingSketch {
         stage.setupDefaultStageZones();
         this.logSketch = logSketch;
         user.setLogSketch(logSketch);
+
+        registerEventListeners();
     }
 
     public void setListener(BodyLocatorListener listener) {
@@ -104,21 +127,7 @@ public class BodyLocator extends AbstractSingleUserTrackingSketch {
         return stage;
     }
 
-    @Override
-    protected void configureKinect(SimpleOpenNI kinect) {
-        kinect.enableRGB();
-        kinect.setMirror(true);
-        kinect.alternativeViewPointDepthToImage();
-    }
-
-    @Override
-    protected void setupUserTrackingSketch() {
-        leftHandBox = new HandBox();
-        leftHandBox.color = color(255, 120, 0);
-
-        rightHandBox = new HandBox();
-        rightHandBox.color = color(0, 80, 255);
-        size(640, 480, OPENGL);
+    protected void registerEventListeners() {
 
         onRightHandExtended(new HandExtendedHandler() {
             @Override
@@ -178,8 +187,7 @@ public class BodyLocator extends AbstractSingleUserTrackingSketch {
         }
     }
 
-    @Override
-    protected void drawUserTrackingSketch() {
+    private void drawBodyLocator() {
         setKinectRGBImageAsBackground();
 
         // Todo: this might be what the native kinect is getting, but it's probably not what we're getting.
@@ -190,6 +198,7 @@ public class BodyLocator extends AbstractSingleUserTrackingSketch {
     }
 
     private void updateUserDataAndDrawStuff() {
+        User user = getUser();
         if (user.isCurrentlyTracking()) {
 
             PVector position = user.centerOfMass;
@@ -200,7 +209,7 @@ public class BodyLocator extends AbstractSingleUserTrackingSketch {
             gestureRecorder.addPoint(user.rightHand.position);
 
             // draw user data.
-            drawUserData();
+            drawUserData(user);
         } else {
             // Note that this will override the gesture recognized notification. The user will likely
             // have seen the results of a recognized gesture, and wants to know that they should stop
@@ -229,7 +238,7 @@ public class BodyLocator extends AbstractSingleUserTrackingSketch {
         }
     }
 
-    void drawUserData() {
+    private void drawUserData(User user) {
         pushMatrix();
         translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
         PVector leftHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.rightHand);
@@ -252,7 +261,7 @@ public class BodyLocator extends AbstractSingleUserTrackingSketch {
         popMatrix();
     }
 
-    class HandBox {
+    private class HandBox {
 
         PVector center;
         int color;
