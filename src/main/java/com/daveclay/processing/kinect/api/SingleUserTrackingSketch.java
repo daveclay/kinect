@@ -61,12 +61,26 @@ public class SingleUserTrackingSketch extends PApplet implements UserTracking {
         return user;
     }
 
+    private long max;
+    private long averagePerf = 0;
+    private long perfCount = 0;
+
     public final void draw() {
+        long start = System.currentTimeMillis();
         kinect.update();
-        calculateUserData();
+        calculateAndTriggerUserEvents();
         if (sketchCallback != null) {
             sketchCallback.draw();
         }
+
+        long time = System.currentTimeMillis() - start;
+        if (time > max) {
+            max = time;
+        }
+        perfCount++;
+        averagePerf = (averagePerf + time) / perfCount;
+        logSketch.log("average time", time + "ms");
+        logSketch.log("max time", max + "ms");
     }
 
     public void onNewUser(SimpleOpenNI curContext, int userId) {
@@ -103,7 +117,7 @@ public class SingleUserTrackingSketch extends PApplet implements UserTracking {
         this.userWasLostHandlers.add(userWasLostHandler);
     }
 
-    private void calculateUserData() {
+    private void calculateAndTriggerUserEvents() {
         int[] userList = kinect.getUsers();
         for (int userId : userList) {
             if (Integer.valueOf(userId).equals(user.getUserId())) {
