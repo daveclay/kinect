@@ -135,7 +135,6 @@ public class BodyLocator extends SingleUserTrackingSketch {
                 logSketch.log("Left Hand Gesture", "Extended.");
                 gestureRecorder.startRecording();
                 drawGestureRecording = true;
-                drawingPoints.clear();
             }
 
             @Override
@@ -226,6 +225,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
         if (drawGestureRecognized > 0) {
             if (System.currentTimeMillis() - lastNotification > 1000) {
                 drawGestureRecognized = 0;
+                drawingPoints.clear();
             } else {
                 if (drawGestureRecognized == 1) {
                     fill(0, 255, 0, 100);
@@ -238,6 +238,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
         }
     }
 
+    private int gestureLineAlpha = 255;
+
     private void drawUserData(User user) {
         pushMatrix();
         translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
@@ -246,10 +248,29 @@ public class BodyLocator extends SingleUserTrackingSketch {
 
         if (drawGestureRecording) {
             drawingPoints.add(leftHandPosition2d);
-            stroke(2);
-            fill(255, 100, 0);
+        }
+
+        if (drawGestureRecording || drawGestureRecognized > 0) {
+
+            if (drawGestureRecording) {
+                gestureLineAlpha = 255;
+            } else {
+                // fade it out since we're not
+                gestureLineAlpha -= 5;
+                if (gestureLineAlpha < 0) {
+                    gestureLineAlpha = 0;
+                }
+            }
+
+            PVector previousPoint = null;
             for (PVector point : drawingPoints) {
+                if (previousPoint != null) {
+                    stroke(0, 255, 0, gestureLineAlpha);
+                    line(previousPoint.x, previousPoint.y, point.x, point.y);
+                }
+                fill(255, 100, 0, gestureLineAlpha);
                 ellipse(point.x, point.y, 10, 10);
+                previousPoint = point;
             }
         }
 
