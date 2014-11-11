@@ -14,7 +14,7 @@ define(function (require) {
 
         log: function(message) {
             var existing = this.textarea.innerHTML;
-            this.textarea.innerHTML = new Date() + ": " + message + existing;
+            this.textarea.innerHTML = new Date() + ": " + message + "\n" + existing;
         },
 
         initialize: function() {

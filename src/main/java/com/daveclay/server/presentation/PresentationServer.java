@@ -37,7 +37,7 @@ public class PresentationServer extends WebSocketServer {
 
     @Override
     public void onOpen( WebSocket conn, ClientHandshake handshake ) {
-        this.sendToAll("{connected: \"" + handshake.getResourceDescriptor() + "\"}");
+        this.sendToAll("{ \"connected\": \"" + handshake.getResourceDescriptor() + "\"}");
         System.out.println( conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!" );
         Executors.newSingleThreadScheduledExecutor().schedule(ping, 5, TimeUnit.SECONDS);
     }

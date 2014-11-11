@@ -154,11 +154,11 @@ define(function (require) {
             this.zoom = function() {
             };
 
-            this.on("LeftToRightLine", this.navigateLeft);
-            this.on("RightToLeftLine", this.navigateRight);
-            this.on("TopToBottomLine", this.navigateUp);
-            this.on("BottomToTopLine", this.navigateDown);
-            this.on("Circle", this.navigateHome);
+            this.onGesture("LeftToRightLine", this.navigateLeft);
+            this.onGesture("RightToLeftLine", this.navigateRight);
+            this.onGesture("TopToBottomLine", this.navigateUp);
+            this.onGesture("BottomToTopLine", this.navigateDown);
+            this.onGesture("Circle", this.navigateHome);
         },
 
         constructor: function(params) {
@@ -213,11 +213,13 @@ define(function (require) {
             this._registerGestureListeners();
             this._registerKeyListeners();
 
-            this.stage.style.opacity = 1;
+            var self = this;
+            this.onConnect(function() {
+                self.stage.style.opacity = 1;
+                self.navigateHome();
+            });
 
             this.connect();
-
-            this.navigateHome();
         }
     });
 
