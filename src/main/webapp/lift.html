@@ -2,62 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8"/>
-        <script src="http://code.jquery.com/jquery-2.1.1.js"></script>
-        <script src="http://underscorejs.org/underscore-min.js"></script>
-
-        <style type="text/css">
-
-            #background {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                transition: all 1.3s;
-            }
-
-            #background .content {
-                color: #382849;
-                font-size: 19em;
-                width: 100%;
-                height: 100%;
-                margin-top: 15%;
-                text-align: center;
-                position: relative;
-            }
-
-            #stage {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: #C2CFC4;
-            }
-
-            .lift {
-                transform: translate3d(0, 50%, 0) !important;
-                opacity: 1 !important;
-            }
-
-            .item {
-                width: 50px;
-                height: 50px;
-                color: white;
-                background-color: #3c6139;
-                padding: 3px;
-                border-radius: 5px;
-
-                position: absolute;
-                opacity: 0;
-                transform: translate3d(0, 100%, 0);
-                transform-style: preserve-3d;
-                transition: all 1.3s;
-
-            }
-
-        </style>
-
+        <link rel="stylesheet" type="text/css" href="css/lift.css"/>
     </head>
     <body>
 
@@ -69,129 +14,11 @@
         <div class="content">Our Staff</div>
     </div>
 
-    <script type="text/javascript">
+    <div id="log">
+        <textarea id="log-data"></textarea>
+    </div>
 
-        var WIDTH = window.innerWidth;
-        var HEIGHT = window.innerHeight;
-        var NUMBER_OF_ITEMS = 25;
-        var TRANSITION_TIME = 2000;
-        var PIXELS_PER_ITEM = WIDTH / NUMBER_OF_ITEMS;
-        var OPACITY_DISTANCE = 200;
+    <script data-main="js/main-lift" src="js/vendor/require.js"></script>
 
-        function Item(index) {
-            var itemElement = $("<div/>");
-            itemElement.append("n=" + index);
-            itemElement.addClass("item");
-            this.element = itemElement;
-            this.x = PIXELS_PER_ITEM * index;
-            this.index = index;
-            this.move(HEIGHT, 0);
-        }
-
-        Item.prototype.move = function(y, opacity) {
-            this.element.css({
-                "transform": "translate3d(" + this.x + "px, " + y + "px, 0)",
-                "opacity": opacity
-            });
-        };
-
-        Item.prototype.setOpacity = function(opacity) {
-            this.opacity = opacity;
-            // todo: don't use the transition time to adjust the opacity when setting it here?
-            this.element.css({
-                "opacity": opacity
-            });
-        };
-
-        Item.prototype.liftIn = function(opacity, callback) {
-            this.move(HEIGHT / 2 + 50, opacity);
-            if (callback) {
-                setTimeout(callback, TRANSITION_TIME);
-            }
-        };
-
-        Item.prototype.liftOut = function(callback) {
-            this.move(0, 0);
-            var index = this.index;
-            var element = this.element;
-            setTimeout(function() {
-                element.remove();
-                if (callback) {
-                    callback(index);
-                }
-            }, TRANSITION_TIME);
-        };
-
-        function ItemStage() {
-            this.stage = $('#stage');
-            this.itemsLiftingIn = [];
-            this.items = [];
-        }
-
-        ItemStage.prototype.createItemAt = function(index) {
-            if ( ! this.itemsLiftingIn[index]) {
-                this.itemsLiftingIn[index] = true;
-
-                var item = new Item(index);
-
-                this.items.push(item);
-                this.stage.append(item.element);
-
-                var self = this;
-
-                setTimeout(function() {
-                    item.liftIn(self.opacity);
-                }, Math.round(Math.random() * 200) + 1000);
-            }
-        };
-
-        ItemStage.prototype.byebye = function(item) {
-            setTimeout(function() {
-                item.liftOut();
-            }, Math.round(Math.random() * 1500) + 1500);
-        };
-
-        ItemStage.prototype.setOpacity = function(opacity) {
-            this.opacity = opacity;
-            for (var i = 0; i < this.items.length; i++) {
-                this.items[i].setOpacity(opacity);
-            }
-        };
-
-        ItemStage.prototype.triggerItemsForPosition = function(x) {
-            var index = Math.round(x / PIXELS_PER_ITEM);
-            this.createItemAt(index - 1);
-            this.createItemAt(index);
-            this.createItemAt(index + 1);
-            for (var i = 0; i < this.items.length; i++) {
-                var item = this.items[i];
-                if (item.index < index - 1 || item.index > index + 1) {
-                    this.items.splice(this.items.indexOf(item), 1);
-                    this.itemsLiftingIn[item.index] = false;
-                    this.byebye(item);
-                }
-            }
-        };
-
-        var itemStage = new ItemStage();
-
-        $(document).mousemove(function(event) {
-            var x = event.pageX;
-            var y = event.pageY;
-
-
-            var verticalSpace = (y - OPACITY_DISTANCE / 2) / (HEIGHT - OPACITY_DISTANCE);
-            if (verticalSpace < 0) {
-                verticalSpace = 0;
-            }
-
-            $('#background').css({
-                opacity: verticalSpace < .5 / 2 ? 1 : 0
-            });
-
-            itemStage.setOpacity(verticalSpace);
-            itemStage.triggerItemsForPosition(x);
-        });
-    </script>
     </body>
 </html>
