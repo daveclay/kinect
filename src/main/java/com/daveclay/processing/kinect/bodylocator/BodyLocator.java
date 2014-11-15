@@ -69,6 +69,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
     boolean drawGestureRecording;
     private long lastNotification;
     private int drawGestureRecognized;
+    private PVector currentUserPosition = new PVector();
 
     public BodyLocator(User user,
                        GestureDataStore gestureDataStore,
@@ -200,8 +201,11 @@ public class BodyLocator extends SingleUserTrackingSketch {
         User user = getUser();
         if (user.isCurrentlyTracking()) {
 
-            PVector position = user.centerOfMass;
-            stage.updatePosition(position);
+            PVector newUserPosition = user.centerOfMass;
+            stage.updatePosition(newUserPosition);
+
+            // Todo:base this on the stage position, and lerp to some set value so js doens't have to?
+            listener.userDidMove(newUserPosition); // TODO: does equality work on PVectors?
 
             // Todo: refactor - have a gesture aware delegate doing this based on userDidEnter() callbacks.
             // Separate the gesture recording and detection from the drawing of all this data.
@@ -295,17 +299,6 @@ public class BodyLocator extends SingleUserTrackingSketch {
             fill(red(color), blue(color), green(color), (int) (alpha * .5));
             stroke(red(color), blue(color), green(color), alpha);
             rect(center.x, center.y, size, size);
-        }
-    }
-
-    public static class NoopListener implements BodyLocatorListener {
-
-        @Override
-        public void gestureWasRecognized(RecognitionResult gesture) {
-        }
-
-        @Override
-        public void userDidEnteredZone(Stage.StageZone stageZone) {
         }
     }
 }

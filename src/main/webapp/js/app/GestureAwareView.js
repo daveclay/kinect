@@ -5,6 +5,9 @@ define(function (require) {
     var _ = require("underscore");
     var LogView = require("app/LogView");
 
+    var min = 10000;
+    var max = -10000;
+
     var GestureAwareView = Backbone.View.extend({
 
         constructor: function(params) {
@@ -49,19 +52,41 @@ define(function (require) {
             this.listeners[gesture] = callback;
         },
 
+        onUserDidMove: function(callback) {
+            this.userDidMove = callback;
+        },
+
         log: function(msg) {
+            console.log(msg);
             this.logView.log(msg);
         },
 
         messageWasReceived: function(event) {
-            var payload = JSON.parse(event.data);
-            this.log("[WebSocket#onmessage] Message: '" + payload + "'");
+            var payload;
+            try {
+                payload = JSON.parse(event.data);
+            } catch (error) {
+                console.log("BAD MESSAGE: ", error);
+            }
+            if (!payload) {
+                return;
+            }
+
             // { type: 'userGestureRecognized', data: { name: '" + gesture.name + "', score: " + gesture.score + " }}
             // { type: 'userDidEnterZone', data: { zone: '" + stageZone.getID() + "'}}
             if (payload.type === 'userGestureRecognized') {
                 var listener = this.listeners[payload.data.name];
                 if (listener) {
                     listener(payload.data);
+                }
+            } else if (payload.type === 'userDidMove') {
+                var position = payload.data;
+                if (position.x == 0 && position.y == 0 && position.z == 0) {
+                    return;
+                }
+
+                if (this.userDidMove) {
+                    this.userDidMove(position);
                 }
             }
         },

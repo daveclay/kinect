@@ -103,9 +103,9 @@ define(function (require) {
             }
         },
 
-        updatePosition: function(event) {
-            var x = event.pageX;
-            var y = event.pageY;
+        updatePosition: function(position) {
+            var x = position.x;
+            var y = position.y;
 
             var verticalSpace = (y - OPACITY_DISTANCE / 2) / (HEIGHT - OPACITY_DISTANCE);
             if (verticalSpace < 0) {
@@ -133,8 +133,29 @@ define(function (require) {
                 console.log("Connected.");
             });
 
+            var map = function(value, start1, stop1, start2, stop2) {
+                var value = start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+                if (value < 0) {
+                    value = 0;
+                }
+
+                return value;
+            };
+
+            this.onUserDidMove(function(position) {
+                var hi = {
+                    x: map(position.x, -300, 300, window.innerWidth, 0),
+                    y: map(position.z, 900, 2200, window.innerHeight, 0)
+                };
+
+                self.updatePosition(hi);
+            });
+
             $(document).mousemove(function(event) {
-                self.updatePosition(event);
+                self.updatePosition({
+                    x: event.pageX,
+                    y: event.pageY
+                });
             });
 
             this.connect();

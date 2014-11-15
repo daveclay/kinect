@@ -54,6 +54,10 @@ public class StageMonitor extends PApplet {
             public void userDidEnteredZone(Stage.StageZone stageZone) {
                 StageMonitor.this.currentStageZone = stageZone;
             }
+
+            @Override
+            public void userDidMove(PVector position) {
+            }
         });
 
         centerZone = (Stage.CenterZone) stage.getStageZoneById(Stage.CenterZone.ID);
