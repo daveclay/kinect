@@ -5,9 +5,6 @@ define(function (require) {
     var _ = require("underscore");
     var LogView = require("app/LogView");
 
-    var min = 10000;
-    var max = -10000;
-
     var GestureAwareView = Backbone.View.extend({
 
         constructor: function(params) {
@@ -25,7 +22,10 @@ define(function (require) {
             };
             this.connectionWasClosedHandler = function(event) {
                 self.log("[WebSocket connection closed]");
-                self.cleanup();
+                this.cleanup();
+                setTimeout(function() {
+                    self.connect(self.uri);
+                }, 5000);
             };
             this.errorWasReceivedHandler = function(event) {
                 console.log(event);
@@ -66,14 +66,12 @@ define(function (require) {
             try {
                 payload = JSON.parse(event.data);
             } catch (error) {
-                console.log("BAD MESSAGE: ", error);
+                console.log("Received invalid data json: ", event.data);
             }
             if (!payload) {
                 return;
             }
 
-            // { type: 'userGestureRecognized', data: { name: '" + gesture.name + "', score: " + gesture.score + " }}
-            // { type: 'userDidEnterZone', data: { zone: '" + stageZone.getID() + "'}}
             if (payload.type === 'userGestureRecognized') {
                 var listener = this.listeners[payload.data.name];
                 if (listener) {
@@ -82,6 +80,7 @@ define(function (require) {
             } else if (payload.type === 'userDidMove') {
                 var position = payload.data;
                 if (position.x == 0 && position.y == 0 && position.z == 0) {
+                    // Todo: Hrm, not sure why we get a zero-position vector here?
                     return;
                 }
 

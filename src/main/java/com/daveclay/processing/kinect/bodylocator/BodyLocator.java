@@ -68,8 +68,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
     List<PVector> drawingPoints = new ArrayList<PVector>();
     boolean drawGestureRecording;
     private long lastNotification;
-    private int drawGestureRecognized;
-    private PVector currentUserPosition = new PVector();
+    private int drawGestureRecognizedState;
 
     public BodyLocator(User user,
                        GestureDataStore gestureDataStore,
@@ -175,8 +174,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
     }
 
     private void drawGestureRecognizedAlert(boolean recognized, RecognitionResult gesture, String message) {
-        if (recognized || drawGestureRecognized != 1 || System.currentTimeMillis() - lastNotification > 1000) {
-            drawGestureRecognized = recognized ? 1 : 2;
+        if (recognized || drawGestureRecognizedState != 1 || System.currentTimeMillis() - lastNotification > 1000) {
+            drawGestureRecognizedState = recognized ? 1 : 2;
             lastNotification = System.currentTimeMillis();
 
             if (gesture != null) {
@@ -220,26 +219,41 @@ public class BodyLocator extends SingleUserTrackingSketch {
             //
             // In other words, don't allow the user to look like an idiot expecting gestures to work
             // if we've lost them. Notify them immediately so they don't look like an idiot.
-            fill(255, 0, 0, 100);
-            rect(0, 0, getWidth(), getHeight());
+            drawLostUser();
         }
     }
 
+    private void drawLostUser() {
+        fill(0, 0, 0, 200);
+        rect(0, 0, getWidth(), getHeight());
+        fill(255);
+        textSize(100);
+        text("Lost User", getHeight() / 3, getWidth() / 3);
+    }
+
     private void drawGestureRecognitionNotification() {
-        if (drawGestureRecognized > 0) {
+        if (drawGestureRecognizedState > 0) {
             if (System.currentTimeMillis() - lastNotification > 1000) {
-                drawGestureRecognized = 0;
+                drawGestureRecognizedState = 0;
                 drawingPoints.clear();
             } else {
-                if (drawGestureRecognized == 1) {
-                    fill(0, 255, 0, 100);
-                    rect(0, 0, getWidth(), getHeight());
+                if (drawGestureRecognizedState == 1) {
+                    drawGestureRecognized();
                 } else {
-                    fill(255, 85, 0, 100);
-                    rect(0, 0, getWidth(), getHeight());
+                    drawGestureNotRecognized();
                 }
             }
         }
+    }
+
+    private void drawGestureRecognized() {
+        fill(0, 255, 0, 100);
+        rect(0, 0, getWidth(), getHeight());
+    }
+
+    private void drawGestureNotRecognized() {
+        fill(255, 0, 0, 100);
+        rect(0, 0, getWidth(), getHeight());
     }
 
     private int gestureLineAlpha = 255;
@@ -254,7 +268,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
             drawingPoints.add(leftHandPosition2d);
         }
 
-        if (drawGestureRecording || drawGestureRecognized > 0) {
+        if (drawGestureRecording || drawGestureRecognizedState > 0) {
 
             if (drawGestureRecording) {
                 gestureLineAlpha = 255;
