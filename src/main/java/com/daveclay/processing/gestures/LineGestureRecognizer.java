@@ -13,10 +13,10 @@ import static com.daveclay.processing.gestures.utils.Distance.findDistance;
 
 public class LineGestureRecognizer implements GestureRecognizer {
 
-    public static LeftToRightLineRecognizer LEFT_TO_RIGHT_LINE_RECOGNIZER = new LeftToRightLineRecognizer();
-    public static RightToLeftLineRecognizer RIGHT_TO_LEFT_LINE_RECOGNIZER = new RightToLeftLineRecognizer();
-    public static BottomToTopLineRecognizer BOTTOM_TO_TOP_LINE_RECOGNIZER = new BottomToTopLineRecognizer();
-    public static TopToBottomLineRecognizer TOP_TO_BOTTOM_LINE_RECOGNIZER = new TopToBottomLineRecognizer();
+    public static final LeftToRightLineRecognizer LEFT_TO_RIGHT_LINE_RECOGNIZER = new LeftToRightLineRecognizer();
+    public static final RightToLeftLineRecognizer RIGHT_TO_LEFT_LINE_RECOGNIZER = new RightToLeftLineRecognizer();
+    public static final BottomToTopLineRecognizer BOTTOM_TO_TOP_LINE_RECOGNIZER = new BottomToTopLineRecognizer();
+    public static final TopToBottomLineRecognizer TOP_TO_BOTTOM_LINE_RECOGNIZER = new TopToBottomLineRecognizer();
 
     private Map<String, RecognizerAlgorithm> recognizerAlgorithmsByName = new HashMap<String, RecognizerAlgorithm>();
 

@@ -45,7 +45,6 @@ try {
         ], function($) {
 
         console.log("jquery initialized");
-        onJQueryInit($);
 
         initializeAppComponents($);
     } );
