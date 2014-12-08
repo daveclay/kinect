@@ -76,7 +76,7 @@ define(function (require) {
             }
         },
 
-        byebye: function(item) {
+        scheduleItemLiftOut: function(item) {
             setTimeout(function() {
                 item.liftOut();
             }, Math.round(Math.random() * 1500) + 1500);
@@ -99,7 +99,7 @@ define(function (require) {
                 if (item.index < index - 1 || item.index > index + 1) {
                     this.items.splice(this.items.indexOf(item), 1);
                     this.itemsLiftingIn[item.index] = false;
-                    this.byebye(item);
+                    this.scheduleItemLiftOut(item);
                 }
             }
         },
