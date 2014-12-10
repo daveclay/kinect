@@ -56,7 +56,7 @@ public class StageMonitor extends PApplet {
             }
 
             @Override
-            public void userDidMove(PVector position) {
+            public void userDidMove(StagePosition stagePosition) {
             }
         });
 

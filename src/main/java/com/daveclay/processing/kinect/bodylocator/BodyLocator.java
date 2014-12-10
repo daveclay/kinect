@@ -189,7 +189,7 @@ public class BodyLocator extends SingleUserTrackingSketch {
     private void drawBodyLocator() {
         setKinectRGBImageAsBackground();
 
-        // Todo: this might be what the native kinect is getting, but it's probably not what we're getting.
+        // Note: this might be what the native kinect is getting, but it's not necessarily what we're processing...
         logSketch.logRounded("FPS", frameRate);
 
         updateUserDataAndDrawStuff();
@@ -202,9 +202,6 @@ public class BodyLocator extends SingleUserTrackingSketch {
 
             PVector newUserPosition = user.centerOfMass;
             stage.updatePosition(newUserPosition);
-
-            // Todo:base this on the stage position, and lerp to some set value so js doens't have to?
-            listener.userDidMove(newUserPosition); // TODO: does equality work on PVectors?
 
             // Todo: refactor - have a gesture aware delegate doing this based on userDidEnter() callbacks.
             // Separate the gesture recording and detection from the drawing of all this data.

@@ -51,14 +51,48 @@ public class Stage {
                 foundMatchingZone = true;
                 if (stageZone != currentStageZone) {
                     // But, only fire the event if the user has changed zones.
-                    fireEvent(stageZone);
+                    fireUserDidEnterZoneEvent(stageZone);
                     currentStageZone = stageZone;
                 }
             }
         }
+
+        fireUserStagePositionEvent(position);
     }
 
-    private void fireEvent(StageZone stageZone) {
+    private void fireUserStagePositionEvent(PVector position) {
+        StagePosition stagePosition = new StagePosition();
+
+        float left = stageBounds.getLeft();
+        float right = stageBounds.getRight();
+        stagePosition.setFromLeftPercent(mapWithin1(position.x, left, right));
+
+        float bottom = stageBounds.getBottom();
+        float top = stageBounds.getTop();
+        stagePosition.setFromBottomPercent(mapWithin1(position.y, bottom, top));
+
+        float front = stageBounds.getFront();
+        float back = stageBounds.getBack();
+        stagePosition.setFromFrontPercent(mapWithin1(position.z, front, back));
+
+        for (BodyLocatorListener listener : this.listeners) {
+            listener.userDidMove(stagePosition);
+        }
+    }
+
+    private float mapWithin1(float value, float min, float max) {
+        return map(value, min, max, 0, 1);
+    }
+
+    private float map(float value,
+                      float start1,
+                      float stop1,
+                      float start2,
+                      float stop2) {
+        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    }
+
+    private void fireUserDidEnterZoneEvent(StageZone stageZone) {
         for (BodyLocatorListener listener : this.listeners) {
             listener.userDidEnteredZone(stageZone);
         }
@@ -263,4 +297,5 @@ public class Stage {
             return Math.abs(leftBottomFront.x) + Math.abs(rightTopBack.x);
         }
     }
+
 }

@@ -1,6 +1,9 @@
 package com.daveclay.processing.kinect.api;
 
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -106,6 +109,39 @@ public class StageTest {
 
         verify(listener, times(1)).userDidEnteredZone(stage.getStageZoneById("Center"));
         verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Left Back"));
+    }
+
+    @Test
+    public void shouldReturnStagePosition() {
+        // 600 to -300 left: 90%
+        // -300 to 0 top: 80%
+        // 800 to 2300 front
+
+        givenTheStageIsCalibrated();
+
+        BodyLocatorListener listener = mock(BodyLocatorListener.class);
+        stage.addListener(listener);
+
+        position.set(left - 50, top - 50, back - 50); // 550, -130, 2250
+        stage.updatePosition(position);
+        verify(listener).userDidMove(argThat(stagePositionWithin(new StagePosition(.055f, .56f, .96f))));
+    }
+
+
+    public Matcher<StagePosition> stagePositionWithin(final StagePosition expectedStagePosition) {
+        return new TypeSafeMatcher<StagePosition>() {
+            @Override
+            public boolean matchesSafely(StagePosition stagePosition) {
+                return stagePosition.getFromLeftPercent() - expectedStagePosition.getFromLeftPercent() < .01 &&
+                        stagePosition.getFromBottomPercent() - expectedStagePosition.getFromBottomPercent() < .01 &&
+                        stagePosition.getFromFrontPercent() - expectedStagePosition.getFromFrontPercent() < .01;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Expected StagePosition to be " + expectedStagePosition);
+            }
+        };
     }
 
     @Test

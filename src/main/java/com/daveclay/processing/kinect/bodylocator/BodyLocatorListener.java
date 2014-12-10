@@ -2,7 +2,7 @@ package com.daveclay.processing.kinect.bodylocator;
 
 import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.api.Stage;
-import processing.core.PVector;
+import com.daveclay.processing.kinect.api.StagePosition;
 
 public interface BodyLocatorListener {
 
@@ -10,5 +10,5 @@ public interface BodyLocatorListener {
 
     void userDidEnteredZone(Stage.StageZone stageZone);
 
-    void userDidMove(PVector position);
+    void userDidMove(StagePosition stagePosition);
 }

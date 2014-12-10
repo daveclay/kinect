@@ -3,14 +3,16 @@ package com.daveclay.server.presentation;
 import com.daveclay.processing.gestures.GestureDataStore;
 import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.api.Stage;
+import com.daveclay.processing.kinect.api.StagePosition;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import org.java_websocket.WebSocket;
-import processing.core.PVector;
 
 public class PresentationWebSocketListener implements BodyLocatorListener {
 
     public static final String GESTURE_RECOGNIZED_TEMPLATE = "{\"type\": \"userGestureRecognized\", \"data\": { \"name\": \"%s\", \"score\": %.2f }}";
-    public static final String USER_DID_MOVE_TEMPLATE = "{\"type\": \"userDidMove\", \"data\": { \"x\": %.2f, \"y\": %.2f, \"z\": %.2f }}";
+    public static final String USER_DID_MOVE_TEMPLATE = "{\"type\": \"userDidMove\", \"data\": { \"fromLeft\": %.2f, \"fromBottom\": %.2f, \"fromFront\": %.2f }}";
+    public static final String USER_DID_ENTER_ZONE_TEMPLATE = "{\"type\": \"userDidEnterZone\", \"data\": { \"zone\": \"%s\" }}";
+
     private final PresentationServer presentationServer;
 
     public PresentationWebSocketListener(final PresentationServer presentationServer,
@@ -37,12 +39,15 @@ public class PresentationWebSocketListener implements BodyLocatorListener {
 
     @Override
     public void userDidEnteredZone(Stage.StageZone stageZone) {
-        presentationServer.sendToAll("{\"type\": \"userDidEnterZone\", \"data\": { \"zone\": \"" + stageZone.getID() + "\" }}");
+        presentationServer.sendToAll(String.format(USER_DID_ENTER_ZONE_TEMPLATE, stageZone.getID()));
     }
 
     @Override
-    public void userDidMove(PVector position) {
-        presentationServer.sendToAll(String.format(USER_DID_MOVE_TEMPLATE, position.x, position.y, position.z));
+    public void userDidMove(StagePosition position) {
+        presentationServer.sendToAll(String.format(USER_DID_MOVE_TEMPLATE,
+                position.getFromLeftPercent(),
+                position.getFromBottomPercent(),
+                position.getFromFrontPercent()));
 
     }
 }
