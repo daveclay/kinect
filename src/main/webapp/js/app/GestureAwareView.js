@@ -22,7 +22,7 @@ define(function (require) {
             };
             this.connectionWasClosedHandler = function(event) {
                 self.log("[WebSocket connection closed]");
-                this.cleanup();
+                self.cleanup();
                 setTimeout(function() {
                     self.connect(self.uri);
                 }, 5000);

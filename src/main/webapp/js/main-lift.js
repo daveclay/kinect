@@ -31,7 +31,8 @@ try {
     });
 
     require([
-        "jquery"
+        "jquery",
+        "vendor/RAF"
         ], function($) {
         console.log("jquery initialized");
         initializeAppComponents($);

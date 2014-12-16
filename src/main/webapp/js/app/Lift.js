@@ -8,10 +8,15 @@ define(function (require) {
 
     var WIDTH = window.innerWidth;
     var HEIGHT = window.innerHeight;
-    var NUMBER_OF_ITEMS = 25;
+    var NUMBER_OF_ITEMS = 11;
     var TRANSITION_TIME = 2000;
     var PIXELS_PER_ITEM = WIDTH / NUMBER_OF_ITEMS;
     var OPACITY_DISTANCE = 200;
+
+    var currentPosition = {
+        x: 0,
+        y: 0
+    };
 
     function Item(index) {
         var itemElement = $("<div/>");
@@ -49,18 +54,32 @@ define(function (require) {
         this.move(0, 0);
         var index = this.index;
         var element = this.element;
-        setTimeout(function() {
-            element.remove();
-            if (callback) {
-                callback(index);
-            }
-        }, TRANSITION_TIME);
+
+        // Todo: setTimeout replacement
+        console.log(new Date() + " removing element at " + index);
+        element.remove();
+        if (callback) {
+            callback(index);
+        }
     };
 
     var LiftView = GestureAwareView.extend({
 
+        _findItemLiftingInForIndex: function(index) {
+            for (var i = 0; i < this.itemsLiftingIn.length; i++) {
+                var item = this.itemsLiftingIn[i];
+                if (item.index == index) {
+                    return item;
+                }
+            }
+        },
+
         createItemAt: function(index) {
-            if (!this.itemsLiftingIn[index]) {
+            if (index < 0) {
+                return;
+            }
+            var existingItem = this._findItemLiftingInForIndex(index);
+            if (! existingItem) {
                 this.itemsLiftingIn[index] = true;
 
                 var item = new Item(index);
@@ -70,16 +89,25 @@ define(function (require) {
 
                 var self = this;
 
-                setTimeout(function() {
-                    item.liftIn(self.opacity);
-                }, Math.round(Math.random() * 200) + 1000);
+                item.liftIn(self.opacity);
             }
         },
 
+        _removeAndLiftItemOut: function(item) {
+            if (this.items[item.index]) {
+                this.items.splice(this.items.indexOf(item), 1);
+            }
+            item.liftOut();
+        },
+
         scheduleItemLiftOut: function(item) {
-            setTimeout(function() {
-                item.liftOut();
-            }, Math.round(Math.random() * 1500) + 1500);
+            var self = this;
+            if ( ! self.itemsToLiftOut[item.index]) {
+                self.itemsToLiftOut.push({
+                    timestamp: new Date().getTime(), // TODO: make random
+                    item: item
+                });
+            }
         },
 
         setOpacity: function(opacity) {
@@ -89,24 +117,31 @@ define(function (require) {
             }
         },
 
-        triggerItemsForPosition: function(x) {
+        createItemsForPosition: function(x) {
             var index = Math.round(x / PIXELS_PER_ITEM);
+            this.currentIndex = index;
             this.createItemAt(index - 1);
             this.createItemAt(index);
             this.createItemAt(index + 1);
+        },
+
+        _isItemWithinIndex: function(item) {
+            var index = this.currentIndex;
+            return item.index >= index - 1 && item.index <= index + 1;
+        },
+
+        _checkItemsForCurrentIndex: function() {
             for (var i = 0; i < this.items.length; i++) {
                 var item = this.items[i];
-                if (item.index < index - 1 || item.index > index + 1) {
-                    this.items.splice(this.items.indexOf(item), 1);
-                    this.itemsLiftingIn[item.index] = false;
+                if ( ! this._isItemWithinIndex(item)) {
                     this.scheduleItemLiftOut(item);
                 }
             }
         },
 
-        updatePosition: function(position) {
-            var x = position.x;
-            var y = position.y;
+        updatePosition: function() {
+            var x = currentPosition.x;
+            var y = currentPosition.y;
 
             var verticalSpace = (y - OPACITY_DISTANCE / 2) / (HEIGHT - OPACITY_DISTANCE);
             if (verticalSpace < 0) {
@@ -118,7 +153,31 @@ define(function (require) {
             });
 
             this.setOpacity(verticalSpace);
-            this.triggerItemsForPosition(x);
+            this.createItemsForPosition(x);
+            this._checkItemsForCurrentIndex();
+
+            var temp = [];
+            for (var i = 0; i < this.itemsToLiftOut.length; i++) {
+                var liftOutData = this.itemsToLiftOut[i];
+                if (liftOutData) {
+                    // items are non-sequential: sometimes we get mouse positions at 1, 5, and 6
+                    var item = liftOutData.item;
+                    if (new Date().getTime() - liftOutData.timestamp > 2000) {
+                        if ( ! this._isItemWithinIndex(item)) {
+                            this._removeAndLiftItemOut(item);
+                        } else {
+                            temp.push(liftOutData);
+                        }
+                    }
+                }
+            }
+
+            this.itemsToLiftOut = temp;
+
+            var self = this;
+            this.thread = window.requestAnimationFrame(function() {
+                self.updatePosition();
+            })
         },
 
         constructor: function(params) {
@@ -127,6 +186,7 @@ define(function (require) {
             this.stage = $('#stage');
             this.background = $('#background');
             this.itemsLiftingIn = [];
+            this.itemsToLiftOut = [];
             this.items = [];
 
             var self = this;
@@ -139,15 +199,20 @@ define(function (require) {
                     x: Numbers.map(position.x, -300, 300, window.innerWidth, 0),
                     y: Numbers.map(position.z, 900, 2200, window.innerHeight, 0)
                 };
-
-                self.updatePosition(hi);
             });
 
             $(document).mousemove(function(event) {
-                self.updatePosition({
+                // Todo: since this queues, you're running against all these queued up events.
+                // Todo: set the current position, then let the animation thread pick up the
+                // Todo: current location and work with that.
+                currentPosition = {
                     x: event.pageX,
                     y: event.pageY
-                });
+                };
+            });
+
+            this.thread = window.requestAnimationFrame(function() {
+                self.updatePosition();
             });
 
             this.connect();
