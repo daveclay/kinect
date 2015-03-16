@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GestureDataStore {
-    public static final String GESTURE_DIR = "/Users/daveclay/work/kinect/projects/kinect/src/main/resources/gestures/";
+    public static final String GESTURE_DIR = "/Users/daveclay/work/kinect/src/main/resources/gestures/";
 
     private final String gestureDirectory;
     private final List<GestureData> gestures = new ArrayList<GestureData>();

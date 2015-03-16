@@ -2,7 +2,7 @@ package com.daveclay.processing.kinect;
 
 import SimpleOpenNI.SimpleOpenNI;
 import ddf.minim.AudioPlayer;
-import ddf.minim.Sound;
+import ddf.minim.Minim;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -13,7 +13,7 @@ public class DrumTriggers2 extends PApplet {
     }
 
     SimpleOpenNI kinect;
-    Sound minim;
+    Minim minim;
 
     HotpointAudio kick;
     HotpointAudio snare;
@@ -28,7 +28,7 @@ public class DrumTriggers2 extends PApplet {
         size(kinect.rgbWidth(), kinect.rgbHeight(), OPENGL);
         // size(1024, 768, OPENGL);
 
-        minim = new Sound();
+        minim = new Minim(this);
         // load both audio files
         AudioPlayer snareAudio = minim.loadFile("hat.wav");
         AudioPlayer kickAudio = minim.loadFile("kick.wav");
