@@ -117,7 +117,9 @@ public class StageMonitor extends PApplet {
         drawMappedZone(rightBackZone);
         drawCenterZone();
 
-        drawPosition(position);
+        if (user != null) {
+            drawPosition(position);
+        }
     }
 
     void drawPosition(PVector position) {

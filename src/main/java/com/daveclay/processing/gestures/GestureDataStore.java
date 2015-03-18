@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class GestureDataStore {
-    public static final String GESTURE_DIR = "/Users/daveclay/work/kinect/src/main/resources/gestures/";
+    public static final String GESTURE_DIR = "/gestures";
 
     private final String gestureDirectory;
     private final List<GestureData> gestures = new ArrayList<GestureData>();
@@ -23,9 +24,11 @@ public class GestureDataStore {
 
     public void load() {
         ObjectMapper objectMapper = new ObjectMapper();
-        File dir = new File(gestureDirectory);
+        URL url = getClass().getResource(gestureDirectory);
+        File dir = new File(url.getFile());
         for (File file : dir.listFiles()) {
             try {
+                System.out.println("loading gesture: " + file.getName());
                 GestureData gestureData = objectMapper.readValue(file, GestureData.class);
                 gestures.add(gestureData);
                 gestureDataByName.put(gestureData.getName(), gestureData);

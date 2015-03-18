@@ -5,6 +5,7 @@ import KinectPV2.*;
 
 import com.daveclay.processing.api.LogSketch;
 import processing.core.PApplet;
+import processing.core.PImage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,18 +29,21 @@ public class UserTrackingSketch extends PApplet {
     protected LogSketch logSketch;
 
     public final void setup() {
-        size(640, 480, OPENGL);
+        size(1920, 1080, OPENGL);
 
         kinect = new KinectPV2(this);
 
         // required to enable user tracking
         kinect.enableColorImg(true);
-        kinect.enableBodyTrackImg(true);
+        // kinect.enableBodyTrackImg(true);
         kinect.enableSkeleton3dMap(true);
+
+        kinect.init();
     }
 
     public void setKinectRGBImageAsBackground() {
-        background(kinect.getColorImage());
+        PImage colorImage = kinect.getColorImage();
+        background(colorImage);
     }
 
     public void setSketchCallback(SketchCallback sketchCallback) {
