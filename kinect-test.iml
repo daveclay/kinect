@@ -9,10 +9,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
+    <content url="file://$MODULE_DIR$/../trinity/KinectPV2/KinectPV2/examples" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="processing-all" level="application" />
-    <orderEntry type="library" name="SimpleOpenNI" level="application" />
     <orderEntry type="library" name="minim" level="application" />
     <orderEntry type="library" name="Maven: org.processing:core:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:jogl-all:2.0.3" level="project" />
@@ -30,5 +30,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-all:1.1" level="project" />
     <orderEntry type="library" name="peasycam" level="application" />
+    <orderEntry type="library" name="KinectPV2" level="application" />
   </component>
 </module>

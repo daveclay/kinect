@@ -1,22 +1,28 @@
 package com.daveclay.processing.kinect.api;
 
-import java.util.ArrayList;
+import KinectPV2.KJoint;
+import KinectPV2.KinectPV2;
+
 import java.util.List;
 
-public abstract class HandState {
+public class HandState {
+
+    private final User user;
+    private final KJoint hand;
+    private UserEventsConfig userEventsConfig = new UserEventsConfig();
     private boolean handWasPreviouslyExtended;
-    private List<HandExtendedHandler> handExtendedHandlers = new ArrayList<HandExtendedHandler>();
 
-    protected int handExtensionThresholdRadius = 350;
-
-    abstract boolean isHandExtended();
-
-    public void addHandExtendedHandler(HandExtendedHandler handExtendedHandler) {
-        this.handExtendedHandlers.add(handExtendedHandler);
+    public HandState(User user, KJoint hand) {
+        this.user = user;
+        this.hand = hand;
     }
 
-    public void setHandExtensionThresholdRadius(int handExtensionThresholdRadius) {
-        this.handExtensionThresholdRadius = handExtensionThresholdRadius;
+    public void setUserEventsConfig(UserEventsConfig userEventsConfig) {
+        this.userEventsConfig = userEventsConfig;
+    }
+
+    public boolean isHandExtended() {
+        return user.isHandExtended(hand, userEventsConfig.handExtensionThresholdRadius);
     }
 
     public void triggerHandStateEvents() {
@@ -29,17 +35,26 @@ public abstract class HandState {
         }
 
         handWasPreviouslyExtended = handCurrentlyExtended;
+    }
 
+    private List<HandExtendedHandler> getHandExtendedHandlers() {
+        if (hand.getType() == KinectPV2.JointType_HandLeft) {
+            return this.userEventsConfig.getLeftHandExtendedHandlers();
+        } else if (hand.getType() == KinectPV2.JointType_HandRight) {
+            return this.userEventsConfig.getRightHandExtendedHandlers();
+        } else {
+            throw new IllegalStateException("Unknown hand joint type: " + hand);
+        }
     }
 
     private void handWasExtended() {
-        for (HandExtendedHandler handListeners : this.handExtendedHandlers) {
+        for (HandExtendedHandler handListeners : getHandExtendedHandlers()) {
             handListeners.onHandExtended();
         }
     }
 
     private void handWasRetracted() {
-        for (HandExtendedHandler handListeners : this.handExtendedHandlers) {
+        for (HandExtendedHandler handListeners : getHandExtendedHandlers()) {
             handListeners.onHandRetracted();
         }
     }

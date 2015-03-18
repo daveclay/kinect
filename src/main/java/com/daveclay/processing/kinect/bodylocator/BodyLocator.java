@@ -1,6 +1,6 @@
 package com.daveclay.processing.kinect.bodylocator;
 
-import SimpleOpenNI.SimpleOpenNI;
+import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.gestures.*;
@@ -14,29 +14,22 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BodyLocator extends SingleUserTrackingSketch {
+public class BodyLocator extends UserTrackingSketch {
 
-    /**
-     * To run this, the SimpleOpenNI.jar must be in the same distribution folder with the "osx" .so
-     * native library (libraries?)
-     */
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
         GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR);
         gestureDataStore.load();
 
-        User user = new User();
         Stage stage = new Stage();
         BodyLocator bodyLocator = new BodyLocator(
-                user,
                 gestureDataStore,
                 stage,
                 logSketch);
 
         StageMonitor stageMonitor = new StageMonitor(
                 stage,
-                logSketch,
-                user);
+                logSketch);
 
         try {
             PresentationServer presentationServer = new PresentationServer(12345);
@@ -70,21 +63,10 @@ public class BodyLocator extends SingleUserTrackingSketch {
     private long lastNotification;
     private int drawGestureRecognizedState;
 
-    public BodyLocator(User user,
-                       GestureDataStore gestureDataStore,
+    public BodyLocator(GestureDataStore gestureDataStore,
                        Stage stage,
                        LogSketch logSketch) {
-        super(user, new UserTrackingKinectConfig() {
-            @Override
-            public void setupUserTrackingSketch(SingleUserTrackingSketch singleUserTrackingSketch) {
-                singleUserTrackingSketch.size(640, 480, OPENGL);
-                SimpleOpenNI kinect = singleUserTrackingSketch.getKinect();
-                kinect.enableRGB();
-                kinect.setMirror(true);
-                kinect.alternativeViewPointDepthToImage();
-            }
-        });
-
+        super();
         setSketchCallback(new SketchCallback() {
             @Override
             public void draw() {
@@ -113,7 +95,6 @@ public class BodyLocator extends SingleUserTrackingSketch {
         this.stage = stage;
         stage.setupDefaultStageZones();
         this.logSketch = logSketch;
-        user.setLogSketch(logSketch);
 
         registerEventListeners();
     }
@@ -197,15 +178,16 @@ public class BodyLocator extends SingleUserTrackingSketch {
     }
 
     private void updateUserDataAndDrawStuff() {
-        User user = getUser();
-        if (user.isCurrentlyTracking()) {
+        User user = getFirstCurrentlyActiveUser();
+        if (user != null) {
 
-            PVector newUserPosition = user.centerOfMass;
+            PVector newUserPosition = user.getJointPosition(KinectPV2.JointType_SpineMid);
+
             stage.updatePosition(newUserPosition);
 
             // Todo: refactor - have a gesture aware delegate doing this based on userDidEnter() callbacks.
             // Separate the gesture recording and detection from the drawing of all this data.
-            gestureRecorder.addPoint(user.rightHand.position);
+            gestureRecorder.addPoint(user.getRightHandPosition());
 
             // draw user data.
             drawUserData(user);
@@ -258,8 +240,8 @@ public class BodyLocator extends SingleUserTrackingSketch {
     private void drawUserData(User user) {
         pushMatrix();
         translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
-        PVector leftHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.rightHand);
-        PVector rightHandPosition2d = user.convertRealWorldToProjectiveMirrored(user.leftHand);
+        PVector leftHandPosition2d = user.getRightHandMirroredPosition();
+        PVector rightHandPosition2d = user.getLeftHandMirroredPosition();
 
         if (drawGestureRecording) {
             drawingPoints.add(leftHandPosition2d);

@@ -1,5 +1,6 @@
 package com.daveclay.processing.kinect.api;
 
+import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
@@ -10,7 +11,6 @@ public class StageMonitor extends PApplet {
 
     private final Stage stage;
     private final LogSketch logSketch;
-    private final User user;
     private final int width;
     private final int height;
     private final StageBounds stageBounds;
@@ -19,6 +19,8 @@ public class StageMonitor extends PApplet {
     private final Stage.RightFrontZone rightFrontZone;
     private final Stage.LeftBackZone leftBackZone;
     private final Stage.RightBackZone rightBackZone;
+
+    private User user;
 
     private Stage.StageZone currentStageZone;
 
@@ -33,14 +35,12 @@ public class StageMonitor extends PApplet {
     private PVector center;
 
     public StageMonitor(Stage stage,
-                        User user,
                         LogSketch logSketch,
                         int width,
                         int height) {
         this.width = width;
         this.height = height;
         this.logSketch = logSketch;
-        this.user = user;
         this.stage = stage;
 
         this.currentStageZone = null;
@@ -69,14 +69,17 @@ public class StageMonitor extends PApplet {
     }
 
     public StageMonitor(Stage stage,
-                        LogSketch logSketch,
-                        User user) {
-        this(stage, user, logSketch, 400, 400);
+                        LogSketch logSketch) {
+        this(stage, logSketch, 400, 400);
     }
 
     @Override
     public void setup() {
         size(width, height);
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -91,8 +94,10 @@ public class StageMonitor extends PApplet {
         centerRadius = centerZone.getCenterRadius();
         center = stageBounds.getCenter();
 
-        position = user.centerOfMass;
-        logSketch.logVector("Stage Position", position);
+        if (user != null) {
+            position = user.getJointPosition(KinectPV2.JointType_SpineBase);
+            logSketch.logVector("Stage Position", position);
+        }
 
         /*
         logSketch.log("Within Center", centerZone.isWithinBounds(position));
