@@ -115,8 +115,8 @@ public class StageMonitor extends PApplet {
     void drawPosition(PVector position) {
         float mappedPositionX = map(position.x, left, right, 0, width);
         float mappedPositionZ = map(position.z, front, back, 0, height);
-        fill(100);
-        rect(mappedPositionX, mappedPositionZ, 10, 10);
+        fill(150, 125, 0);
+        rect(mappedPositionX, mappedPositionZ, 50, 50);
     }
 
     private void drawCenterZone() {

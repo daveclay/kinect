@@ -48,7 +48,7 @@ public class LogSketch extends PApplet {
     }
 
     public void logVector(String label, PVector vector) {
-        log(label, "x: " + Math.round(vector.x) + ", y: " + Math.round(vector.y) + ", z: " + Math.round(vector.z));
+        log(label, "x: " + vector.x + ", y: " + vector.y + ", z: " + vector.z);
     }
 
     public synchronized void log(String label, String info) {

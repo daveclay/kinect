@@ -281,8 +281,6 @@ public class BodyLocator extends UserTrackingSketch {
         leftHandBox.drawAt(leftHandPosition2d);
         rightHandBox.drawAt(rightHandPosition2d);
         popMatrix();
-
-        stage.updatePosition(user.getJointPosition(KinectPV2.JointType_SpineBase));
     }
 
     private class HandBox {
