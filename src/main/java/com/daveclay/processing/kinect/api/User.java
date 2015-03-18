@@ -6,6 +6,7 @@ import processing.core.PVector;
 
 public class User {
 
+    private final int id;
     private final KinectPV2 kinect;
     private final Skeleton skeleton;
     private final KJoint leftHand;
@@ -14,7 +15,8 @@ public class User {
     private final HandState leftHandState;
     private final HandState rightHandState;
 
-    public User(KinectPV2 kinect, Skeleton skeleton, UserEventsConfig userEventsConfig) {
+    public User(KinectPV2 kinect, Skeleton skeleton, UserEventsConfig userEventsConfig, int index) {
+        this.id = index;
         this.kinect = kinect;
         this.skeleton = skeleton;
         this.leftHand = findJoint(KinectPV2.JointType_HandLeft);
@@ -24,6 +26,10 @@ public class User {
         this.rightHandState = new HandState(this, this.rightHand);
         this.leftHandState.setUserEventsConfig(userEventsConfig);
         this.rightHandState.setUserEventsConfig(userEventsConfig);
+    }
+
+    public int getID() {
+        return id;
     }
 
     public void triggerUserInteractionListeners() {

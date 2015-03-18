@@ -15,6 +15,7 @@ public class Stage {
     private final StageBounds stageBounds = new StageBounds();
     private Map<String, StageZone> stageZoneById = new HashMap<String, StageZone>();
     private List<StageZone> stageZones = new ArrayList<StageZone>();
+    private PVector position = new PVector();
 
     // Todo: ths should be its own listener, not a BodyLocator.Listener - the stage only sends
     // stage update events, doens't care about gestures.
@@ -31,6 +32,10 @@ public class Stage {
         return stageBounds;
     }
 
+    public PVector getPosition() {
+        return position;
+    }
+
     public void setupDefaultStageZones() {
         addStageZone(new CenterZone());
         addStageZone(new LeftFrontZone());
@@ -42,6 +47,7 @@ public class Stage {
     private StageZone currentStageZone = null;
 
     public void updatePosition(PVector position) {
+        this.position = position;
         stageBounds.expandStageBounds(position);
         boolean foundMatchingZone = false;
         for (StageZone stageZone : stageZones) {

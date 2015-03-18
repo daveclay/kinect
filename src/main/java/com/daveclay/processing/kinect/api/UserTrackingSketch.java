@@ -35,7 +35,7 @@ public class UserTrackingSketch extends PApplet {
 
         // required to enable user tracking
         kinect.enableColorImg(true);
-        // kinect.enableBodyTrackImg(true);
+        kinect.enableSkeleton(true);
         kinect.enableSkeleton3dMap(true);
 
         kinect.init();
@@ -115,7 +115,7 @@ public class UserTrackingSketch extends PApplet {
     private void updateUserSkeleton(int index, Skeleton skeleton) {
         UserTrackingState userTrackingState;
         if ( ! userTrackingStateByIndex.containsKey(index)) {
-            User user = new User(kinect, skeleton, perUserEventsConfig);
+            User user = new User(kinect, skeleton, perUserEventsConfig, index);
             userTrackingState = new UserTrackingState(user);
             userTrackingStateByIndex.put(index, userTrackingState);
         } else {

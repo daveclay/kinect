@@ -22,12 +22,14 @@ public class BodyLocator extends UserTrackingSketch {
         gestureDataStore.load();
 
         Stage stage = new Stage();
-        BodyLocator bodyLocator = new BodyLocator(
-                gestureDataStore,
+        stage.setupDefaultStageZones();
+
+        StageMonitor stageMonitor = new StageMonitor(
                 stage,
                 logSketch);
 
-        StageMonitor stageMonitor = new StageMonitor(
+        BodyLocator bodyLocator = new BodyLocator(
+                gestureDataStore,
                 stage,
                 logSketch);
 
@@ -62,6 +64,7 @@ public class BodyLocator extends UserTrackingSketch {
     boolean drawGestureRecording;
     private long lastNotification;
     private int drawGestureRecognizedState;
+    private User user;
 
     public BodyLocator(GestureDataStore gestureDataStore,
                        Stage stage,
@@ -93,7 +96,6 @@ public class BodyLocator extends UserTrackingSketch {
         gestureRecognizer.addRecognizer(lineGestureRecognizer);
 
         this.stage = stage;
-        stage.setupDefaultStageZones();
         this.logSketch = logSketch;
 
         registerEventListeners();
@@ -129,13 +131,16 @@ public class BodyLocator extends UserTrackingSketch {
         onUserEntered(new UserEnteredHandler() {
             @Override
             public void userDidEnter(User user) {
+                System.out.println("HELLO User " + user.getID() + "!");
+                BodyLocator.this.user = user;
             }
         });
 
         onUserWasLost(new UserWasLostHandler() {
             @Override
             public void userWasLost(User user) {
-
+                System.out.println("User " + user.getID() + " LOST, eh well...");
+                BodyLocator.this.user = null;
             }
         });
 
@@ -178,7 +183,6 @@ public class BodyLocator extends UserTrackingSketch {
     }
 
     private void updateUserDataAndDrawStuff() {
-        User user = getFirstCurrentlyActiveUser();
         if (user != null) {
 
             PVector newUserPosition = user.getJointPosition(KinectPV2.JointType_SpineMid);
@@ -277,6 +281,8 @@ public class BodyLocator extends UserTrackingSketch {
         leftHandBox.drawAt(leftHandPosition2d);
         rightHandBox.drawAt(rightHandPosition2d);
         popMatrix();
+
+        stage.updatePosition(user.getJointPosition(KinectPV2.JointType_SpineBase));
     }
 
     private class HandBox {

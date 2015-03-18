@@ -20,8 +20,6 @@ public class StageMonitor extends PApplet {
     private final Stage.LeftBackZone leftBackZone;
     private final Stage.RightBackZone rightBackZone;
 
-    private User user;
-
     private Stage.StageZone currentStageZone;
 
     private PVector position;
@@ -78,10 +76,6 @@ public class StageMonitor extends PApplet {
         size(width, height);
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     @Override
     public void draw() {
         // real-life values:
@@ -93,11 +87,9 @@ public class StageMonitor extends PApplet {
         realWorldDepth = stageBounds.getDepth();
         centerRadius = centerZone.getCenterRadius();
         center = stageBounds.getCenter();
+        position = stage.getPosition();
 
-        if (user != null) {
-            position = user.getJointPosition(KinectPV2.JointType_SpineBase);
-            logSketch.logVector("Stage Position", position);
-        }
+        logSketch.logVector("Stage Position", position);
 
         /*
         logSketch.log("Within Center", centerZone.isWithinBounds(position));
@@ -117,9 +109,7 @@ public class StageMonitor extends PApplet {
         drawMappedZone(rightBackZone);
         drawCenterZone();
 
-        if (user != null) {
-            drawPosition(position);
-        }
+        drawPosition(position);
     }
 
     void drawPosition(PVector position) {
