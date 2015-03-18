@@ -147,6 +147,7 @@ public class UserTrackingSketch extends PApplet {
 
         public void updateTrackingStatus(Skeleton skeleton) {
             if (skeleton.isTracked()) {
+                logSketch.logVector("Hi", user.getJointPosition(KinectPV2.JointType_SpineBase));
                 if ( ! currentlyTracked) {
                     triggerUserEnteredListeners(user);
                     currentlyTracked = true;

@@ -8,11 +8,11 @@ import java.util.List;
 public class HandState {
 
     private final User user;
-    private final KJoint hand;
+    private final int hand;
     private UserEventsConfig userEventsConfig = new UserEventsConfig();
     private boolean handWasPreviouslyExtended;
 
-    public HandState(User user, KJoint hand) {
+    public HandState(User user, int hand) {
         this.user = user;
         this.hand = hand;
     }
@@ -38,9 +38,9 @@ public class HandState {
     }
 
     private List<HandExtendedHandler> getHandExtendedHandlers() {
-        if (hand.getType() == KinectPV2.JointType_HandLeft) {
+        if (hand == KinectPV2.JointType_HandLeft) {
             return this.userEventsConfig.getLeftHandExtendedHandlers();
-        } else if (hand.getType() == KinectPV2.JointType_HandRight) {
+        } else if (hand == KinectPV2.JointType_HandRight) {
             return this.userEventsConfig.getRightHandExtendedHandlers();
         } else {
             throw new IllegalStateException("Unknown hand joint type: " + hand);

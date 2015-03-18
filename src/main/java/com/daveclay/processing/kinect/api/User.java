@@ -9,9 +9,6 @@ public class User {
     private final int id;
     private final KinectPV2 kinect;
     private final Skeleton skeleton;
-    private final KJoint leftHand;
-    private final KJoint rightHand;
-    private final KJoint torso;
     private final HandState leftHandState;
     private final HandState rightHandState;
 
@@ -19,11 +16,8 @@ public class User {
         this.id = index;
         this.kinect = kinect;
         this.skeleton = skeleton;
-        this.leftHand = findJoint(KinectPV2.JointType_HandLeft);
-        this.rightHand = findJoint(KinectPV2.JointType_HandLeft);
-        this.torso = findJoint(KinectPV2.JointType_SpineBase);
-        this.leftHandState = new HandState(this, this.leftHand);
-        this.rightHandState = new HandState(this, this.rightHand);
+        this.leftHandState = new HandState(this, KinectPV2.JointType_HandLeft);
+        this.rightHandState = new HandState(this, KinectPV2.JointType_HandRight);
         this.leftHandState.setUserEventsConfig(userEventsConfig);
         this.rightHandState.setUserEventsConfig(userEventsConfig);
     }
@@ -42,15 +36,11 @@ public class User {
     }
 
     public PVector getLeftHandMirroredPosition() {
-        return getMirroredPosition(leftHand);
-    }
-
-    public PVector getRightHandPosition() {
-        return KinectUtils.getPosition(rightHand);
+        return getMirroredPosition(getLeftHandPosition());
     }
 
     public PVector getRightHandMirroredPosition() {
-        return getMirroredPosition(rightHand);
+        return getMirroredPosition(getRightHandPosition());
     }
 
     public PVector getJointPosition(int joint) {
@@ -61,14 +51,24 @@ public class User {
         return skeleton;
     }
 
-    private PVector getMirroredPosition(KJoint joint) {
-        return VectorMath.reflectVertically(KinectUtils.getPosition(joint));
+    public PVector getRightHandPosition() {
+        return getJointPosition(KinectPV2.JointType_HandRight);
     }
 
-    public boolean isHandExtended(KJoint hand, float threshold) {
+    public PVector getLeftHandPosition() {
+        return getJointPosition(KinectPV2.JointType_HandLeft);
+    }
+
+    private PVector getMirroredPosition(PVector position) {
+        return VectorMath.reflectVertically(position);
+    }
+
+    public boolean isHandExtended(int hand, float threshold) {
+        PVector handPosition = getJointPosition(hand);
+        PVector torsoPosition = getJointPosition(KinectPV2.JointType_SpineBase);
         return ! VectorMath.isWithinZ(
-                KinectUtils.getPosition(hand),
-                KinectUtils.getPosition(torso),
+                handPosition,
+                torsoPosition,
                 threshold);
     }
 
@@ -79,11 +79,11 @@ public class User {
         logSketch.logVector("Left Hand Pos", rightHand.position);
         logSketch.logVector("Torso", torso.position);
         */
-        return isHandExtended(rightHand, threshold);
+        return isHandExtended(KinectPV2.JointType_HandRight, threshold);
     }
 
     public boolean isLeftHandExtended(float threshold) {
-        return isHandExtended(leftHand, threshold);
+        return isHandExtended(KinectPV2.JointType_HandLeft, threshold);
     }
 
     private KJoint findJoint(int which) {
