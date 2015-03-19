@@ -5,7 +5,7 @@ import java.util.List;
 
 public class UserEventsConfig {
 
-    protected int handExtensionThresholdRadius = 350;
+    protected float handExtensionThresholdRadius = .5f;
 
     private List<HandExtendedHandler> leftHandExtendedHandlers = new ArrayList<HandExtendedHandler>();
     private List<HandExtendedHandler> rightHandExtendedHandlers = new ArrayList<HandExtendedHandler>();
@@ -26,7 +26,7 @@ public class UserEventsConfig {
         this.rightHandExtendedHandlers = rightHandExtendedHandlers;
     }
 
-    public int getHandExtensionThresholdRadius() {
+    public float getHandExtensionThresholdRadius() {
         return handExtensionThresholdRadius;
     }
 

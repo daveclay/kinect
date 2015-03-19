@@ -4,12 +4,12 @@ import processing.core.PVector;
 
 public class StageBounds {
 
-    private float front = Integer.MAX_VALUE; // positive
-    private float back = 0; // also positive, but bigger.
-    private float right = Integer.MAX_VALUE; // right goes negative
-    private float left = 0; // left goes positive
-    private float bottom = Integer.MAX_VALUE;
-    private float top = 0;
+    private Float front;
+    private Float back;
+    private Float right;
+    private Float left;
+    private Float bottom;
+    private Float top;
 
     private boolean ignoreZeros = true;
 
@@ -17,6 +17,20 @@ public class StageBounds {
         if (ignoreZeros && isZero(position)) {
             return;
         }
+        if (front == null) {
+            initialize(position);
+        } else {
+            expand(position);
+        }
+    }
+
+    private void initialize(PVector position) {
+        left = right = position.x;
+        top = bottom = position.y;
+        back = front = position.z;
+    }
+
+    private void expand(PVector position) {
         if (position.z < front) {
             front = position.z;
         }
