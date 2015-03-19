@@ -78,7 +78,10 @@ public class StageMonitor extends PApplet {
 
     @Override
     public void draw() {
-        // real-life values:
+        if ( ! stageBounds.initialized()) {
+            return;
+        }
+
         left = stageBounds.getLeft();
         right = stageBounds.getRight();
         front = stageBounds.getFront();

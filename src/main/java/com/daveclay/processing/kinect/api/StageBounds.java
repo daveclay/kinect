@@ -24,6 +24,10 @@ public class StageBounds {
         }
     }
 
+    public boolean initialized() {
+        return front != null;
+    }
+
     private void initialize(PVector position) {
         left = right = position.x;
         top = bottom = position.y;
