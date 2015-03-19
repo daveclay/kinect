@@ -246,6 +246,13 @@ public class BodyLocator extends UserTrackingSketch {
         translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
         PVector leftHandPosition2d = user.getRightHandMirroredPosition();
         PVector rightHandPosition2d = user.getLeftHandMirroredPosition();
+        /*
+
+        http://stackoverflow.com/questions/17832238/kinect-intrinsic-parameters-from-field-of-view/18199938#18199938
+              CoordinateMapper ^mapper =
+        frame->BodyFrameSource->KinectSensor->CoordinateMapper;
+      ColorSpacePoint headPoint = mapper->MapCameraPointToColorSpace(headLocation);
+         */
 
         if (drawGestureRecording) {
             drawingPoints.add(leftHandPosition2d);
