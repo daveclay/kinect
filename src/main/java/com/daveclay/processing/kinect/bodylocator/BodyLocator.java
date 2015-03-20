@@ -11,6 +11,7 @@ import com.daveclay.server.presentation.PresentationWebSocketListener;
 import processing.core.PVector;
 
 import java.net.UnknownHostException;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -243,16 +244,19 @@ public class BodyLocator extends UserTrackingSketch {
 
     private void drawUserData(User user) {
         pushMatrix();
-        translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
-        PVector leftHandPosition2d = user.getRightHandMirroredPosition();
-        PVector rightHandPosition2d = user.getLeftHandMirroredPosition();
-        /*
 
-        http://stackoverflow.com/questions/17832238/kinect-intrinsic-parameters-from-field-of-view/18199938#18199938
-              CoordinateMapper ^mapper =
-        frame->BodyFrameSource->KinectSensor->CoordinateMapper;
-      ColorSpacePoint headPoint = mapper->MapCameraPointToColorSpace(headLocation);
-         */
+        PVector leftHandPosition2d = user.getRightHandPosition2D();
+        PVector rightHandPosition2d = user.getLeftHandPosition2D();
+
+        logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
+        logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
+
+        stroke(120);
+        strokeWeight(2);
+        line(leftHandPosition2d.x, leftHandPosition2d.y, rightHandPosition2d.x, rightHandPosition2d.y);
+        leftHandBox.drawAt(leftHandPosition2d);
+        rightHandBox.drawAt(rightHandPosition2d);
+        popMatrix();
 
         if (drawGestureRecording) {
             drawingPoints.add(leftHandPosition2d);
@@ -281,13 +285,6 @@ public class BodyLocator extends UserTrackingSketch {
                 previousPoint = point;
             }
         }
-
-        stroke(120);
-        strokeWeight(2);
-        line(leftHandPosition2d.x, leftHandPosition2d.y, rightHandPosition2d.x, rightHandPosition2d.y);
-        leftHandBox.drawAt(leftHandPosition2d);
-        rightHandBox.drawAt(rightHandPosition2d);
-        popMatrix();
     }
 
     private class HandBox {

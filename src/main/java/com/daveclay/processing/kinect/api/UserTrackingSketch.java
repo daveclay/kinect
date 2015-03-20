@@ -37,8 +37,16 @@ public class UserTrackingSketch extends PApplet {
         kinect.enableColorImg(true);
         kinect.enableSkeleton(true);
         kinect.enableSkeleton3dMap(true);
+        kinect.enableSkeletonColorMap(true);
 
         kinect.init();
+    }
+
+    @Override
+    public void destroy() {
+        kinect.dispose();
+        System.out.println("Disposed of Kinect");
+        super.destroy();
     }
 
     public void setKinectRGBImageAsBackground() {
@@ -105,24 +113,28 @@ public class UserTrackingSketch extends PApplet {
     }
 
     private void calculateAndTriggerUserEvents() {
-        Skeleton[] skeletons = kinect.getSkeleton3d();
-        for (int i = 0; i < skeletons.length; i++) {
-            Skeleton skeleton = skeletons[i];
-            updateUserSkeleton(i, skeleton);
+        Skeleton[] skeleton3Ds = kinect.getSkeleton3d();
+        Skeleton[] colorSkeletons = kinect.getSkeletonColorMap();
+        for (int i = 0; i < skeleton3Ds.length; i++) {
+            Skeleton skeleton3D = skeleton3Ds[i];
+            Skeleton colorSkeleton = colorSkeletons[i];
+            updateUserSkeleton(i, skeleton3D, colorSkeleton);
         }
     }
 
-    private void updateUserSkeleton(int index, Skeleton skeleton) {
+    private void updateUserSkeleton(int index,
+                                    Skeleton skeleton3D,
+                                    Skeleton colorSkeleton) {
         UserTrackingState userTrackingState;
         if ( ! userTrackingStateByIndex.containsKey(index)) {
-            User user = new User(kinect, skeleton, perUserEventsConfig, index);
+            User user = new User(kinect, skeleton3D, colorSkeleton, perUserEventsConfig, index);
             userTrackingState = new UserTrackingState(user);
             userTrackingStateByIndex.put(index, userTrackingState);
         } else {
             userTrackingState = userTrackingStateByIndex.get(index);
         }
 
-        userTrackingState.updateTrackingStatus(skeleton);
+        userTrackingState.updateTrackingStatus(skeleton3D);
     }
 
     private void triggerUserEnteredListeners(User user) {

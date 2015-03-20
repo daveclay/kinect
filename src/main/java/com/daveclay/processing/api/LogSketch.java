@@ -51,6 +51,10 @@ public class LogSketch extends PApplet {
         log(label, "x: " + vector.x + ", y: " + vector.y + ", z: " + vector.z);
     }
 
+    public void logScreenCoords(String label, PVector vector) {
+        log(label, "x: " + Math.round(vector.x) + ", y: " + Math.round(vector.y));
+    }
+
     public synchronized void log(String label, String info) {
         lines.put(label, info);
     }

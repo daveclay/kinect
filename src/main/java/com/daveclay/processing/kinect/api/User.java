@@ -8,14 +8,21 @@ public class User {
 
     private final int id;
     private final KinectPV2 kinect;
-    private final Skeleton skeleton;
+    private final Skeleton skeleton3D;
+    private final Skeleton colorSkeleton;
     private final HandState leftHandState;
     private final HandState rightHandState;
 
-    public User(KinectPV2 kinect, Skeleton skeleton, UserEventsConfig userEventsConfig, int index) {
+    public User(KinectPV2 kinect,
+                Skeleton skeleton3D,
+                Skeleton colorSkeleton,
+                UserEventsConfig userEventsConfig,
+                int index) {
+        Skeleton[] hi = kinect.getSkeletonColorMap();
         this.id = index;
         this.kinect = kinect;
-        this.skeleton = skeleton;
+        this.skeleton3D = skeleton3D;
+        this.colorSkeleton = colorSkeleton;
         this.leftHandState = new HandState(this, KinectPV2.JointType_HandLeft);
         this.rightHandState = new HandState(this, KinectPV2.JointType_HandRight);
         this.leftHandState.setUserEventsConfig(userEventsConfig);
@@ -32,23 +39,23 @@ public class User {
     }
 
     public boolean isCurrentlyTracking() {
-        return skeleton.isTracked();
+        return skeleton3D.isTracked();
     }
 
-    public PVector getLeftHandMirroredPosition() {
-        return getMirroredPosition(getLeftHandPosition());
+    public PVector getLeftHandPosition2D() {
+        return KinectUtils.getPosition(colorSkeleton.getJoints()[KinectPV2.JointType_HandLeft]);
     }
 
-    public PVector getRightHandMirroredPosition() {
-        return getMirroredPosition(getRightHandPosition());
+    public PVector getRightHandPosition2D() {
+        return KinectUtils.getPosition(colorSkeleton.getJoints()[KinectPV2.JointType_HandRight]);
     }
 
     public PVector getJointPosition(int joint) {
-        return KinectUtils.getPosition(skeleton.getJoints()[joint]);
+        return KinectUtils.getPosition(skeleton3D.getJoints()[joint]);
     }
 
-    public Skeleton getSkeleton() {
-        return skeleton;
+    public Skeleton getSkeleton3D() {
+        return skeleton3D;
     }
 
     public PVector getRightHandPosition() {
@@ -87,7 +94,7 @@ public class User {
     }
 
     private KJoint findJoint(int which) {
-        KJoint[] joints = skeleton.getJoints();
+        KJoint[] joints = skeleton3D.getJoints();
         return joints[which];
     }
 
