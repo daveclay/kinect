@@ -6,12 +6,13 @@ import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.gestures.*;
 import com.daveclay.processing.gestures.GestureDataStore;
 import com.daveclay.processing.kinect.api.*;
+import com.daveclay.processing.kinect.api.stage.Stage;
+import com.daveclay.processing.kinect.api.stage.StageMonitor;
 import com.daveclay.server.presentation.PresentationServer;
 import com.daveclay.server.presentation.PresentationWebSocketListener;
 import processing.core.PVector;
 
 import java.net.UnknownHostException;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
