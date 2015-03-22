@@ -33,6 +33,11 @@ public class UserTrackingSketch extends PApplet {
 
         kinect = new KinectPV2(this);
 
+        /*
+        // TODO:
+        if (this.enableColorImg()) {
+          then bother actually retriving image data or skeleton data.
+         */
         // required to enable user tracking
         kinect.enableColorImg(true);
         kinect.enableSkeleton(true);

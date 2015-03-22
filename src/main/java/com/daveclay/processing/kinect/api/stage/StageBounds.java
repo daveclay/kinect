@@ -1,4 +1,4 @@
-package com.daveclay.processing.kinect.api;
+package com.daveclay.processing.kinect.api.stage;
 
 import processing.core.PVector;
 

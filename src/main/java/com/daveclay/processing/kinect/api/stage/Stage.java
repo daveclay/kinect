@@ -1,4 +1,4 @@
-package com.daveclay.processing.kinect.api;
+package com.daveclay.processing.kinect.api.stage;
 
 import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
