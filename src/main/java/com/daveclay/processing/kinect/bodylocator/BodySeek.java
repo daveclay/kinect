@@ -38,6 +38,11 @@ public class BodySeek extends UserTrackingSketch {
             public void draw() {
                 drawBodyLocator();
             }
+
+            @Override
+            public void setup() {
+                background(0);
+            }
         });
 
         this.logSketch = logSketch;
@@ -100,7 +105,10 @@ public class BodySeek extends UserTrackingSketch {
     }
 
     private void drawUserData(User user) {
-        background(0);
+        noStroke();
+        fill(0, 0, 0, 10);
+        rect(0, 0, width, height);
+
         pushMatrix();
 
         PVector leftHandPosition2d = user.getRightHandPosition2D();
@@ -140,6 +148,8 @@ public class BodySeek extends UserTrackingSketch {
         float r;
         float maxforce;    // Maximum steering force
         float maxspeed;    // Maximum speed
+
+        List<PVector> previousLocations = new ArrayList<PVector>();
 
         public Vehicle(float x, float y, int index) {
             this.index = index;
@@ -194,8 +204,6 @@ public class BodySeek extends UserTrackingSketch {
             // Draw a triangle rotated in the direction of velocity
             // float theta = velocity.heading() + PI / 2;
             fill(color);
-            stroke(0);
-            strokeWeight(1);
             ellipse(location.x, location.y, r, r);
         }
     }

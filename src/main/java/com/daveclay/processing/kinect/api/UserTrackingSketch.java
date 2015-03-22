@@ -14,8 +14,11 @@ import java.util.Map;
 
 public class UserTrackingSketch extends PApplet {
 
-    public static interface SketchCallback {
-        void draw();
+    public static abstract class SketchCallback {
+        public void setup() {
+        }
+
+        abstract public void draw();
     }
 
     private final Map<Integer, UserTrackingState> userTrackingStateByIndex = new HashMap<Integer, UserTrackingState>();
@@ -43,6 +46,8 @@ public class UserTrackingSketch extends PApplet {
         kinect.enableSkeleton(true);
         kinect.enableSkeleton3dMap(true);
         kinect.enableSkeletonColorMap(true);
+
+        sketchCallback.setup();
 
         kinect.init();
     }
