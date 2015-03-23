@@ -187,7 +187,7 @@ public class BodyLocator extends UserTrackingSketch {
     private void updateUserDataAndDrawStuff() {
         if (user != null) {
 
-            PVector newUserPosition = user.getJointPosition(KinectPV2.JointType_SpineMid);
+            PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
 
             stage.updatePosition(newUserPosition);
 
@@ -246,8 +246,8 @@ public class BodyLocator extends UserTrackingSketch {
     private void drawUserData(User user) {
         pushMatrix();
 
-        PVector leftHandPosition2d = user.getRightHandPosition2D();
-        PVector rightHandPosition2d = user.getLeftHandPosition2D();
+        PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
+        PVector rightHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandRight);
 
         logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
         logSketch.logScreenCoords("Left Hand", leftHandPosition2d);

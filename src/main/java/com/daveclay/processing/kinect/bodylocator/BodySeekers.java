@@ -1,26 +1,21 @@
 package com.daveclay.processing.kinect.bodylocator;
 
 import KinectPV2.KinectPV2;
+import com.daveclay.processing.api.FrameExporter;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
-import com.daveclay.processing.gestures.*;
 import com.daveclay.processing.kinect.api.*;
-import com.daveclay.processing.kinect.api.stage.Stage;
-import com.daveclay.processing.kinect.api.stage.StageMonitor;
-import com.daveclay.server.presentation.PresentationServer;
-import com.daveclay.server.presentation.PresentationWebSocketListener;
 import processing.core.PVector;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BodySeek extends UserTrackingSketch {
+public class BodySeekers extends UserTrackingSketch {
 
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
 
-        BodySeek bodyLocator = new BodySeek(logSketch);
+        BodySeekers bodyLocator = new BodySeekers(logSketch);
 
         SketchRunner.run(logSketch, bodyLocator);
 
@@ -29,9 +24,10 @@ public class BodySeek extends UserTrackingSketch {
     }
 
     private User user;
+    private FrameExporter frameExporter;
     private List<Vehicle> vehicles = new ArrayList<Vehicle>();
 
-    public BodySeek(LogSketch logSketch) {
+    public BodySeekers(LogSketch logSketch) {
         super();
         setSketchCallback(new SketchCallback() {
             @Override
@@ -45,12 +41,13 @@ public class BodySeek extends UserTrackingSketch {
             }
         });
 
+        this.frameExporter = new FrameExporter(this, "C:/Users/daveclay/Documents/ProcessingMovies/bodyseeker%s.tif");
         this.logSketch = logSketch;
         int width = 1920;
         int height = 1080;
 
 
-        for (int i = 0; i < 600; i++) {
+        for (int i = 0; i < 220; i++) {
             this.vehicles.add(new Vehicle(random(width), random(height), i));
         }
 
@@ -62,7 +59,8 @@ public class BodySeek extends UserTrackingSketch {
             @Override
             public void userDidEnter(User user) {
                 System.out.println("HELLO User " + user.getID() + "!");
-                BodySeek.this.user = user;
+                BodySeekers.this.user = user;
+                // BodySeek.this.frameExporter.start();
             }
         });
 
@@ -70,7 +68,8 @@ public class BodySeek extends UserTrackingSketch {
             @Override
             public void userWasLost(User user) {
                 System.out.println("User " + user.getID() + " LOST, eh well...");
-                BodySeek.this.user = null;
+                BodySeekers.this.user = null;
+                BodySeekers.this.frameExporter.stop();
             }
         });
     }
@@ -82,7 +81,7 @@ public class BodySeek extends UserTrackingSketch {
 
     private void updateUserDataAndDrawStuff() {
         if (user != null) {
-            PVector newUserPosition = user.getJointPosition(KinectPV2.JointType_SpineMid);
+            PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
             // draw user data.
             drawUserData(user);
         } else {
@@ -97,44 +96,47 @@ public class BodySeek extends UserTrackingSketch {
     }
 
     private void drawLostUser() {
-        fill(0, 0, 0, 200);
-        rect(0, 0, getWidth(), getHeight());
-        fill(255);
-        textSize(100);
-        text("Lost User", getHeight() / 3, getWidth() / 3);
+        noStroke();
+        fill(0, 5);
+        rect(0, 0, width, height);
     }
 
     private void drawUserData(User user) {
         noStroke();
-        fill(0, 0, 0, 10);
+        fill(0, 5);
         rect(0, 0, width, height);
 
-        pushMatrix();
-
-        PVector leftHandPosition2d = user.getRightHandPosition2D();
-        PVector rightHandPosition2d = user.getLeftHandPosition2D();
+        PVector leftFootPosition2d = user.getJointPosition2D(KinectPV2.JointType_HipLeft);
+        PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
+        PVector rightHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandRight);
 
         logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
         logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
 
         // Draw an ellipse at the mouse location
+        /*
+        pushMatrix();
         fill(100, 200, 30);
         stroke(0);
         strokeWeight(2);
         ellipse(leftHandPosition2d.x, leftHandPosition2d.y, 20, 20);
         popMatrix();
+        */
 
         // Call the appropriate steering behaviors for our agents
         for (Vehicle vehicle : vehicles) {
             if (vehicle.index % 2 == 0) {
                 vehicle.seek(leftHandPosition2d);
-            } else {
+            } else if (vehicle.index % 3 == 0) {
                 vehicle.seek(rightHandPosition2d);
+            } else {
+                vehicle.seek(leftFootPosition2d);
             }
             vehicle.update();
             vehicle.display();
         }
 
+        this.frameExporter.writeFrame();
     }
 
 
@@ -142,6 +144,7 @@ public class BodySeek extends UserTrackingSketch {
 
         int index;
         int color;
+        PVector previousLocation;
         PVector location;
         PVector velocity;
         PVector acceleration;
@@ -149,17 +152,21 @@ public class BodySeek extends UserTrackingSketch {
         float maxforce;    // Maximum steering force
         float maxspeed;    // Maximum speed
 
-        List<PVector> previousLocations = new ArrayList<PVector>();
-
         public Vehicle(float x, float y, int index) {
             this.index = index;
-            this.color = color(random(255), random(255), random(255));
+            if (index % 2 == 0) {
+                this.color = color(255, random(255), 0);
+            } else if (index % 3 == 0) {
+                this.color = color(random(255), 0, 255);
+            } else {
+                this.color = color(0, random(255), 255);
+            }
             acceleration = new PVector(0, 0);
             velocity = new PVector(0, -2);
             location = new PVector(x, y);
-            r = 10;
+            r = 2;
             maxspeed = random(9, 13);
-            maxforce = random(.3f, .6f);
+            maxforce = random(.6f, .9f);
         }
 
         // Method to update location
@@ -203,8 +210,16 @@ public class BodySeek extends UserTrackingSketch {
         void display() {
             // Draw a triangle rotated in the direction of velocity
             // float theta = velocity.heading() + PI / 2;
-            fill(color);
-            ellipse(location.x, location.y, r, r);
+            if (previousLocation != null) {
+                stroke(color);
+                strokeWeight(r);
+                line(previousLocation.x, previousLocation.y, location.x, location.y);
+            } else {
+                fill(color);
+                ellipse(location.x, location.y, r, r);
+            }
+
+            previousLocation = location.get();
         }
     }
 }
