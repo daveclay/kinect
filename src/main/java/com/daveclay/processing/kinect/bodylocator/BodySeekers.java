@@ -36,7 +36,10 @@ public class BodySeekers extends UserTrackingSketch {
             }
 
             @Override
-            public void setup() {
+            public void setup(KinectPV2 kinect) {
+                kinect.enableSkeleton(true);
+                kinect.enableSkeleton3dMap(true);
+                kinect.enableSkeletonColorMap(true);
                 background(0);
             }
         });
@@ -106,7 +109,7 @@ public class BodySeekers extends UserTrackingSketch {
         fill(0, 5);
         rect(0, 0, width, height);
 
-        PVector leftFootPosition2d = user.getJointPosition2D(KinectPV2.JointType_HipLeft);
+        PVector leftHip = user.getJointPosition2D(KinectPV2.JointType_HipLeft);
         PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
         PVector rightHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandRight);
 
@@ -130,7 +133,7 @@ public class BodySeekers extends UserTrackingSketch {
             } else if (vehicle.index % 3 == 0) {
                 vehicle.seek(rightHandPosition2d);
             } else {
-                vehicle.seek(leftFootPosition2d);
+                vehicle.seek(leftHip);
             }
             vehicle.update();
             vehicle.display();

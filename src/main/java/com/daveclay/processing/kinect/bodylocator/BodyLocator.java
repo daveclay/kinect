@@ -77,6 +77,14 @@ public class BodyLocator extends UserTrackingSketch {
             public void draw() {
                 drawBodyLocator();
             }
+
+            @Override
+            public void setup(KinectPV2 kinect) {
+                kinect.enableSkeleton(true);
+                kinect.enableSkeleton3dMap(true);
+                kinect.enableSkeletonColorMap(true);
+                background(0);
+            }
         });
 
         leftHandBox = new HandBox();

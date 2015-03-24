@@ -15,7 +15,7 @@ import java.util.Map;
 public class UserTrackingSketch extends PApplet {
 
     public static abstract class SketchCallback {
-        public void setup() {
+        public void setup(KinectPV2 kinect) {
         }
 
         abstract public void draw();
@@ -42,12 +42,14 @@ public class UserTrackingSketch extends PApplet {
           then bother actually retriving image data or skeleton data.
          */
         // required to enable user tracking
+        /*
         kinect.enableColorImg(true);
         kinect.enableSkeleton(true);
         kinect.enableSkeleton3dMap(true);
         kinect.enableSkeletonColorMap(true);
+        */
 
-        sketchCallback.setup();
+        sketchCallback.setup(kinect);
 
         kinect.init();
     }
@@ -70,19 +72,6 @@ public class UserTrackingSketch extends PApplet {
 
     public KinectPV2 getKinect() {
         return kinect;
-    }
-
-    public User getFirstCurrentlyActiveUser() {
-        int lowestActiveIndex = Integer.MAX_VALUE;
-        User user = null;
-        for (Map.Entry<Integer, UserTrackingState> entry : userTrackingStateByIndex.entrySet()) {
-            int index = entry.getKey();
-            UserTrackingState userTrackingState = entry.getValue();
-            if (userTrackingState.currentlyTracked && index < lowestActiveIndex) {
-                user = userTrackingState.user;
-            }
-        }
-        return user;
     }
 
     private long max;
