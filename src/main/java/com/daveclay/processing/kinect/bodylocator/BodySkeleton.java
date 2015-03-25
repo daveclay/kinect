@@ -14,12 +14,12 @@ import processing.core.PVector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BodyLines extends UserTrackingSketch {
+public class BodySkeleton extends UserTrackingSketch {
 
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
 
-        BodyLines bodyLocator = new BodyLines(logSketch);
+        BodySkeleton bodyLocator = new BodySkeleton(logSketch);
 
         SketchRunner.run(logSketch, bodyLocator);
 
@@ -32,7 +32,7 @@ public class BodyLines extends UserTrackingSketch {
     private FrameExporter frameExporter;
     private List<Vehicle> vehicles = new ArrayList<Vehicle>();
 
-    public BodyLines(LogSketch logSketch) {
+    public BodySkeleton(LogSketch logSketch) {
         super();
         setSketchCallback(new SketchCallback() {
             @Override
@@ -67,7 +67,7 @@ public class BodyLines extends UserTrackingSketch {
             @Override
             public void userDidEnter(User user) {
                 System.out.println("HELLO User " + user.getID() + "!");
-                BodyLines.this.user = user;
+                BodySkeleton.this.user = user;
                 // BodySeek.this.frameExporter.start();
             }
         });
@@ -76,8 +76,8 @@ public class BodyLines extends UserTrackingSketch {
             @Override
             public void userWasLost(User user) {
                 System.out.println("User " + user.getID() + " LOST, eh well...");
-                BodyLines.this.user = null;
-                BodyLines.this.frameExporter.stop();
+                BodySkeleton.this.user = null;
+                BodySkeleton.this.frameExporter.stop();
             }
         });
     }
@@ -102,21 +102,8 @@ public class BodyLines extends UserTrackingSketch {
     }
 
     private void drawUserData(User user) {
-
         PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
         PVector rightHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandRight);
-
-        PVector spine3d = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
-        if (spine3d.z > 3) {
-            blendMode(BLEND);
-            noStroke();
-            fill(0, 10); // only do this momentarily?
-            rect(0, 0, width, height);
-        } else if (spine3d.z > 2) {
-            blendMode(BLEND);
-        } else {
-            blendMode(SCREEN);
-        }
 
         logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
         logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
@@ -126,30 +113,7 @@ public class BodyLines extends UserTrackingSketch {
     }
 
     private void drawLines(PVector leftHandPosition2d, PVector rightHandPosition2d) {
-        PVector d = PVector.sub(leftHandPosition2d, rightHandPosition2d);
-        d.div(2f);
-        float mag = d.mag();
 
-        noFill();
-        float weight;
-        int alpha;
-
-        if (random(10) > 7) {
-            weight = random(10);
-            alpha = (int) random(100);
-            stroke(random(200), random(60), random(255), alpha);
-        } else {
-            weight = 1;
-            alpha = 255;
-            stroke(random(55) + 200, random(60), random(105) + 150, alpha);
-        }
-
-        strokeWeight(weight);
-        generateLines(leftHandPosition2d, rightHandPosition2d, d, mag);
-
-        stroke(0, random(100));
-        strokeWeight(random(50));
-        generateLines(leftHandPosition2d, rightHandPosition2d, d, mag);
     }
 
     void generateLines(PVector leftHandPosition2d, PVector rightHandPosition2d, PVector d, float mag) {
