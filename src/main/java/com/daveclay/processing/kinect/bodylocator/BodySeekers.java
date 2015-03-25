@@ -19,8 +19,8 @@ public class BodySeekers extends UserTrackingSketch {
 
         SketchRunner.run(logSketch, bodyLocator);
 
-        logSketch.frame.setLocation(0, 100);
-        bodyLocator.frame.setLocation(logSketch.getWidth() + 10, 100);
+        logSketch.frame.setLocation(0, 0);
+        bodyLocator.frame.setLocation(0, logSketch.getHeight() - 120);
     }
 
     private User user;
@@ -51,9 +51,8 @@ public class BodySeekers extends UserTrackingSketch {
         int width = 1920;
         int height = 1080;
 
-
         for (int i = 0; i < 220; i++) {
-            this.vehicles.add(new Vehicle(random(width), random(height), i));
+            this.vehicles.add(new Vehicle(width / 2, height / 2, i));
         }
 
         registerEventListeners();
@@ -86,7 +85,6 @@ public class BodySeekers extends UserTrackingSketch {
 
     private void updateUserDataAndDrawStuff() {
         if (user != null) {
-            PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
             // draw user data.
             drawUserData(user);
         } else {
