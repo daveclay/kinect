@@ -88,12 +88,6 @@ public class BodySeekers extends UserTrackingSketch {
             // draw user data.
             drawUserData(user);
         } else {
-            // Note that this will override the gesture recognized notification. The user will likely
-            // have seen the results of a recognized gesture, and wants to know that they should stop
-            // expecting gestures immediately if the sensor has lost them.
-            //
-            // In other words, don't allow the user to look like an idiot expecting gestures to work
-            // if we've lost them. Notify them immediately so they don't look like an idiot.
             drawLostUser();
         }
     }

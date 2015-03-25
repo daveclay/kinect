@@ -32,7 +32,7 @@ public class UserTrackingSketch extends PApplet {
     protected LogSketch logSketch;
 
     public final void setup() {
-        size(1920, 1080, OPENGL);
+        size(1920, 1080, P2D);
 
         kinect = new KinectPV2(this);
 

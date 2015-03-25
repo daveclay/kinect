@@ -23,8 +23,8 @@ public class BodyLines extends UserTrackingSketch {
 
         SketchRunner.run(logSketch, bodyLocator);
 
-        logSketch.frame.setLocation(0, 100);
-        bodyLocator.frame.setLocation(logSketch.getWidth() + 10, 100);
+        logSketch.frame.setLocation(0, 0);
+        bodyLocator.frame.setLocation(0, logSketch.getHeight() - 100);
     }
 
     private User user;
@@ -89,17 +89,8 @@ public class BodyLines extends UserTrackingSketch {
 
     private void updateUserDataAndDrawStuff() {
         if (user != null) {
-            PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
-            stage.updatePosition(newUserPosition);
-            // draw user data.
             drawUserData(user);
         } else {
-            // Note that this will override the gesture recognized notification. The user will likely
-            // have seen the results of a recognized gesture, and wants to know that they should stop
-            // expecting gestures immediately if the sensor has lost them.
-            //
-            // In other words, don't allow the user to look like an idiot expecting gestures to work
-            // if we've lost them. Notify them immediately so they don't look like an idiot.
             drawLostUser();
         }
     }
@@ -111,43 +102,73 @@ public class BodyLines extends UserTrackingSketch {
     }
 
     private void drawUserData(User user) {
-        noStroke();
-        fill(0, 5);
-        rect(0, 0, width, height);
-
-        PVector leftHip = user.getJointPosition2D(KinectPV2.JointType_HipLeft);
         PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
         PVector rightHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandRight);
 
         logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
         logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
 
-        // Draw an ellipse at the mouse location
-        /*
-        pushMatrix();
-        fill(100, 200, 30);
-        stroke(0);
-        strokeWeight(2);
-        ellipse(leftHandPosition2d.x, leftHandPosition2d.y, 20, 20);
-        popMatrix();
-        */
-
-        // Call the appropriate steering behaviors for our agents
-        for (Vehicle vehicle : vehicles) {
-            if (vehicle.index % 2 == 0) {
-                vehicle.seek(leftHandPosition2d);
-            } else if (vehicle.index % 3 == 0) {
-                vehicle.seek(rightHandPosition2d);
-            } else {
-                vehicle.seek(leftHip);
-            }
-            vehicle.update();
-            vehicle.display();
-        }
-
+        drawLines(leftHandPosition2d, rightHandPosition2d);
         this.frameExporter.writeFrame();
     }
 
+    private void drawLines(PVector leftHandPosition2d, PVector rightHandPosition2d) {
+        PVector d = PVector.sub(leftHandPosition2d, rightHandPosition2d);
+        d.div(2f);
+        float mag = d.mag();
+
+        noFill();
+        float weight;
+        int alpha;
+
+        if (random(10) > 7) {
+            weight = random(30) + 25;
+            alpha = (int) random(100);
+            stroke(random(200), random(60), random(255), alpha);
+        } else {
+            weight = 1;
+            alpha = 255;
+            stroke(random(55) + 200, random(60), random(105) + 150, alpha);
+        }
+
+        strokeWeight(weight);
+        generateLines(leftHandPosition2d, rightHandPosition2d, d, mag);
+
+        stroke(0, random(100));
+        strokeWeight(random(50) + 40);
+        generateLines(leftHandPosition2d, rightHandPosition2d, d, mag);
+    }
+
+    void generateLines(PVector leftHandPosition2d, PVector rightHandPosition2d, PVector d, float mag) {
+        float[] coordinatesA = noiseFactor(d, mag);
+        float[] coordinatesB = noiseFactor(d, mag);
+
+        /*
+        int size = 30;
+        ellipse(coordinatesA[0] + leftHandPosition2d.x, coordinatesA[1] + leftHandPosition2d.y, size, size);
+        ellipse(coordinatesB[0] + rightHandPosition2d.x, coordinatesB[1] + rightHandPosition2d.y, size, size);
+        */
+
+        beginShape();
+        vertex(leftHandPosition2d.x, leftHandPosition2d.y);
+        bezierVertex(
+                coordinatesA[0] + leftHandPosition2d.x,
+                coordinatesA[1] + leftHandPosition2d.y,
+                coordinatesB[0] + rightHandPosition2d.x,
+                coordinatesB[1] + rightHandPosition2d.y,
+                rightHandPosition2d.x,
+                rightHandPosition2d.y);
+
+        endShape();
+    }
+
+    float[] noiseFactor(PVector d, float mag) {
+        float value = noise(random(10));
+        float angle = value*3.14159265f*2;
+        float x = cos(angle) * mag;
+        float y = sin(angle) * mag;
+        return new float[] { x, y };
+    }
 
     class Vehicle {
 
