@@ -4,18 +4,22 @@ import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.FrameExporter;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
-import com.daveclay.processing.kinect.api.*;
+import com.daveclay.processing.kinect.api.User;
+import com.daveclay.processing.kinect.api.UserEnteredHandler;
+import com.daveclay.processing.kinect.api.UserTrackingSketch;
+import com.daveclay.processing.kinect.api.UserWasLostHandler;
+import com.daveclay.processing.kinect.api.stage.Stage;
 import processing.core.PVector;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BodySeekers extends UserTrackingSketch {
+public class BodyLines extends UserTrackingSketch {
 
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
 
-        BodySeekers bodyLocator = new BodySeekers(logSketch);
+        BodyLines bodyLocator = new BodyLines(logSketch);
 
         SketchRunner.run(logSketch, bodyLocator);
 
@@ -24,12 +28,11 @@ public class BodySeekers extends UserTrackingSketch {
     }
 
     private User user;
+    private Stage stage;
     private FrameExporter frameExporter;
     private List<Vehicle> vehicles = new ArrayList<Vehicle>();
-    private FloatValueMeasurement zValues = new FloatValueMeasurement();
-    private FloatValueMeasurement hueValues = new FloatValueMeasurement();
 
-    public BodySeekers(LogSketch logSketch) {
+    public BodyLines(LogSketch logSketch) {
         super();
         setSketchCallback(new SketchCallback() {
             @Override
@@ -64,7 +67,7 @@ public class BodySeekers extends UserTrackingSketch {
             @Override
             public void userDidEnter(User user) {
                 System.out.println("HELLO User " + user.getID() + "!");
-                BodySeekers.this.user = user;
+                BodyLines.this.user = user;
                 // BodySeek.this.frameExporter.start();
             }
         });
@@ -73,8 +76,8 @@ public class BodySeekers extends UserTrackingSketch {
             @Override
             public void userWasLost(User user) {
                 System.out.println("User " + user.getID() + " LOST, eh well...");
-                BodySeekers.this.user = null;
-                BodySeekers.this.frameExporter.stop();
+                BodyLines.this.user = null;
+                BodyLines.this.frameExporter.stop();
             }
         });
     }
@@ -87,6 +90,7 @@ public class BodySeekers extends UserTrackingSketch {
     private void updateUserDataAndDrawStuff() {
         if (user != null) {
             PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
+            stage.updatePosition(newUserPosition);
             // draw user data.
             drawUserData(user);
         } else {
@@ -112,20 +116,11 @@ public class BodySeekers extends UserTrackingSketch {
         rect(0, 0, width, height);
 
         PVector leftHip = user.getJointPosition2D(KinectPV2.JointType_HipLeft);
-
         PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
-        leftHandPosition2d.z = user.getJointPosition3D(KinectPV2.JointType_HandLeft).z;
-
-        PVector rightHandPosition3d = user.getJointPosition3D(KinectPV2.JointType_HandRight);
         PVector rightHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandRight);
-
-        float z = rightHandPosition3d.z;
-        rightHandPosition2d.z = z;
-        zValues.add(z);
 
         logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
         logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
-        logSketch.log("Z", zValues);
 
         // Draw an ellipse at the mouse location
         /*
@@ -157,37 +152,28 @@ public class BodySeekers extends UserTrackingSketch {
     class Vehicle {
 
         int index;
-        int r;
-        int g;
-        int b;
-        float alpha;
+        int color;
         PVector previousLocation;
         PVector location;
         PVector velocity;
         PVector acceleration;
-        float size;
+        float r;
         float maxforce;    // Maximum steering force
         float maxspeed;    // Maximum speed
 
         public Vehicle(float x, float y, int index) {
             this.index = index;
             if (index % 2 == 0) {
-                this.r = 255;
-                this.g = (int) random(255);
-                this.b = 0;
+                this.color = color(255, random(255), 0);
             } else if (index % 3 == 0) {
-                this.r = (int) random(255);
-                this.g = 0;
-                this.b = 255;
+                this.color = color(random(255), 0, 255);
             } else {
-                this.r = 0;
-                this.g = (int) random(255);
-                this.b = 255;
+                this.color = color(0, random(255), 255);
             }
             acceleration = new PVector(0, 0);
             velocity = new PVector(0, -2);
             location = new PVector(x, y);
-            size = 2;
+            r = 2;
             maxspeed = random(9, 13);
             maxforce = random(.6f, .9f);
         }
@@ -223,8 +209,6 @@ public class BodySeekers extends UserTrackingSketch {
 
             desired.mult(maxspeed);
 
-            alpha = map(target.z, zValues.getMin(), zValues.getMax(), 0, 1);
-
             // Steering = Desired minus velocity
             PVector steer = PVector.sub(desired, velocity);
             steer.limit(maxforce);  // Limit to maximum steering force
@@ -235,24 +219,13 @@ public class BodySeekers extends UserTrackingSketch {
         void display() {
             // Draw a triangle rotated in the direction of velocity
             // float theta = velocity.heading() + PI / 2;
-            float hsb[] = new float[3];
-            java.awt.Color.RGBtoHSB(r, g, b, hsb);
-            float hue = hsb[0] + alpha;
-            if (hue > 1f) hue -= 1f;
-            int color = java.awt.Color.HSBtoRGB(hue, hsb[1], hsb[2]);
-
-            if (index % 2 == 0) {
-                hueValues.add(hue);
-                logSketch.log("Hue", hueValues);
-            }
-
             if (previousLocation != null) {
                 stroke(color);
-                strokeWeight(size);
+                strokeWeight(r);
                 line(previousLocation.x, previousLocation.y, location.x, location.y);
             } else {
                 fill(color);
-                ellipse(location.x, location.y, size, size);
+                ellipse(location.x, location.y, r, r);
             }
 
             previousLocation = location.get();

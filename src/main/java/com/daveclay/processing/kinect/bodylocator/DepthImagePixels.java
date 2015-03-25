@@ -158,32 +158,6 @@ public class DepthImagePixels extends UserTrackingSketch {
         }
     }
 
-    public static class FloatValueMeasurement {
-        private float min = Float.MAX_VALUE;
-        private float max = Float.MIN_VALUE;
-
-        public void add(float value) {
-            min = min(min, value);
-            max = max(max, value);
-        }
-
-        public float getRange() {
-            return max - min;
-        }
-
-        public float getMin() {
-            return min;
-        }
-
-        public float getMax() {
-            return max;
-        }
-
-        public float mapValues(float value, float start, float stop) {
-
-            return map(value, min, max, start, stop);
-        }
-    }
 }
 
 
