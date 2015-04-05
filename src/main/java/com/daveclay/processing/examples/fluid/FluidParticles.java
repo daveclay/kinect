@@ -224,9 +224,9 @@ public class FluidParticles extends PApplet {
             float dy = Math.abs(previousY - this.y);
 
             int color = color(
-                    Math.abs(map(dx + dy, 0, 20, 200, 0)) % 235,
+                    Math.abs(map(dx + dy, 0, 20, 200, 0)) % 200,
                     40,
-                    Math.abs(map(dx + dy, 0, 20, 0, 255)) % 235
+                    min(255, Math.abs(map(dx + dy, 0, 20, 0, 255)))
             );
 
             int px = (int) x;

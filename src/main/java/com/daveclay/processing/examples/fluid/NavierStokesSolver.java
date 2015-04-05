@@ -128,9 +128,9 @@ public class NavierStokesSolver {
 	void dens_step(double[] x, double[] x0, double[] u, double[] v, double diff,
 			double dt) {
 		add_source(x, x0, dt);
-		SWAP(x0, x);
+		SWAP(x0, x); // doesn't do much, visually
 		diffuse(0, x, x0, diff, dt);
-		SWAP(x0, x);
+		SWAP(x0, x); // also doesn't do much, visually.
 		advect(0, x, x0, u, v, dt);
 	}
 
@@ -138,11 +138,11 @@ public class NavierStokesSolver {
 			double dt) {
 		add_source(u, u0, dt);
 		add_source(v, v0, dt);
-		SWAP(u0, u);
+		SWAP(u0, u); // appears to control the vertical
 		diffuse(1, u, u0, visc, dt);
-		SWAP(v0, v);
+		SWAP(v0, v); // and the horizontal.
 		diffuse(2, v, v0, visc, dt);
-		project(u, v, u0, v0);
+		project(u, v, u0, v0); // interesting effect - seems to control the initial velocities
 		SWAP(u0, u);
 		SWAP(v0, v);
 		advect(1, u, u0, u0, v0, dt);
@@ -153,7 +153,7 @@ public class NavierStokesSolver {
 	void project(double[] u, double[] v, double[] p, double[] div) {
 		int i, j, k;
 		double h;
-		h = 1.0 / N;
+		h = 1.0 / N; // make this 2f for some extra sensitivity
 		for (i = 1; i <= N; i++) {
 			for (j = 1; j <= N; j++) {
 				div[INDEX(i, j)] = -0.5
