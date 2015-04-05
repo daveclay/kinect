@@ -1,14 +1,21 @@
 package com.daveclay.processing.examples.fluid;
 
+import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.image.ImgProc;
+import com.daveclay.processing.kinect.api.FloatValueMeasurement;
 import processing.core.PApplet;
 
 public class FluidParticles extends PApplet {
 
     public static void main(String[] args) {
-        SketchRunner.run(new FluidParticles());
+        LogSketch logSketch = new LogSketch();
+        SketchRunner.run(new FluidParticles(logSketch), logSketch);
     }
+
+
+    private final LogSketch logSketch;
+    FloatValueMeasurement f = new FloatValueMeasurement();
 
     NavierStokesSolver fluidSolver;
     double visc, diff, limitVelocity, vScale, velocityScale;
@@ -24,22 +31,25 @@ public class FluidParticles extends PApplet {
     int[] prevFrame;
     int[] tempFrame;
 
+    public FluidParticles(LogSketch logSketch) {
+        this.logSketch = logSketch;
+    }
 
     public void setup() {
         imgProc = new ImgProc(this);
         fluidSolver = new NavierStokesSolver();
         frameRate(60);
 
-        size(800, 800);
+        size(1200, 800);
 
-        numParticles = 30000;
+        numParticles = 50000;
         particles = new Particle[numParticles];
         visc = 0.0005f;
         diff = .25f;
         velocityScale = 16;
 
         limitVelocity = 200;
-        colorMode(HSB);
+        colorMode(HSB, 255);
 
         /*
         stroke(color(0));
@@ -223,12 +233,15 @@ public class FluidParticles extends PApplet {
             float dx = Math.abs(previousX - this.x);
             float dy = Math.abs(previousY - this.y);
 
-            int color = color(
-                    Math.abs(map(dx + dy, 0, 20, 200, 0)) % 200,
-                    40,
-                    min(255, Math.abs(map(dx + dy, 0, 20, 0, 255)))
-            );
+            if (Math.abs(dx + dy) > 50) {
+                return;
+            }
 
+            float h = Math.abs(map(dx + dy, 0, 20, 160, 50)) % 200;
+            float s = 40;
+            float v = min(254, Math.abs(map(dx + dy, 0, 20, 0, 200)));
+
+            int color = color(h, s, v);
             int px = (int) x;
             int py = (int) y;
 

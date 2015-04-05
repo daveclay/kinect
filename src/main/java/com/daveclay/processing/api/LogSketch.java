@@ -53,7 +53,10 @@ public class LogSketch extends PApplet {
     }
 
     public void log(String label, FloatValueMeasurement measurement) {
-        log(label, "min: " + measurement.getMin() + " max: " + measurement.getMax() + " range: " + measurement.getRange());
+        log(label, "min: " + measurement.getMin() +
+                " max: " + measurement.getMax() +
+                " range: " + measurement.getRange()
+        );
     }
 
     public void log(String label, float value) {
