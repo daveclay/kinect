@@ -7,7 +7,7 @@ import processing.core.PApplet;
  * http://www.dgp.toronto.edu/people/stam/reality/Research/pdf/GDC03.pdf
  */
 public class NavierStokesSolver {
-	final static int N = 25;
+	final static int N = 40;
 	final static int SIZE = (N + 2) * (N + 2);
 	double[] u = new double[SIZE];
 	double[] v = new double[SIZE];

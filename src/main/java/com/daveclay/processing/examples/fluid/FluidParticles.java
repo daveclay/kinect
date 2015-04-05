@@ -1,6 +1,7 @@
 package com.daveclay.processing.examples.fluid;
 
 import com.daveclay.processing.api.SketchRunner;
+import com.daveclay.processing.api.image.ImgProc;
 import processing.core.PApplet;
 
 public class FluidParticles extends PApplet {
@@ -18,27 +19,51 @@ public class FluidParticles extends PApplet {
     float cellHeight;
     float cellWidth;
 
+    ImgProc imgProc;
+    int[] currFrame;
+    int[] prevFrame;
+    int[] tempFrame;
+
+
     public void setup() {
+        imgProc = new ImgProc(this);
         fluidSolver = new NavierStokesSolver();
         frameRate(60);
 
         size(800, 800);
 
-        numParticles = 10000;
+        numParticles = 30000;
         particles = new Particle[numParticles];
-        visc = 0.005f;
+        visc = 0.0005f;
         diff = .25f;
         velocityScale = 16;
 
         limitVelocity = 200;
+        colorMode(HSB);
 
+        /*
         stroke(color(0));
         fill(color(0));
         smooth();
+        */
 
         cellHeight = height / NavierStokesSolver.N;
         cellWidth = width / NavierStokesSolver.N;
+        setupPixelFrames();
+        background(color(0));
         initParticles();
+    }
+
+    private void setupPixelFrames() {
+        currFrame = new int[width*height];
+        prevFrame = new int[width*height];
+        tempFrame = new int[width*height];
+        for(int i=0; i<width*height; i++) {
+            currFrame[i] = color(0, 0, 0);
+            prevFrame[i] = color(0, 0, 0);
+            tempFrame[i] = color(0, 0, 0);
+        }
+
     }
 
     private void initParticles() {
@@ -50,21 +75,27 @@ public class FluidParticles extends PApplet {
     }
 
     public void draw() {
-
-        background(color(0));
+        imgProc.blur(prevFrame, tempFrame, width, height);
+        //imgProc.scaleBrightness(tempFrame, tempFrame, width, height, 0.99f);
+        arraycopy(tempFrame, currFrame);
 
         handleMouseMotion();
 
         double dt = 1 / frameRate;
         fluidSolver.tick(dt, visc, diff);
 
+        /*
         stroke(color(64));
         paintGrid();
         stroke(color(96));
         paintMotionVector((float) vScale * 2);
+        */
+
         vScale = velocityScale * 60 / frameRate;
         paintParticles();
 
+        imgProc.drawPixelArray(currFrame, 0, 0, width, height);
+        arraycopy(currFrame, prevFrame);
     }
 
     private void paintParticles() {
@@ -189,18 +220,25 @@ public class FluidParticles extends PApplet {
         }
 
         void paint() {
-            float dx = previousX - this.x;
-            float dy = previousY - this.y;
+            float dx = Math.abs(previousX - this.x);
+            float dy = Math.abs(previousY - this.y);
 
             int color = color(
-                    Math.abs(map(dx, -3, 3, -255, 255)),
-                    Math.abs(map(dy, -3, 3, -255, 255)),
-                    map(dx + dy, -2f, 0, 255, 0));
+                    Math.abs(map(dx + dy, 0, 20, 200, 0)) % 235,
+                    40,
+                    Math.abs(map(dx + dy, 0, 20, 0, 255)) % 235
+            );
 
-            set((int) this.x + 1, (int) this.y + 1, color);
-            set((int) this.x, (int) this.y + 1, color);
-            set((int) this.x + 1, (int) this.y, color);
-            set((int) this.x, (int) this.y, color);
+            int px = (int) x;
+            int py = (int) y;
+
+            pixel(px, py, color);
+        }
+
+        void pixel(int x, int y, int color) {
+            x = min(max(x, 0), width - 1);
+            y = min(max(y, 0), height - 1);
+            currFrame[x + y * width] = color;
         }
     }
 }
