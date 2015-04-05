@@ -1,4 +1,4 @@
-package com.daveclay.processing.kinect.api;
+package com.daveclay.processing.kinect.api.stage;
 
 import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
@@ -144,7 +144,7 @@ public class Stage {
         public static final String ID = "Center";
 
         private final PVector center = new PVector();
-        private float centerRadius = 200;
+        private float centerRadius = .2f;
 
         @Override
         public String getID() {

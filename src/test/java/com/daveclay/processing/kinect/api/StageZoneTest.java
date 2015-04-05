@@ -1,5 +1,7 @@
 package com.daveclay.processing.kinect.api;
 
+import com.daveclay.processing.kinect.api.stage.Stage;
+import com.daveclay.processing.kinect.api.stage.StageBounds;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

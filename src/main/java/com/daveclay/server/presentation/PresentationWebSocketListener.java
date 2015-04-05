@@ -2,8 +2,8 @@ package com.daveclay.server.presentation;
 
 import com.daveclay.processing.gestures.GestureDataStore;
 import com.daveclay.processing.gestures.RecognitionResult;
-import com.daveclay.processing.kinect.api.Stage;
-import com.daveclay.processing.kinect.api.StagePosition;
+import com.daveclay.processing.kinect.api.stage.Stage;
+import com.daveclay.processing.kinect.api.stage.StagePosition;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import org.java_websocket.WebSocket;
 

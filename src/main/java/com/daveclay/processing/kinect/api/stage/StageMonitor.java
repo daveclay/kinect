@@ -1,6 +1,5 @@
-package com.daveclay.processing.kinect.api;
+package com.daveclay.processing.kinect.api.stage;
 
-import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
@@ -78,7 +77,10 @@ public class StageMonitor extends PApplet {
 
     @Override
     public void draw() {
-        // real-life values:
+        if ( ! stageBounds.initialized()) {
+            return;
+        }
+
         left = stageBounds.getLeft();
         right = stageBounds.getRight();
         front = stageBounds.getFront();

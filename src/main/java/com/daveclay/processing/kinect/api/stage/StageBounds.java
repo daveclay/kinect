@@ -1,4 +1,4 @@
-package com.daveclay.processing.kinect.api;
+package com.daveclay.processing.kinect.api.stage;
 
 import processing.core.PVector;
 
@@ -22,6 +22,10 @@ public class StageBounds {
         } else {
             expand(position);
         }
+    }
+
+    public boolean initialized() {
+        return front != null;
     }
 
     private void initialize(PVector position) {

@@ -6,6 +6,8 @@ import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.gestures.*;
 import com.daveclay.processing.gestures.GestureDataStore;
 import com.daveclay.processing.kinect.api.*;
+import com.daveclay.processing.kinect.api.stage.Stage;
+import com.daveclay.processing.kinect.api.stage.StageMonitor;
 import com.daveclay.server.presentation.PresentationServer;
 import com.daveclay.server.presentation.PresentationWebSocketListener;
 import processing.core.PVector;
@@ -74,6 +76,14 @@ public class BodyLocator extends UserTrackingSketch {
             @Override
             public void draw() {
                 drawBodyLocator();
+            }
+
+            @Override
+            public void setup(KinectPV2 kinect) {
+                kinect.enableSkeleton(true);
+                kinect.enableSkeleton3dMap(true);
+                kinect.enableSkeletonColorMap(true);
+                background(0);
             }
         });
 
@@ -185,7 +195,7 @@ public class BodyLocator extends UserTrackingSketch {
     private void updateUserDataAndDrawStuff() {
         if (user != null) {
 
-            PVector newUserPosition = user.getJointPosition(KinectPV2.JointType_SpineMid);
+            PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
 
             stage.updatePosition(newUserPosition);
 
@@ -243,9 +253,19 @@ public class BodyLocator extends UserTrackingSketch {
 
     private void drawUserData(User user) {
         pushMatrix();
-        translate(width, 0); // we mirrored the view, so the 2d coordinates need a new origin.
-        PVector leftHandPosition2d = user.getRightHandMirroredPosition();
-        PVector rightHandPosition2d = user.getLeftHandMirroredPosition();
+
+        PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
+        PVector rightHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandRight);
+
+        logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
+        logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
+
+        stroke(120);
+        strokeWeight(2);
+        line(leftHandPosition2d.x, leftHandPosition2d.y, rightHandPosition2d.x, rightHandPosition2d.y);
+        leftHandBox.drawAt(leftHandPosition2d);
+        rightHandBox.drawAt(rightHandPosition2d);
+        popMatrix();
 
         if (drawGestureRecording) {
             drawingPoints.add(leftHandPosition2d);
@@ -274,13 +294,6 @@ public class BodyLocator extends UserTrackingSketch {
                 previousPoint = point;
             }
         }
-
-        stroke(120);
-        strokeWeight(2);
-        line(leftHandPosition2d.x, leftHandPosition2d.y, rightHandPosition2d.x, rightHandPosition2d.y);
-        leftHandBox.drawAt(leftHandPosition2d);
-        rightHandBox.drawAt(rightHandPosition2d);
-        popMatrix();
     }
 
     private class HandBox {

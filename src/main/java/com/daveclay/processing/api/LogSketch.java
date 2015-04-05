@@ -1,5 +1,6 @@
 package com.daveclay.processing.api;
 
+import com.daveclay.processing.kinect.api.FloatValueMeasurement;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -19,7 +20,7 @@ public class LogSketch extends PApplet {
     }
 
     public LogSketch() {
-        this(800, 480);
+        this(1800, 480);
     }
 
     public void setFontSize(int fontSize) {
@@ -49,6 +50,18 @@ public class LogSketch extends PApplet {
 
     public void logVector(String label, PVector vector) {
         log(label, "x: " + vector.x + ", y: " + vector.y + ", z: " + vector.z);
+    }
+
+    public void log(String label, FloatValueMeasurement measurement) {
+        log(label, "min: " + measurement.getMin() + " max: " + measurement.getMax() + " range: " + measurement.getRange());
+    }
+
+    public void log(String label, float value) {
+        log(label, "" + value);
+    }
+
+    public void logScreenCoords(String label, PVector vector) {
+        log(label, "x: " + Math.round(vector.x) + ", y: " + Math.round(vector.y));
     }
 
     public synchronized void log(String label, String info) {

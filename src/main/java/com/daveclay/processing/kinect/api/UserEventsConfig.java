@@ -5,7 +5,7 @@ import java.util.List;
 
 public class UserEventsConfig {
 
-    protected float handExtensionThresholdRadius = .5f;
+    protected float handExtensionThresholdRadius = .3f;
 
     private List<HandExtendedHandler> leftHandExtendedHandlers = new ArrayList<HandExtendedHandler>();
     private List<HandExtendedHandler> rightHandExtendedHandlers = new ArrayList<HandExtendedHandler>();
