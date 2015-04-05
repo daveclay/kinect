@@ -128,6 +128,9 @@ public class FluidParticles extends PApplet {
         public float x;
         public float y;
 
+        private float previousX;
+        private float previousY;
+
         void update() {
             int n = NavierStokesSolver.N;
 
@@ -169,6 +172,9 @@ public class FluidParticles extends PApplet {
 
             dy = lerp(lerp(dy, dyv, hf * lY / cellWidth), lerp(dyh, dyvh, hf * lY / cellWidth), vf * lX / cellHeight);
 
+            this.previousX = this.x;
+            this.previousY = this.y;
+
             this.x += dx * vScale;
             this.y += dy * vScale;
 
@@ -179,14 +185,22 @@ public class FluidParticles extends PApplet {
                 this.y = random(height);
             }
 
-            paint(dx, dy);
+            paint();
         }
 
-        void paint(float dx, float dy) {
-            set((int) this.x + 1, (int) this.y + 1, color(dx * 1255, dy * 1255, 255));
-            set((int) this.x, (int) this.y + 1, color(dx * 1255, dy * 1255, 255));
-            set((int) this.x + 1, (int) this.y, color(dx * 1255, dy * 1255, 255));
-            set((int) this.x, (int) this.y, color(dx * 1255, dy * 1255, 255));
+        void paint() {
+            float dx = previousX - this.x;
+            float dy = previousY - this.y;
+
+            int color = color(
+                    Math.abs(map(dx, -3, 3, -255, 255)),
+                    Math.abs(map(dy, -3, 3, -255, 255)),
+                    map(dx + dy, -2f, 0, 255, 0));
+
+            set((int) this.x + 1, (int) this.y + 1, color);
+            set((int) this.x, (int) this.y + 1, color);
+            set((int) this.x + 1, (int) this.y, color);
+            set((int) this.x, (int) this.y, color);
         }
     }
 }
