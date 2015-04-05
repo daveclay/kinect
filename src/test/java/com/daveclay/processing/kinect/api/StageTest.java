@@ -1,5 +1,7 @@
 package com.daveclay.processing.kinect.api;
 
+import com.daveclay.processing.kinect.api.stage.Stage;
+import com.daveclay.processing.kinect.api.stage.StagePosition;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

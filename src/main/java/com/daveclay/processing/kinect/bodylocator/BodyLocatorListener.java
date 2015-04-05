@@ -1,8 +1,8 @@
 package com.daveclay.processing.kinect.bodylocator;
 
 import com.daveclay.processing.gestures.RecognitionResult;
-import com.daveclay.processing.kinect.api.Stage;
-import com.daveclay.processing.kinect.api.StagePosition;
+import com.daveclay.processing.kinect.api.stage.Stage;
+import com.daveclay.processing.kinect.api.stage.StagePosition;
 
 public interface BodyLocatorListener {
 

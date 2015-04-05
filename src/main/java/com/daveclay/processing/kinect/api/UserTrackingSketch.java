@@ -14,8 +14,11 @@ import java.util.Map;
 
 public class UserTrackingSketch extends PApplet {
 
-    public static interface SketchCallback {
-        void draw();
+    public static abstract class SketchCallback {
+        public void setup(KinectPV2 kinect) {
+        }
+
+        abstract public void draw();
     }
 
     private final Map<Integer, UserTrackingState> userTrackingStateByIndex = new HashMap<Integer, UserTrackingState>();
@@ -29,16 +32,33 @@ public class UserTrackingSketch extends PApplet {
     protected LogSketch logSketch;
 
     public final void setup() {
-        size(1920, 1080, OPENGL);
+        size(1920, 1080, P2D);
 
         kinect = new KinectPV2(this);
 
+        /*
+        // TODO:
+        if (this.enableColorImg()) {
+          then bother actually retriving image data or skeleton data.
+         */
         // required to enable user tracking
+        /*
         kinect.enableColorImg(true);
         kinect.enableSkeleton(true);
         kinect.enableSkeleton3dMap(true);
+        kinect.enableSkeletonColorMap(true);
+        */
+
+        sketchCallback.setup(kinect);
 
         kinect.init();
+    }
+
+    @Override
+    public void destroy() {
+        kinect.dispose();
+        System.out.println("Disposed of Kinect");
+        super.destroy();
     }
 
     public void setKinectRGBImageAsBackground() {
@@ -52,19 +72,6 @@ public class UserTrackingSketch extends PApplet {
 
     public KinectPV2 getKinect() {
         return kinect;
-    }
-
-    public User getFirstCurrentlyActiveUser() {
-        int lowestActiveIndex = Integer.MAX_VALUE;
-        User user = null;
-        for (Map.Entry<Integer, UserTrackingState> entry : userTrackingStateByIndex.entrySet()) {
-            int index = entry.getKey();
-            UserTrackingState userTrackingState = entry.getValue();
-            if (userTrackingState.currentlyTracked && index < lowestActiveIndex) {
-                user = userTrackingState.user;
-            }
-        }
-        return user;
     }
 
     private long max;
@@ -105,24 +112,28 @@ public class UserTrackingSketch extends PApplet {
     }
 
     private void calculateAndTriggerUserEvents() {
-        Skeleton[] skeletons = kinect.getSkeleton3d();
-        for (int i = 0; i < skeletons.length; i++) {
-            Skeleton skeleton = skeletons[i];
-            updateUserSkeleton(i, skeleton);
+        Skeleton[] skeleton3Ds = kinect.getSkeleton3d();
+        Skeleton[] colorSkeletons = kinect.getSkeletonColorMap();
+        for (int i = 0; i < skeleton3Ds.length; i++) {
+            Skeleton skeleton3D = skeleton3Ds[i];
+            Skeleton colorSkeleton = colorSkeletons[i];
+            updateUserSkeleton(i, skeleton3D, colorSkeleton);
         }
     }
 
-    private void updateUserSkeleton(int index, Skeleton skeleton) {
+    private void updateUserSkeleton(int index,
+                                    Skeleton skeleton3D,
+                                    Skeleton colorSkeleton) {
         UserTrackingState userTrackingState;
         if ( ! userTrackingStateByIndex.containsKey(index)) {
-            User user = new User(kinect, skeleton, perUserEventsConfig, index);
+            User user = new User(kinect, skeleton3D, colorSkeleton, perUserEventsConfig, index);
             userTrackingState = new UserTrackingState(user);
             userTrackingStateByIndex.put(index, userTrackingState);
         } else {
             userTrackingState = userTrackingStateByIndex.get(index);
         }
 
-        userTrackingState.updateTrackingStatus(skeleton);
+        userTrackingState.updateTrackingStatus(skeleton3D);
     }
 
     private void triggerUserEnteredListeners(User user) {
@@ -147,7 +158,6 @@ public class UserTrackingSketch extends PApplet {
 
         public void updateTrackingStatus(Skeleton skeleton) {
             if (skeleton.isTracked()) {
-                logSketch.logVector("Hi", user.getJointPosition(KinectPV2.JointType_SpineBase));
                 if ( ! currentlyTracked) {
                     triggerUserEnteredListeners(user);
                     currentlyTracked = true;
