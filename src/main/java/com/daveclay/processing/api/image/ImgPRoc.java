@@ -5,9 +5,25 @@ import processing.core.PApplet;
 public class ImgProc {
 
     private PApplet pApplet;
+    int[] currFrame;
+    int[] prevFrame;
+    int[] tempFrame;
+    int width;
+    int height;
 
     public ImgProc(PApplet pApplet) {
         this.pApplet = pApplet;
+        this.width = pApplet.width;
+        this.height = pApplet.height;
+    }
+
+    public void pixel(int x, int y, int color) {
+        currFrame[x + y * width] = color;
+    }
+
+    public void draw() {
+        drawPixelArray(currFrame, 0, 0, width, height);
+        PApplet.arraycopy(currFrame, prevFrame);
     }
 
     public void drawPixelArray(int[] src, int dx, int dy, int w, int h) {
@@ -24,6 +40,19 @@ public class ImgProc {
             pApplet.pixels[x + y * w] = src[i];
         }
         pApplet.updatePixels();
+    }
+
+    public void simpleBlur() {
+        pApplet.loadPixels();
+        int[] tempFrame = new int[width*height];
+        blur(pApplet.pixels, tempFrame, width, height);
+        PApplet.arraycopy(tempFrame, pApplet.pixels);
+        pApplet.updatePixels();
+    }
+
+    public void blur() {
+        blur(prevFrame, tempFrame, width, height);
+        //imgProc.scaleBrightness(tempFrame, tempFrame, width, height, 0.99f);
     }
 
     public void blur(int[] src, int[] dst, int w, int h) {
@@ -78,5 +107,21 @@ public class ImgProc {
                 //dst[x + y*w] = src[x + y*w];
             }
         }
+    }
+
+    public void copyFrame() {
+        PApplet.arraycopy(tempFrame, currFrame);
+    }
+
+    public void setupPixelFrames() {
+        currFrame = new int[width*height];
+        prevFrame = new int[width*height];
+        tempFrame = new int[width*height];
+        for(int i=0; i<width*height; i++) {
+            currFrame[i] = pApplet.color(0, 0, 0);
+            prevFrame[i] = pApplet.color(0, 0, 0);
+            tempFrame[i] = pApplet.color(0, 0, 0);
+        }
+
     }
 }

@@ -27,9 +27,6 @@ public class FluidParticles extends PApplet {
     float cellWidth;
 
     ImgProc imgProc;
-    int[] currFrame;
-    int[] prevFrame;
-    int[] tempFrame;
 
     public FluidParticles(LogSketch logSketch) {
         this.logSketch = logSketch;
@@ -59,21 +56,9 @@ public class FluidParticles extends PApplet {
 
         cellHeight = height / NavierStokesSolver.N;
         cellWidth = width / NavierStokesSolver.N;
-        setupPixelFrames();
+        imgProc.setupPixelFrames();
         background(color(0));
         initParticles();
-    }
-
-    private void setupPixelFrames() {
-        currFrame = new int[width*height];
-        prevFrame = new int[width*height];
-        tempFrame = new int[width*height];
-        for(int i=0; i<width*height; i++) {
-            currFrame[i] = color(0, 0, 0);
-            prevFrame[i] = color(0, 0, 0);
-            tempFrame[i] = color(0, 0, 0);
-        }
-
     }
 
     private void initParticles() {
@@ -85,9 +70,8 @@ public class FluidParticles extends PApplet {
     }
 
     public void draw() {
-        imgProc.blur(prevFrame, tempFrame, width, height);
-        //imgProc.scaleBrightness(tempFrame, tempFrame, width, height, 0.99f);
-        arraycopy(tempFrame, currFrame);
+        imgProc.blur();
+        imgProc.copyFrame();
 
         handleMouseMotion();
 
@@ -104,8 +88,7 @@ public class FluidParticles extends PApplet {
         vScale = velocityScale * 60 / frameRate;
         paintParticles();
 
-        imgProc.drawPixelArray(currFrame, 0, 0, width, height);
-        arraycopy(currFrame, prevFrame);
+        imgProc.draw();
     }
 
     private void paintParticles() {
@@ -251,7 +234,7 @@ public class FluidParticles extends PApplet {
         void pixel(int x, int y, int color) {
             x = min(max(x, 0), width - 1);
             y = min(max(y, 0), height - 1);
-            currFrame[x + y * width] = color;
+            imgProc.pixel(x, y, color);
         }
     }
 }

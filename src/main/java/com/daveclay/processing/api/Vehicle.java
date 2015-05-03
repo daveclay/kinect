@@ -95,7 +95,35 @@ public class Vehicle {
         // Limit speed
         velocity.limit(maxspeed);
         location.add(velocity);
+        // Reset accelertion to 0 each cycle
+        acceleration.mult(0);
 
+        // unless we're outside. in which case, force.
+        constraintByForce();
+    }
+
+    public void constraintByForce() {
+        float magnitudeOutsideX;
+        float magnitudeOutsideY;
+
+        magnitudeOutsideX = 0;
+        if (location.x < 0) {
+            magnitudeOutsideX = -1 * location.x;
+        } else if (location.x > sketch.width) {
+            magnitudeOutsideX = sketch.width - location.x;
+        }
+
+        magnitudeOutsideY = 0;
+        if (location.y < 0) {
+            magnitudeOutsideY = -1 * location.y;
+        } else if (location.y > sketch.height) {
+            magnitudeOutsideY = sketch.height - location.y;
+        }
+
+        acceleration.add(new PVector(magnitudeOutsideX / 20, magnitudeOutsideY / 20));
+    }
+
+    public void constrainByWrap() {
         if (location.x > sketch.width) {
             location.x = 0;
         } else if (location.x < 0) {
@@ -106,8 +134,5 @@ public class Vehicle {
         } else if (location.y < 0) {
             location.y = sketch.height;
         }
-
-        // Reset accelertion to 0 each cycle
-        acceleration.mult(0);
     }
 }
