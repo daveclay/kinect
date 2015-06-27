@@ -7,10 +7,10 @@ import com.daveclay.processing.api.image.ImgProc;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class VehicleBezier extends PApplet {
+public class VehicleBezierBlurLines extends PApplet {
 
     public static void main(String[] args) {
-        SketchRunner.run(new VehicleBezier());
+        SketchRunner.run(new VehicleBezierBlurLines());
     }
 
     ImgProc imgProc;
@@ -26,8 +26,14 @@ public class VehicleBezier extends PApplet {
     float noiseG = random(16432);
     float noiseB = random(64311);
 
+    boolean blurOn = false;
+
+    public void mouseClicked() {
+        blurOn = !blurOn;
+    }
+
     public void setup() {
-        size(1024, 768);
+        size(displayWidth, displayHeight);
         background(0);
         imgProc = new ImgProc(this);
 
@@ -35,17 +41,25 @@ public class VehicleBezier extends PApplet {
         controlPoint1 = new Vehicle(this, 100, 100);
         controlPoint2 = new Vehicle(this, 500, 300);
 
-        controlPoint1.maxspeed = controlPoint2.maxspeed = 6;
-        controlPoint1.maxforce = controlPoint2.maxforce = .5f;
+        controlPoint1.maxspeed = controlPoint2.maxspeed = 16;
+        controlPoint1.maxforce = controlPoint2.maxforce = 1f;
 
         anchorPoint1 = new Vehicle(this, 0, height/2);
         anchorPoint2 = new Vehicle(this, width, height/2);
         target1 = new Vehicle(this, random(0, width), random(0, height));
         target2 = new Vehicle(this, random(0, width), random(0, height));
+        frameRate(30);
+    }
+
+    void incrementFade() {
+        if (frameCount % 10 == 0) {
+            fill(color(0, 0, 0, 8));
+            rect(0, 0, width, height);
+            noFill();
+        }
     }
 
     public void draw() {
-        //background(0);
         smooth();
         PVector mouse = new PVector(mouseX, mouseY);
         target1.seek(mouse);
@@ -53,6 +67,8 @@ public class VehicleBezier extends PApplet {
 
         controlPoint1.flow(field.lookup(controlPoint1.location));
         controlPoint2.flow(field.lookup(controlPoint2.location));
+        anchorPoint1.flow(field.lookup(anchorPoint1.location));
+        anchorPoint2.flow(field.lookup(anchorPoint2.location));
 
         controlPoint1.update();
         controlPoint2.update();
@@ -61,14 +77,21 @@ public class VehicleBezier extends PApplet {
         target1.update();
         target2.update();
 
-        noFill();
+        int color = color(
+                noise(noiseR += .2) * 255,
+                noise(noiseR += .2) * 255,
+                noise(noiseR += .2) * 255,
+                blurOn ? 255 : 100
+        );
+        stroke(color);
 
-        stroke(color(
-                noise(noiseR += .01) * 255,
-                noise(noiseG += .01) * 255,
-                noise(noiseB += .01) * 255,
-                255
-                ));
+        if (blurOn) {
+            int fillColor = (color & 0xffffff) | (3 << 24);
+            fill(fillColor);
+        } else {
+            noFill();
+        }
+
         beginShape();
         vertex(anchorPoint1.location.x, anchorPoint1.location.y);
         bezierVertex(
@@ -82,9 +105,10 @@ public class VehicleBezier extends PApplet {
         endShape();
 
         //drawControls();
-        // field.draw();
+        //fieldA.draw();
 
-        imgProc.simpleBlur();
+        //imgProc.simpleBrightness(1.1f);
+        if (blurOn) imgProc.simpleBlur();
         field.initialize();
     }
 
