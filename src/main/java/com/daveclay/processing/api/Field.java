@@ -23,12 +23,12 @@ public class Field {
     int resolution;
     float initialFieldStrengthX;
     float initialFieldStrengthY;
-    float initNoise = 1253f;
+    float initNoise;
 
     class Cell {
         PVector force = new PVector();
-        //float xoff = sketch.noise(initNoise += .2) * 360;
-        float xoff = sketch.random(360);
+        float xoff = sketch.noise(initNoise += 1) * 360;
+        //float xoff = sketch.random(360);
         // initialFieldStrengthX;
         float yoff = initialFieldStrengthY;
 
@@ -48,6 +48,7 @@ public class Field {
     public Field(int resolution, PApplet sketch) {
         this.sketch = sketch;
         this.resolution = resolution;
+        initNoise = sketch.random(51233f);
         initialFieldStrengthX = sketch.random(53210);
         initialFieldStrengthY = sketch.random(76433);
         rows = sketch.height / resolution;
@@ -89,7 +90,7 @@ public class Field {
         return fieldCells[column][row].get();
     }
 
-    public void draw() {
+    public void draw(int color) {
         for (int col = 0; col < cols; col++) {
             for (int row = 0; row < rows; row++) {
                 Cell cell = fieldCells[col][row];
@@ -102,12 +103,7 @@ public class Field {
                 float endX = centerX + (cell.force.x * (resolution / 2));
                 float endY = centerY + (cell.force.y * (resolution / 2));
 
-                if (centerY < endY) {
-                    /*
-                    sketch.fill(20, 20, 20);
-                    */
-                }
-                sketch.stroke(sketch.color(60, 60, 60));
+                sketch.stroke(sketch.color(60, 60, 60, 60));
                 sketch.rect(x, y, resolution, resolution);
 
                 sketch.noStroke();
@@ -115,7 +111,7 @@ public class Field {
                 sketch.ellipse(centerX, centerY, 2, 2);
                 sketch.noFill();
 
-                sketch.stroke(sketch.color(120, 0, 0));
+                sketch.stroke(color);
                 sketch.line(centerX, centerY, endX, endY);
                 sketch.noFill();
             }

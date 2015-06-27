@@ -42,10 +42,26 @@ public class ImgProc {
         pApplet.updatePixels();
     }
 
+    public void bullshitBlur() {
+        pApplet.loadPixels();
+        int[] tempFrame = new int[width * height];
+        otherFastBlur(pApplet.pixels, tempFrame);
+        PApplet.arraycopy(tempFrame, pApplet.pixels);
+        pApplet.updatePixels();
+    }
+
     public void simpleBlur() {
         pApplet.loadPixels();
-        int[] tempFrame = new int[width*height];
+        int[] tempFrame = new int[width * height];
         blur(pApplet.pixels, tempFrame, width, height);
+        PApplet.arraycopy(tempFrame, pApplet.pixels);
+        pApplet.updatePixels();
+    }
+
+    public void simpleBrightness(float scale) {
+        pApplet.loadPixels();
+        int[] tempFrame = new int[width * height];
+        scaleBrightness(pApplet.pixels, tempFrame, width, height, scale);
         PApplet.arraycopy(tempFrame, pApplet.pixels);
         pApplet.updatePixels();
     }
@@ -114,14 +130,36 @@ public class ImgProc {
     }
 
     public void setupPixelFrames() {
-        currFrame = new int[width*height];
-        prevFrame = new int[width*height];
-        tempFrame = new int[width*height];
-        for(int i=0; i<width*height; i++) {
+        currFrame = new int[width * height];
+        prevFrame = new int[width * height];
+        tempFrame = new int[width * height];
+        for (int i = 0; i < width * height; i++) {
             currFrame[i] = pApplet.color(0, 0, 0);
             prevFrame[i] = pApplet.color(0, 0, 0);
             tempFrame[i] = pApplet.color(0, 0, 0);
         }
+    }
 
+    public void otherFastBlur(int[] source, int[] dest) {
+        for (int i = 1; i < (width - 1); ++i) {
+            for (int j = 1; j < (height - 1); ++j) {
+                dest[i + j * width] = (((((source[i + j * width] & 0xFF) << 2) +
+                        (source[i + 1 + j * width] & 0xFF) +
+                        (source[i - 1 + j * width] & 0xFF) +
+                        (source[i + (j + 1) * width] & 0xFF) +
+                        (source[i + (j - 1) * width] & 0xFF)) >> 3) & 0xFF) +
+                        (((((source[i + j * width] & 0xFF00) << 2) +
+                                (source[i + 1 + j * width] & 0xFF00) +
+                                (source[i - 1 + j * width] & 0xFF00) +
+                                (source[i + (j + 1) * width] & 0xFF00) +
+                                (source[i + (j - 1) * width] & 0xFF00)) >> 3) & 0xFF00) +
+                        (((((source[i + j * width] & 0xFF0000) << 2) +
+                                (source[i + 1 + j * width] & 0xFF0000) +
+                                (source[i - 1 + j * width] & 0xFF0000) +
+                                (source[i + (j + 1) * width] & 0xFF0000) +
+                                (source[i + (j - 1) * width] & 0xFF0000)) >> 3) & 0xFF0000) +
+                        0xFF000000;
+            }
+        }
     }
 }
