@@ -18,8 +18,8 @@ public class Deconstructed_sphere extends PApplet {
     float[] s = new float[NumParticle];
     float[] radius = new float[NumParticle];
     float motionNoise = random(10);
-    NoiseColor noiseColor = new NoiseColor(this);
-    NoiseColor spotNoiseColor = new NoiseColor(this);
+    NoiseColor noiseColor = new NoiseColor(this, .000003f);
+    NoiseColor spotNoiseColor = new NoiseColor(this, .000002f);
 
     public void setup() {
         size(1024, 1024, OPENGL);
@@ -56,6 +56,9 @@ public class Deconstructed_sphere extends PApplet {
 
     public void DrawMe() {
         translate(width / 2, height / 2, 250);
+        rotateX(frameCount*0.003f);
+        rotateY(frameCount*0.002f);
+        rotateZ(frameCount*0.004f);
 
         for (int i = 0; i < NumParticle - 1; i++) {
             strokeWeight(2);
@@ -64,8 +67,6 @@ public class Deconstructed_sphere extends PApplet {
         }
         stroke(noiseColor(50));
         line(spot[0].x, spot[0].y, spot[0].z, spot[NumParticle - 1].x, spot[NumParticle - 1].y, spot[NumParticle - 1].z);
-
-        stroke(173, 200, 0, 200);
 
         for (int i = 0; i < NumParticle - 1; i++) {
             drawSpot(i, i + 1);
@@ -88,6 +89,7 @@ public class Deconstructed_sphere extends PApplet {
             max = dist;
         }
         int alpha = (int) map(dist, 0, 300493, 0, 255);
+        alpha = max(0, min(255, alpha));
         stroke(spotNoiseColor.nextColor(alpha));
         strokeWeight((int) (dist * .0001));
         point(0, 0, 0);

@@ -6,7 +6,7 @@ public class NoiseColor {
 
     public static void main(String[] args) {
         PApplet hi = new PApplet();
-        NoiseColor noiseColor = new NoiseColor(hi);
+        NoiseColor noiseColor = new NoiseColor(hi, .0001f);
         for (int i = 0; i < 1000; i++) {
             int argb = noiseColor.nextColor(0);
 
@@ -27,12 +27,13 @@ public class NoiseColor {
     int alpha = 55;
     float rate = .00001f;
 
-    public NoiseColor(PApplet pApplet) {
+    public NoiseColor(PApplet pApplet, float rate) {
         this.pApplet = pApplet;
         rNoise = pApplet.random(10);
         gNoise = rNoise + 1;
         bNoise = rNoise + 2;
         tick = pApplet.random(10);
+        this.rate = rate;
     }
 
     public int nextColor(int alpha) {
