@@ -4,10 +4,10 @@ import com.daveclay.processing.api.NoiseColor;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class Deconstructed_sphere extends PApplet {
+public class DeconstructedSphere2D extends PApplet {
 
     public static void main(String[] args) {
-        PApplet.main(Deconstructed_sphere.class.getName());
+        PApplet.main(DeconstructedSphere2D.class.getName());
     }
 
     float max = 0;
@@ -27,7 +27,7 @@ public class Deconstructed_sphere extends PApplet {
         for (int i = 0; i < NumParticle; i++) {
             t[i] = random(-1, 1);
             s[i] = random(2 * PI);
-            radius[i] = 100 + 20 * noise(sqrt(1 - t[i] * t[i]) * cos(s[i]), t[i], motionNoise);
+            radius[i] = 160 + 30 * noise(sqrt(1 - t[i] * t[i]) * cos(s[i]), t[i], motionNoise);
             spot[i] = new PVector(
                     radius[i] * sqrt(1 - t[i] * t[i]) * cos(s[i]),
                     radius[i] * sqrt(1 - t[i] * t[i]) * sin(s[i]),
@@ -55,18 +55,15 @@ public class Deconstructed_sphere extends PApplet {
     }
 
     public void DrawMe() {
-        translate(width / 2, height / 2, 250);
-        rotateX(frameCount*0.003f);
-        rotateY(frameCount*0.002f);
-        rotateZ(frameCount*0.004f);
+        translate(width / 2, height / 2);
 
         for (int i = 0; i < NumParticle - 1; i++) {
             strokeWeight(2);
             stroke(noiseColor(50));
-            line(spot[i].x, spot[i].y, spot[i].z, spot[i + 1].x, spot[i + 1].y, spot[i + 1].z);
+            line(spot[i].x, spot[i].y, spot[i + 1].x, spot[i + 1].y); // , spot[i + 1].z);
         }
         stroke(noiseColor(50));
-        line(spot[0].x, spot[0].y, spot[0].z, spot[NumParticle - 1].x, spot[NumParticle - 1].y, spot[NumParticle - 1].z);
+        line(spot[0].x, spot[0].y, spot[NumParticle - 1].x, spot[NumParticle - 1].y); //, spot[NumParticle - 1].z);
 
         for (int i = 0; i < NumParticle - 1; i++) {
             drawSpot(i, i + 1);
@@ -83,16 +80,17 @@ public class Deconstructed_sphere extends PApplet {
                 spot[indexB].y,
                 spot[indexB].z);
         pushMatrix();
-        translate(spot[indexA].x, spot[indexA].y, spot[indexA].z);
+        translate(spot[indexA].x, spot[indexA].y); // , spot[indexA].z);
         if (dist > max) {
-            System.out.println(dist);
+            //System.out.println(dist);
             max = dist;
         }
-        int alpha = (int) map(dist, 0, 600493, 20, 255);
+        int alpha = (int) map(dist, 0, 300493, 0, 255);
         alpha = max(0, min(255, alpha));
-        stroke(spotNoiseColor.nextColor(alpha));
-        strokeWeight((int) (dist * .0001));
-        point(0, 0, 0);
+        fill(spotNoiseColor.nextColor(alpha));
+        //strokeWeight((int) (dist * .0001));
+        int radius = (int) (dist * .0001);
+        ellipse(0, 0, radius, radius);
         popMatrix();
     }
 
