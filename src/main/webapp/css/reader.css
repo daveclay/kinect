@@ -1,0 +1,74 @@
+#reader .ui-content {
+    padding:0;
+    min-height: 480px;
+}
+
+.swiper-nav .swiper-wrapper {
+    margin: 0 auto;
+}
+
+.swiper-nav .swiper-slide:first-child span {
+    border-left: none;
+}
+
+.swiper-nav .swiper-slide:last-child span {
+    border-right: none;
+}
+
+.swiper-pages {
+    height: 100%;
+}
+
+.scroll-container {
+    height: 100%;
+    width: 100%;
+}
+
+.scroll-container .swiper-slide {
+    width: 100%;
+}
+
+.swiper-slide {
+    width: 100%;
+    position: relative;
+    text-align: center;
+}
+
+.swiper-gallery .swiper-slide img {
+    opacity: 0.2;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    -webkit-transition: 1000ms;
+    -moz-transition: 1000ms;
+    -ms-transition: 1000ms;
+    -o-transition: 1000ms;
+    transition: 1000ms;
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    -o-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+.swiper-gallery .swiper-slide-visible img {
+    opacity: 1;
+}
+
+.swiper-scrollbar {
+    position: absolute;
+    right: 5px;
+    top: 2%;
+    width: 5px;
+    height: 96%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.swiper-scrollbar-drag {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+}
