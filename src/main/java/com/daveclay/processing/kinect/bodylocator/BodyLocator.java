@@ -32,6 +32,7 @@ public class BodyLocator extends UserTrackingSketch {
         BodyLocator bodyLocator = new BodyLocator(
                 gestureDataStore,
                 stage,
+                stageMonitor,
                 hud);
 
         try {
@@ -47,10 +48,8 @@ public class BodyLocator extends UserTrackingSketch {
             System.exit(-1);
         }
 
-        SketchRunner.run(bodyLocator, stageMonitor);
-
-        stageMonitor.frame.setLocation(0, 0);
-        bodyLocator.frame.setLocation(0, stageMonitor.getWidth() + 2);
+        SketchRunner.run(bodyLocator);
+        bodyLocator.frame.setLocation(0, 0);
     }
 
     BodyLocatorListener listener;
@@ -68,6 +67,7 @@ public class BodyLocator extends UserTrackingSketch {
 
     public BodyLocator(GestureDataStore gestureDataStore,
                        Stage stage,
+                       StageMonitor stageMonitor,
                        HUD hud) {
         super();
         setSketchCallback(new SketchCallback() {
@@ -105,6 +105,7 @@ public class BodyLocator extends UserTrackingSketch {
 
         this.stage = stage;
         this.hud = hud;
+        this.stageMonitor = stageMonitor;
 
         registerEventListeners();
     }
@@ -193,6 +194,7 @@ public class BodyLocator extends UserTrackingSketch {
 
     private void drawHUD() {
         hud.draw(this);
+        stageMonitor.draw(this);
     }
 
     private void updateUserDataAndDrawStuff() {

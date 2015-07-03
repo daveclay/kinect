@@ -6,7 +6,7 @@ import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class StageMonitor extends PApplet {
+public class StageMonitor {
 
     private final Stage stage;
     private final HUD hud;
@@ -18,6 +18,8 @@ public class StageMonitor extends PApplet {
     private final Stage.RightFrontZone rightFrontZone;
     private final Stage.LeftBackZone leftBackZone;
     private final Stage.RightBackZone rightBackZone;
+
+    private PApplet currentCanvas;
 
     private Stage.StageZone currentStageZone;
 
@@ -70,13 +72,9 @@ public class StageMonitor extends PApplet {
         this(stage, hud, 400, 400);
     }
 
-    @Override
-    public void setup() {
-        size(width, height);
-    }
+    public void draw(PApplet canvas) {
+        this.currentCanvas = canvas;
 
-    @Override
-    public void draw() {
         if ( ! stageBounds.initialized()) {
             return;
         }
@@ -101,9 +99,9 @@ public class StageMonitor extends PApplet {
         hud.log("Within Right Back", rightBackZone.isWithinBounds(position));
         */
 
-        background(100);
-        stroke(255, 255, 255);
-        strokeWeight(2);
+        canvas.background(100);
+        canvas.stroke(255, 255, 255);
+        canvas.strokeWeight(2);
 
         drawMappedZone(leftFrontZone);
         drawMappedZone(rightFrontZone);
@@ -117,8 +115,8 @@ public class StageMonitor extends PApplet {
     void drawPosition(PVector position) {
         float mappedPositionX = map(position.x, left, right, 0, width);
         float mappedPositionZ = map(position.z, front, back, 0, height);
-        fill(150, 125, 0);
-        rect(mappedPositionX, mappedPositionZ, 50, 50);
+        currentCanvas.fill(150, 125, 0);
+        currentCanvas.rect(mappedPositionX, mappedPositionZ, 50, 50);
     }
 
     private void drawCenterZone() {
@@ -127,7 +125,7 @@ public class StageMonitor extends PApplet {
         float mappedCenterX = map(center.x, left, right, 0, width);
         float mappedCenterZ = map(center.z, front, back, 0, height);
         setFill(centerZone);
-        ellipse(mappedCenterX, mappedCenterZ, mappedHorizontalCenterRadius, mappedVerticalCenterRadius);
+        currentCanvas.ellipse(mappedCenterX, mappedCenterZ, mappedHorizontalCenterRadius, mappedVerticalCenterRadius);
     }
 
     public void drawMappedZone(Stage.RectStageZone stageZone) {
@@ -140,14 +138,18 @@ public class StageMonitor extends PApplet {
         float mappedDepth = map(stageZone.getDepth(), 0, realWorldDepth, 0, height);
 
         setFill(stageZone);
-        rect(mappedX, mappedY, mappedWidth, mappedDepth);
+        currentCanvas.rect(mappedX, mappedY, mappedWidth, mappedDepth);
     }
 
     void setFill(Stage.StageZone stageZone) {
         if (stageZone == this.currentStageZone) {
-            fill(0, 255, 0);
+            currentCanvas.fill(0, 255, 0);
         } else {
-            fill(100);
+            currentCanvas.fill(100);
         }
+    }
+
+    public static final float map(float value, float start1, float stop1, float start2, float stop2) {
+        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
 }
