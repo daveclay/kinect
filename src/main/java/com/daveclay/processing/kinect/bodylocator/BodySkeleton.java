@@ -2,6 +2,7 @@ package com.daveclay.processing.kinect.bodylocator;
 
 import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.FrameExporter;
+import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.kinect.api.User;
@@ -19,7 +20,8 @@ public class BodySkeleton extends UserTrackingSketch {
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
 
-        BodySkeleton bodyLocator = new BodySkeleton(logSketch);
+        BodySkeleton bodySkeleton = new BodySkeleton(logSketch.getHud());
+        BodySkeleton bodyLocator = bodySkeleton;
 
         SketchRunner.run(logSketch, bodyLocator);
 
@@ -32,7 +34,7 @@ public class BodySkeleton extends UserTrackingSketch {
     private FrameExporter frameExporter;
     private List<Vehicle> vehicles = new ArrayList<Vehicle>();
 
-    public BodySkeleton(LogSketch logSketch) {
+    public BodySkeleton(HUD hud) {
         super();
         setSketchCallback(new SketchCallback() {
             @Override
@@ -50,7 +52,7 @@ public class BodySkeleton extends UserTrackingSketch {
         });
 
         this.frameExporter = new FrameExporter(this, "C:/Users/daveclay/Documents/ProcessingMovies/bodyseeker%s.tif");
-        this.logSketch = logSketch;
+        this.hud = hud;
         int width = 1920;
         int height = 1080;
 
@@ -83,7 +85,7 @@ public class BodySkeleton extends UserTrackingSketch {
     }
 
     private void drawBodyLocator() {
-        logSketch.logRounded("FPS", frameRate);
+        hud.logRounded("FPS", frameRate);
         updateUserDataAndDrawStuff();
     }
 
@@ -105,8 +107,8 @@ public class BodySkeleton extends UserTrackingSketch {
         PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
         PVector rightHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandRight);
 
-        logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
-        logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
+        hud.logScreenCoords("Right Hand", rightHandPosition2d);
+        hud.logScreenCoords("Left Hand", leftHandPosition2d);
 
         drawLines(leftHandPosition2d, rightHandPosition2d);
         this.frameExporter.writeFrame();

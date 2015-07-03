@@ -3,7 +3,7 @@ package com.daveclay.processing.kinect.api;
 import KinectPV2.KinectPV2;
 import KinectPV2.*;
 
-import com.daveclay.processing.api.LogSketch;
+import com.daveclay.processing.api.HUD;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -29,7 +29,7 @@ public class UserTrackingSketch extends PApplet {
 
     private SketchCallback sketchCallback;
     private KinectPV2 kinect;
-    protected LogSketch logSketch;
+    protected HUD hud;
 
     public final void setup() {
         size(1920, 1080, P2D);
@@ -91,8 +91,8 @@ public class UserTrackingSketch extends PApplet {
         }
         perfCount++;
         averagePerf = (averagePerf + time) / perfCount;
-        logSketch.log("average time", time + "ms");
-        logSketch.log("max time", max + "ms");
+        hud.log("average time", time + "ms");
+        hud.log("max time", max + "ms");
     }
 
     public void onLeftHandExtended(HandExtendedHandler handExtendedHandler) {

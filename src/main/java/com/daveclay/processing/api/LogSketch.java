@@ -9,22 +9,18 @@ import java.util.Map;
 
 public class LogSketch extends PApplet {
 
+    private final HUD hud;
     private final int width;
     private final int height;
-    private int fontSize = 40;
-    private Map<String, String> lines = new LinkedHashMap<String, String>();
 
     public LogSketch(int width, int height) {
         this.width = width;
         this.height = height;
+        this.hud = new HUD(this);
     }
 
     public LogSketch() {
         this(1800, 480);
-    }
-
-    public void setFontSize(int fontSize) {
-        this.fontSize = fontSize;
     }
 
     @Override
@@ -32,62 +28,12 @@ public class LogSketch extends PApplet {
         size(width, height);
     }
 
-    public void logRounded(String label, double value) {
-        log(label, Double.toString(Math.round(value)));
-    }
-
-    public void logRounded(String label, float value) {
-        logRounded(label, "", value);
-    }
-
-    public void logRounded(String label, String prefix, double value) {
-        log(label, prefix + " " + Long.toString(Math.round(value)));
-    }
-
-    public void logRounded(String label, String prefix, float value) {
-        log(label, prefix + " " + Integer.toString(Math.round(value)));
-    }
-
-    public void logVector(String label, PVector vector) {
-        log(label, "x: " + vector.x + ", y: " + vector.y + ", z: " + vector.z);
-    }
-
-    public void log(String label, FloatValueMeasurement measurement) {
-        log(label, "min: " + measurement.getMin() +
-                " max: " + measurement.getMax() +
-                " range: " + measurement.getRange()
-        );
-    }
-
-    public void log(String label, float value) {
-        log(label, "" + value);
-    }
-
-    public void logScreenCoords(String label, PVector vector) {
-        log(label, "x: " + Math.round(vector.x) + ", y: " + Math.round(vector.y));
-    }
-
-    public synchronized void log(String label, String info) {
-        lines.put(label, info);
+    public HUD getHud() {
+        return hud;
     }
 
     public void draw() {
         background(255);
-        fill(0);
-        textSize(fontSize);
-        writeLines();
-    }
-
-    synchronized void writeLines() {
-        int yIncrement = fontSize + 3;
-        int y = yIncrement;
-        for (Map.Entry<String, String> entry : lines.entrySet()) {
-            text(entry.getKey() + ": " + entry.getValue(), 10, y);
-            y += yIncrement;
-        }
-    }
-
-    public void log(String key, boolean value) {
-        log(key, value ? "YES": "NO");
+        hud.draw();
     }
 }
