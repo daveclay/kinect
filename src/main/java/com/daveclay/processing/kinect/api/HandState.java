@@ -1,6 +1,5 @@
 package com.daveclay.processing.kinect.api;
 
-import KinectPV2.KJoint;
 import KinectPV2.KinectPV2;
 
 import java.util.List;

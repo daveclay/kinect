@@ -200,7 +200,6 @@ public class BodyLocator extends UserTrackingSketch {
             stage.updatePosition(newUserPosition);
 
             // Todo: refactor - have a gesture aware delegate doing this based on userDidEnter() callbacks.
-            // Separate the gesture recording and detection from the drawing of all this data.
             gestureRecorder.addPoint(user.getRightHandPosition());
 
             // draw user data.
