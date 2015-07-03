@@ -20,8 +20,7 @@ import java.util.List;
 public class BodyLocator extends UserTrackingSketch {
 
     public static void main(String[] args) {
-        LogSketch logSketch = new LogSketch();
-        HUD hud = logSketch.getHud();
+        HUD hud = new HUD();
         GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR);
         gestureDataStore.load();
 
@@ -48,11 +47,10 @@ public class BodyLocator extends UserTrackingSketch {
             System.exit(-1);
         }
 
-        SketchRunner.run(logSketch, bodyLocator, stageMonitor);
+        SketchRunner.run(bodyLocator, stageMonitor);
 
-        logSketch.frame.setLocation(0, 100);
-        bodyLocator.frame.setLocation(logSketch.getWidth() + 10, 100);
-        stageMonitor.frame.setLocation(100, logSketch.getHeight() + 10);
+        stageMonitor.frame.setLocation(0, 0);
+        bodyLocator.frame.setLocation(0, stageMonitor.getWidth() + 2);
     }
 
     BodyLocatorListener listener;
@@ -186,10 +184,15 @@ public class BodyLocator extends UserTrackingSketch {
         setKinectRGBImageAsBackground();
 
         // Note: this might be what the native kinect is getting, but it's not necessarily what we're processing...
-        hud.logRounded("FPS", frameRate);
+        // hud.logRounded("FPS", frameRate);
 
         updateUserDataAndDrawStuff();
         drawGestureRecognitionNotification();
+        drawHUD();
+    }
+
+    private void drawHUD() {
+        hud.draw(this);
     }
 
     private void updateUserDataAndDrawStuff() {

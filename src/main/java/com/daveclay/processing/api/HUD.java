@@ -4,18 +4,27 @@ import com.daveclay.processing.kinect.api.FloatValueMeasurement;
 import processing.core.PApplet;
 import processing.core.PVector;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HUD {
 
-    private final PApplet canvas;
+    private PApplet defaultCanvas;
     private Map<String, String> lines = new LinkedHashMap<String, String>();
     private int fontSize = 40;
-    private int color = 0;
+    private int color = 255;
+
+    public HUD() {
+    }
 
     public HUD(PApplet canvas) {
-        this.canvas = canvas;
+        this.defaultCanvas = canvas;
+    }
+
+    public void setDefaultCanvas(PApplet defaultCanvas) {
+        this.defaultCanvas = defaultCanvas;
     }
 
     public void setColor(int color) {
@@ -66,18 +75,38 @@ public class HUD {
     }
 
     public void draw() {
-        canvas.fill(color);
-        canvas.textSize(fontSize);
-        writeLines();
+        draw(this.defaultCanvas);
     }
 
-    synchronized void writeLines() {
+    public synchronized void draw(PApplet canvas) {
+        canvas.textSize(fontSize);
+        canvas.noStroke();
         int yIncrement = fontSize + 3;
+        int x = 10;
+
         int y = yIncrement;
-        for (Map.Entry<String, String> entry : lines.entrySet()) {
-            canvas.text(entry.getKey() + ": " + entry.getValue(), 10, y);
+        List<String> texts = buildTexts();
+        for (String text: texts) {
+            float width = canvas.textWidth(text);
+            canvas.fill(canvas.color(0, 120));
+            canvas.rect(x, y - yIncrement + 5, width, yIncrement);
             y += yIncrement;
         }
+
+        y = yIncrement;
+        for (String text: texts) {
+            canvas.fill(color);
+            canvas.text(text, x, y);
+            y += yIncrement;
+        }
+    }
+
+    private List<String> buildTexts() {
+        List<String> text = new ArrayList<String>();
+        for (Map.Entry<String, String> entry : lines.entrySet()) {
+            text.add(entry.getKey() + ": " + entry.getValue());
+        }
+        return text;
     }
 
     public void log(String key, boolean value) {
