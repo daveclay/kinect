@@ -4,6 +4,7 @@ import KinectPV2.KinectPV2;
 import KinectPV2.*;
 
 import com.daveclay.processing.api.HUD;
+import com.daveclay.processing.kinect.api.stage.StageMonitor;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -30,6 +31,7 @@ public class UserTrackingSketch extends PApplet {
     private SketchCallback sketchCallback;
     private KinectPV2 kinect;
     protected HUD hud;
+    protected StageMonitor stageMonitor;
 
     public final void setup() {
         size(1920, 1080, P2D);
