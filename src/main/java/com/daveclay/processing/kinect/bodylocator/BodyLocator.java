@@ -125,14 +125,14 @@ public class BodyLocator extends UserTrackingSketch {
         onRightHandExtended(new HandExtendedHandler() {
             @Override
             public void onHandExtended() {
-                logSketch.log("Left Hand Gesture", "Extended.");
+                logSketch.log("Right Hand Gesture", "Extended.");
                 gestureRecorder.startRecording();
                 drawGestureRecording = true;
             }
 
             @Override
             public void onHandRetracted() {
-                logSketch.log("Left Hand Gesture", "Retracted.");
+                logSketch.log("Right Hand Gesture", "Retracted.");
                 gestureRecorder.stopRecording();
                 drawGestureRecording = false;
             }
@@ -253,8 +253,8 @@ public class BodyLocator extends UserTrackingSketch {
     private void drawUserData(User user) {
         pushMatrix();
 
-        PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
-        PVector rightHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandRight);
+        PVector leftHandPosition2d = user.getLeftHandPosition2D();
+        PVector rightHandPosition2d = user.getRightHandPosition2D();
 
         logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
         logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
@@ -267,7 +267,7 @@ public class BodyLocator extends UserTrackingSketch {
         popMatrix();
 
         if (drawGestureRecording) {
-            drawingPoints.add(leftHandPosition2d);
+            drawingPoints.add(rightHandPosition2d);
         }
 
         if (drawGestureRecording || drawGestureRecognizedState > 0) {
