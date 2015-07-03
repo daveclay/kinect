@@ -9,7 +9,7 @@ import processing.core.PVector;
 public class StageMonitor extends PApplet {
 
     private final Stage stage;
-    private final HUD logSketch;
+    private final HUD hud;
     private final int width;
     private final int height;
     private final StageBounds stageBounds;
@@ -32,12 +32,12 @@ public class StageMonitor extends PApplet {
     private PVector center;
 
     public StageMonitor(Stage stage,
-                        HUD logSketch,
+                        HUD hud,
                         int width,
                         int height) {
         this.width = width;
         this.height = height;
-        this.logSketch = logSketch;
+        this.hud = hud;
         this.stage = stage;
 
         this.currentStageZone = null;
@@ -66,8 +66,8 @@ public class StageMonitor extends PApplet {
     }
 
     public StageMonitor(Stage stage,
-                        HUD logSketch) {
-        this(stage, logSketch, 400, 400);
+                        HUD hud) {
+        this(stage, hud, 400, 400);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class StageMonitor extends PApplet {
         center = stageBounds.getCenter();
         position = stage.getPosition();
 
-        logSketch.logVector("Stage Position", position);
+        hud.logVector("Stage Position", position);
 
         /*
         hud.log("Within Center", centerZone.isWithinBounds(position));
