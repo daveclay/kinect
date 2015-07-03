@@ -1,6 +1,6 @@
 package com.daveclay.processing.kinect.api.stage;
 
-import com.daveclay.processing.api.LogSketch;
+import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import processing.core.PApplet;
@@ -9,7 +9,7 @@ import processing.core.PVector;
 public class StageMonitor extends PApplet {
 
     private final Stage stage;
-    private final LogSketch logSketch;
+    private final HUD logSketch;
     private final int width;
     private final int height;
     private final StageBounds stageBounds;
@@ -32,7 +32,7 @@ public class StageMonitor extends PApplet {
     private PVector center;
 
     public StageMonitor(Stage stage,
-                        LogSketch logSketch,
+                        HUD logSketch,
                         int width,
                         int height) {
         this.width = width;
@@ -66,7 +66,7 @@ public class StageMonitor extends PApplet {
     }
 
     public StageMonitor(Stage stage,
-                        LogSketch logSketch) {
+                        HUD logSketch) {
         this(stage, logSketch, 400, 400);
     }
 
@@ -94,11 +94,11 @@ public class StageMonitor extends PApplet {
         logSketch.logVector("Stage Position", position);
 
         /*
-        logSketch.log("Within Center", centerZone.isWithinBounds(position));
-        logSketch.log("Within Left Front", leftFrontZone.isWithinBounds(position));
-        logSketch.log("Within Right Front", rightFrontZone.isWithinBounds(position));
-        logSketch.log("Within Left Back", leftBackZone.isWithinBounds(position));
-        logSketch.log("Within Right Back", rightBackZone.isWithinBounds(position));
+        hud.log("Within Center", centerZone.isWithinBounds(position));
+        hud.log("Within Left Front", leftFrontZone.isWithinBounds(position));
+        hud.log("Within Right Front", rightFrontZone.isWithinBounds(position));
+        hud.log("Within Left Back", leftBackZone.isWithinBounds(position));
+        hud.log("Within Right Back", rightBackZone.isWithinBounds(position));
         */
 
         background(100);

@@ -1,6 +1,7 @@
 package com.daveclay.processing.kinect.bodylocator;
 
 import KinectPV2.KinectPV2;
+import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.kinect.api.UserTrackingSketch;
@@ -10,7 +11,7 @@ public class DepthImagePixels extends UserTrackingSketch {
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
 
-        DepthImagePixels bodyLocator = new DepthImagePixels(logSketch);
+        DepthImagePixels bodyLocator = new DepthImagePixels(logSketch.getHud());
 
         SketchRunner.run(logSketch, bodyLocator);
 
@@ -23,7 +24,7 @@ public class DepthImagePixels extends UserTrackingSketch {
     IntValueMeasurement yValues = new IntValueMeasurement();
     IntValueMeasurement zValues = new IntValueMeasurement();
 
-    public DepthImagePixels(LogSketch logSketch) {
+    public DepthImagePixels(HUD logSketch) {
         super();
         setSketchCallback(new SketchCallback() {
             @Override
@@ -40,19 +41,19 @@ public class DepthImagePixels extends UserTrackingSketch {
             }
         });
 
-        this.logSketch = logSketch;
+        this.hud = logSketch;
     }
 
     private void drawBodyLocator() {
         background(0, 0, 255);
         smooth();
-        logSketch.logRounded("FPS", frameRate);
+        hud.logRounded("FPS", frameRate);
         int [] depthRaw = getKinect().getRawDepth();
 
 
-        logSketch.log("R", xValues.getCurrent() + " " + xValues.getMin() + " / " + xValues.getMax());
-        logSketch.log("G", yValues.getCurrent() + " " + yValues.getMin() + " / " + yValues.getMax());
-        logSketch.log("B", zValues.getCurrent() + " " + zValues.getMin() + " / " + zValues.getMax());
+        hud.log("R", xValues.getCurrent() + " " + xValues.getMin() + " / " + xValues.getMax());
+        hud.log("G", yValues.getCurrent() + " " + yValues.getMin() + " / " + yValues.getMax());
+        hud.log("B", zValues.getCurrent() + " " + zValues.getMin() + " / " + zValues.getMax());
 
         int count = 0;
         int divisor = 10;
@@ -85,7 +86,7 @@ public class DepthImagePixels extends UserTrackingSketch {
         stroke(255, 255, 0);
         noFill();
         rect(200, 200, 100, 100);
-        logSketch.log("Loop", count + "");
+        hud.log("Loop", count + "");
 
     }
 
@@ -93,12 +94,12 @@ public class DepthImagePixels extends UserTrackingSketch {
     private void redDuplicateOddities() {
         background(0);
         smooth();
-        logSketch.logRounded("FPS", frameRate);
+        hud.logRounded("FPS", frameRate);
         FloatBuffer buffer = getKinect().getPointCloudColorPos();
 
-        logSketch.log("X", xValues.getMin() + " / " + xValues.getMax());
-        logSketch.log("Y", yValues.getMin() + " / " + yValues.getMax());
-        logSketch.log("Z", zValues.getMin() + " / " + zValues.getMax());
+        hud.log("X", xValues.getMin() + " / " + xValues.getMax());
+        hud.log("Y", yValues.getMin() + " / " + yValues.getMax());
+        hud.log("Z", zValues.getMin() + " / " + zValues.getMax());
 
         int count = 0;
         int divisor = 20;
@@ -121,7 +122,7 @@ public class DepthImagePixels extends UserTrackingSketch {
             fill(255, 0, 0, z);
             ellipse(x, y, 2f, 2f);
         }
-        logSketch.log("Loop: ", count + "");
+        hud.log("Loop: ", count + "");
     }
     */
 

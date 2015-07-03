@@ -2,6 +2,7 @@ package com.daveclay.processing.kinect.bodylocator;
 
 import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.FrameExporter;
+import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.kinect.api.*;
@@ -15,7 +16,7 @@ public class BodySeekers extends UserTrackingSketch {
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
 
-        BodySeekers bodyLocator = new BodySeekers(logSketch);
+        BodySeekers bodyLocator = new BodySeekers(logSketch.getHud());
 
         SketchRunner.run(logSketch, bodyLocator);
 
@@ -29,7 +30,7 @@ public class BodySeekers extends UserTrackingSketch {
     private FloatValueMeasurement zValues = new FloatValueMeasurement();
     private FloatValueMeasurement hueValues = new FloatValueMeasurement();
 
-    public BodySeekers(LogSketch logSketch) {
+    public BodySeekers(HUD hud) {
         super();
         setSketchCallback(new SketchCallback() {
             @Override
@@ -47,7 +48,7 @@ public class BodySeekers extends UserTrackingSketch {
         });
 
         this.frameExporter = new FrameExporter(this, "C:/Users/daveclay/Documents/ProcessingMovies/bodyseeker%s.tif");
-        this.logSketch = logSketch;
+        this.hud = hud;
         int width = 1920;
         int height = 1080;
 
@@ -79,7 +80,7 @@ public class BodySeekers extends UserTrackingSketch {
     }
 
     private void drawBodyLocator() {
-        logSketch.logRounded("FPS", frameRate);
+        hud.logRounded("FPS", frameRate);
         updateUserDataAndDrawStuff();
     }
 
@@ -115,9 +116,9 @@ public class BodySeekers extends UserTrackingSketch {
         rightHandPosition2d.z = z;
         zValues.add(z);
 
-        logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
-        logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
-        logSketch.log("Z", zValues);
+        hud.logScreenCoords("Right Hand", rightHandPosition2d);
+        hud.logScreenCoords("Left Hand", leftHandPosition2d);
+        hud.log("Z", zValues);
 
         // Draw an ellipse at the mouse location
         /*
@@ -235,7 +236,7 @@ public class BodySeekers extends UserTrackingSketch {
 
             if (index % 2 == 0) {
                 hueValues.add(hue);
-                logSketch.log("Hue", hueValues);
+                hud.log("Hue", hueValues);
             }
 
             if (previousLocation != null) {

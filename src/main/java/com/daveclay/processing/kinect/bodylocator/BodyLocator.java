@@ -1,6 +1,7 @@
 package com.daveclay.processing.kinect.bodylocator;
 
 import KinectPV2.KinectPV2;
+import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.gestures.*;
@@ -20,20 +21,19 @@ public class BodyLocator extends UserTrackingSketch {
 
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
+        HUD hud = logSketch.getHud();
         GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR);
         gestureDataStore.load();
 
         Stage stage = new Stage();
         stage.setupDefaultStageZones();
 
-        StageMonitor stageMonitor = new StageMonitor(
-                stage,
-                logSketch);
+        StageMonitor stageMonitor = new StageMonitor(stage, hud);
 
         BodyLocator bodyLocator = new BodyLocator(
                 gestureDataStore,
                 stage,
-                logSketch);
+                hud);
 
         try {
             PresentationServer presentationServer = new PresentationServer(12345);
@@ -70,7 +70,7 @@ public class BodyLocator extends UserTrackingSketch {
 
     public BodyLocator(GestureDataStore gestureDataStore,
                        Stage stage,
-                       LogSketch logSketch) {
+                       HUD hud) {
         super();
         setSketchCallback(new SketchCallback() {
             @Override
@@ -106,7 +106,7 @@ public class BodyLocator extends UserTrackingSketch {
         gestureRecognizer.addRecognizer(lineGestureRecognizer);
 
         this.stage = stage;
-        this.logSketch = logSketch;
+        this.hud = hud;
 
         registerEventListeners();
     }
@@ -125,14 +125,14 @@ public class BodyLocator extends UserTrackingSketch {
         onRightHandExtended(new HandExtendedHandler() {
             @Override
             public void onHandExtended() {
-                logSketch.log("Right Hand Gesture", "Extended.");
+                hud.log("Right Hand Gesture", "Extended.");
                 gestureRecorder.startRecording();
                 drawGestureRecording = true;
             }
 
             @Override
             public void onHandRetracted() {
-                logSketch.log("Right Hand Gesture", "Retracted.");
+                hud.log("Right Hand Gesture", "Retracted.");
                 gestureRecorder.stopRecording();
                 drawGestureRecording = false;
             }
@@ -164,7 +164,7 @@ public class BodyLocator extends UserTrackingSketch {
             @Override
             public void gestureWasNotRecognized(String message) {
                 drawGestureRecognizedAlert(false, null, message);
-                logSketch.log("Gesture", message);
+                hud.log("Gesture", message);
             }
         });
     }
@@ -175,9 +175,9 @@ public class BodyLocator extends UserTrackingSketch {
             lastNotification = System.currentTimeMillis();
 
             if (gesture != null) {
-                logSketch.logRounded("Gesture", gesture.name, gesture.score * 100d);
+                hud.logRounded("Gesture", gesture.name, gesture.score * 100d);
             } else {
-                logSketch.log("Gesture", message);
+                hud.log("Gesture", message);
             }
         }
     }
@@ -186,7 +186,7 @@ public class BodyLocator extends UserTrackingSketch {
         setKinectRGBImageAsBackground();
 
         // Note: this might be what the native kinect is getting, but it's not necessarily what we're processing...
-        logSketch.logRounded("FPS", frameRate);
+        hud.logRounded("FPS", frameRate);
 
         updateUserDataAndDrawStuff();
         drawGestureRecognitionNotification();
@@ -256,8 +256,8 @@ public class BodyLocator extends UserTrackingSketch {
         PVector leftHandPosition2d = user.getLeftHandPosition2D();
         PVector rightHandPosition2d = user.getRightHandPosition2D();
 
-        logSketch.logScreenCoords("Right Hand", rightHandPosition2d);
-        logSketch.logScreenCoords("Left Hand", leftHandPosition2d);
+        hud.logScreenCoords("Right Hand", rightHandPosition2d);
+        hud.logScreenCoords("Left Hand", leftHandPosition2d);
 
         stroke(120);
         strokeWeight(2);

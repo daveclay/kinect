@@ -86,9 +86,9 @@ public class User {
     public boolean isRightHandExtended(float threshold) {
         /*
         double distance = Math.sqrt(VectorMath.getZDistanceSquared(rightHand.position, centerOfMass));
-        logSketch.logRounded("Left hand distance", distance);
-        logSketch.logVector("Left Hand Pos", rightHand.position);
-        logSketch.logVector("Torso", torso.position);
+        hud.logRounded("Left hand distance", distance);
+        hud.logVector("Left Hand Pos", rightHand.position);
+        hud.logVector("Torso", torso.position);
         */
         return isHandExtended(KinectPV2.JointType_HandRight, threshold);
     }
