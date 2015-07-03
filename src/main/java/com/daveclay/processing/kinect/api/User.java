@@ -7,20 +7,16 @@ import processing.core.PVector;
 public class User {
 
     private final int id;
-    private final KinectPV2 kinect;
     private final Skeleton skeleton3D;
     private final Skeleton colorSkeleton;
     private final HandState leftHandState;
     private final HandState rightHandState;
 
-    public User(KinectPV2 kinect,
-                Skeleton skeleton3D,
+    public User(Skeleton skeleton3D,
                 Skeleton colorSkeleton,
                 UserEventsConfig userEventsConfig,
                 int index) {
-        Skeleton[] hi = kinect.getSkeletonColorMap();
         this.id = index;
-        this.kinect = kinect;
         this.skeleton3D = skeleton3D;
         this.colorSkeleton = colorSkeleton;
         this.leftHandState = new HandState(this, KinectPV2.JointType_HandLeft);

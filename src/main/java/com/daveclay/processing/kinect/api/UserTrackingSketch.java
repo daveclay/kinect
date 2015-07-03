@@ -126,7 +126,7 @@ public class UserTrackingSketch extends PApplet {
                                     Skeleton colorSkeleton) {
         UserTrackingState userTrackingState;
         if ( ! userTrackingStateByIndex.containsKey(index)) {
-            User user = new User(kinect, skeleton3D, colorSkeleton, perUserEventsConfig, index);
+            User user = new User(skeleton3D, colorSkeleton, perUserEventsConfig, index);
             userTrackingState = new UserTrackingState(user);
             userTrackingStateByIndex.put(index, userTrackingState);
         } else {
