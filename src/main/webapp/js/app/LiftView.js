@@ -8,10 +8,7 @@ define(function (require) {
     require("tweenmax");
     var Item = require("app/Item");
 
-    var WIDTH = window.innerWidth;
     var HEIGHT = window.innerHeight;
-    var NUMBER_OF_ITEMS = 25;
-    var PIXELS_PER_ITEM = WIDTH / NUMBER_OF_ITEMS;
     var currentPosition = {
         x: 0,
         y: 0
@@ -23,7 +20,7 @@ define(function (require) {
         updateItemsAtCurrentPosition: function() {
             var indexData = this.items[this.currentIndex];
             if (!indexData.item) {
-                var newItem = new Item(this.currentIndex, PIXELS_PER_ITEM * this.currentIndex, this.itemOptions);
+                var newItem = new Item(this.currentIndex, this.pixelsPerItem * this.currentIndex, this.options);
                 this.$el.append(newItem.element);
                 indexData.item = newItem;
             }
@@ -51,9 +48,9 @@ define(function (require) {
 
         nextIndex: function() {
             var x = currentPosition.x;
-            var index = Math.round(x / PIXELS_PER_ITEM);
-            if (index > NUMBER_OF_ITEMS - 1) {
-                index = NUMBER_OF_ITEMS - 1;
+            var index = Math.round(x / this.pixelsPerItem);
+            if (index > this.options.NUMBER_OF_ITEMS - 1) {
+                index = this.options.NUMBER_OF_ITEMS - 1;
             }
             return index;
         },
@@ -88,14 +85,15 @@ define(function (require) {
         constructor: function(params) {
             GestureAwareView.prototype.constructor.apply(this, params);
             var self = this;
-            this.itemOptions = params.itemOptions;
+            this.options = params.itemOptions;
+            this.pixelsPerItem = window.innerWidth / this.options.NUMBER_OF_ITEMS;
 
             this.title = $("#title");
             this.titlePosition = this.title[0].style.height;
             console.log(this.titlePosition);
 
             this.items = [];
-            for (var i = 0; i < NUMBER_OF_ITEMS; i++) {
+            for (var i = 0; i < this.options.NUMBER_OF_ITEMS; i++) {
                 this.items[i] = {
                     index: i
                 }

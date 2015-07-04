@@ -9,16 +9,9 @@ define(function (require) {
     var LiftView = require("app/LiftView");
     var Item = require("app/Item");
 
-    var WIDTH = window.innerWidth;
-    var HEIGHT = window.innerHeight;
-    var NUMBER_OF_ITEMS = 25;
-    var PIXELS_PER_ITEM = WIDTH / NUMBER_OF_ITEMS;
-    var currentPosition = {
-        x: 0,
-        y: 0
-    };
-
     var itemOptions = {
+        NUMBER_OF_ITEMS: 25,
+
         initial: function(item) {
             item.element.css({
                 left: item.x + "px",
