@@ -82,8 +82,10 @@ define(function (require) {
                 this.$el.append(newItem.element);
                 indexData.item = newItem;
             }
-            var item = indexData.item;
-            item.enter();
+            if (this.isViewerInBounds()) {
+                var item = indexData.item;
+                item.enter();
+            }
             this.updateOtherItems();
         },
 
@@ -112,6 +114,18 @@ define(function (require) {
         },
 
         updatePosition: function() {
+            if (!this.titleTween || !this.titleTween.isActive()) {
+                if (this.isViewerInBounds()) {
+                    this.titleTween = TweenLite.to(this.title[0], 1, {
+                        autoAlpha: 0,
+                        top: 0
+                    });
+                } else {
+                    this.titleTween = TweenLite.to(this.title[0], 1, {
+                        autoAlpha: 1
+                    });
+                }
+            }
             var nextIndex = this.nextIndex();
             this.currentIndex = nextIndex;
             this.updateItemsAtCurrentPosition();
@@ -122,8 +136,17 @@ define(function (require) {
             })
         },
 
+        isViewerInBounds: function() {
+            return currentPosition.y  < HEIGHT / 2;
+        },
+
         constructor: function(params) {
             GestureAwareView.prototype.constructor.apply(this, params);
+            var self = this;
+
+            this.title = $("#title");
+            this.titlePosition = this.title[0].style.height;
+            console.log(this.titlePosition);
 
             this.items = [];
             for (var i = 0; i < NUMBER_OF_ITEMS; i++) {
@@ -131,8 +154,6 @@ define(function (require) {
                     index: i
                 }
             }
-
-            var self = this;
 
             this.onConnect(function() {
                 console.log("Connected.");
