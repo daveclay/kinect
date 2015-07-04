@@ -25,6 +25,11 @@ define(function (require) {
         },
 
         enter: function(item) {
+            var color = Colors.HSVtoRGB(item.index / 255, 1, 1);
+
+            var startColor = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", .1)";
+            var stopColor = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", 0)";
+
             return TweenLite.to(item.element[0], 2, {
                 autoAlpha:.5,
                 top: window.innerHeight / 2,
@@ -32,6 +37,8 @@ define(function (require) {
                 rotationZ: 0,
                 rotationX: 4,
                 rotationY: 5,
+                backgroundImage:"radial-gradient(circle," + startColor + " 0%, " + stopColor + " 80%)",
+
                 onComplete: function () {
                     item.enterComplete = true;
                 }
@@ -44,11 +51,11 @@ define(function (require) {
             var color = Colors.HSVtoRGB(index / 255, 1, 1);
 
             var startColor = "rgba(250, 247, 255, .75)";
-            var stopColor = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", .25)";
+            var stopColor = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", 0)";
             return TweenLite.to(item.element[0], 1, {
                 autoAlpha: 0,
-                top: 0,
-                backgroundImage:"radial-gradient(circle," + startColor + ", " + stopColor + ")",
+                top: window.innerHeight * .3,
+                backgroundImage:"radial-gradient(circle," + startColor + " 0%, " + stopColor + " 80%)",
                 rotationZ: 90,
                 rotationX: 93,
                 rotationY: 29,
