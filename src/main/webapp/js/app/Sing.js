@@ -8,6 +8,7 @@ define(function (require) {
     require("tweenmax");
     var LiftView = require("app/LiftView");
     var Item = require("app/Item");
+    var Colors = require("app/util/Colors");
 
     var itemOptions = {
         NUMBER_OF_ITEMS: 355,
@@ -38,10 +39,17 @@ define(function (require) {
         },
 
         exit: function(item) {
+            var index = item.index;
+            // 0 <= h, s, v <= 1
+            var color = Colors.HSVtoRGB(index / 255, 1, 1);
+
+            var startColor = "rgba(250, 247, 255, .75)";
+            var stopColor = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", .25)";
             return TweenLite.to(item.element[0], 1, {
                 autoAlpha: 0,
                 top: 0,
-                rotationZ: 190,
+                backgroundImage:"radial-gradient(circle," + startColor + ", " + stopColor + ")",
+                rotationZ: 90,
                 rotationX: 93,
                 rotationY: 29,
                 scale: 20,
