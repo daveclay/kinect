@@ -10,24 +10,27 @@ define(function (require) {
     var Item = require("app/Item");
 
     var itemOptions = {
-        NUMBER_OF_ITEMS: 25,
+        NUMBER_OF_ITEMS: 355,
+        template: function(item) {
+            return ""
+        },
 
         initial: function(item) {
             item.element.css({
                 left: item.x + "px",
                 top: window.innerHeight + "px",
-                transform: "scale(.5,.5) rotateX(-23deg) rotateY(-141deg) rotateZ(-54deg)"
+                transform: "scale(.5,.5) rotateX(-23deg) rotateY(-241deg) rotateZ(-94deg)"
             });
         },
 
         enter: function(item) {
             return TweenLite.to(item.element[0], 2, {
-                autoAlpha: 1,
+                autoAlpha:.5,
                 top: window.innerHeight / 2,
-                scale: 1,
+                scale: 3,
                 rotationZ: 0,
-                rotationX: 0,
-                rotationY: 0,
+                rotationX: 4,
+                rotationY: 5,
                 onComplete: function () {
                     item.enterComplete = true;
                 }
@@ -41,7 +44,7 @@ define(function (require) {
                 rotationZ: 190,
                 rotationX: 93,
                 rotationY: 29,
-                scale: .1,
+                scale: 20,
                 onComplete: function () {
                     item.element.remove();
                 }

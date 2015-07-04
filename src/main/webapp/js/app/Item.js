@@ -13,7 +13,7 @@ define(function (require) {
             this.options = options;
 
             var itemElement = $("<div/>");
-            itemElement.append("This is a test of the session " + index);
+            itemElement.append(options.template(this));
             itemElement.addClass("item");
             this.element = itemElement;
             this.enterComplete = false;

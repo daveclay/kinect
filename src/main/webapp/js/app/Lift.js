@@ -11,6 +11,9 @@ define(function (require) {
 
     var itemOptions = {
         NUMBER_OF_ITEMS: 25,
+        template: function(item) {
+            return "Employee #" + item.index + " is who?";
+        },
 
         initial: function(item) {
             item.element.css({
