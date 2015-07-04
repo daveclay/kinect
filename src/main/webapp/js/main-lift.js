@@ -4,7 +4,8 @@ try {
     var initializeAppComponents = function($) {
         require([
             "app/Router",
-            "app/Lift"
+            "app/Lift",
+            "tweenmax"
         ], function(Router) {
             var router = Router.createRouter();
             console.log("app initialized");
@@ -16,16 +17,20 @@ try {
         paths: {
             jquery: 'vendor/jquery-2.1.1.min',
             backbone: "vendor/backbone",
-            underscore: "vendor/underscore"
+            underscore: "vendor/underscore",
+            tweenmax: "vendor/TweenMax.min"
         },
 
         shim: {
             'underscore': {
                 exports: '_'
             },
-            "backbone": {
-                "deps": [ "underscore", "jquery" ],
-                "exports": "Backbone"  //attaches "Backbone" to the window object
+            backbone: {
+                deps: [ "underscore", "jquery" ],
+                exports: "Backbone"  //attaches "Backbone" to the window object
+            },
+            tweenmax: {
+                exports: "TweenMax"
             }
         }
     });

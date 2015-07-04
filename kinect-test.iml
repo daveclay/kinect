@@ -29,5 +29,6 @@
     <orderEntry type="library" name="core" level="application" />
     <orderEntry type="library" name="windows64" level="application" />
     <orderEntry type="library" name="library" level="application" />
+    <orderEntry type="library" name="processing-all" level="application" />
   </component>
 </module>
