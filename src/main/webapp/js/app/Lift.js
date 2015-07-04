@@ -17,13 +17,51 @@ define(function (require) {
         y: 0
     };
 
+    var itemOptions = {
+        initial: function(item) {
+            item.element.css({
+                left: item.x + "px",
+                top: window.innerHeight + "px",
+                transform: "scale(.5,.5) rotateX(-10deg) rotateY(-40deg) rotateZ(-154deg)"
+            });
+        },
+
+        enter: function(item) {
+            return TweenLite.to(item.element[0], 2, {
+                autoAlpha: 1,
+                top: window.innerHeight / 2,
+                scale: 1,
+                rotationZ: 0,
+                rotationX: 0,
+                rotationY: 0,
+                onComplete: function () {
+                    item.enterComplete = true;
+                }
+            });
+        },
+
+        exit: function(item) {
+            return TweenLite.to(item.element[0], 1, {
+                autoAlpha: 0,
+                top: 0,
+                rotationZ: 140,
+                rotationX: 60,
+                rotationY: 20,
+                scale: .6,
+                onComplete: function () {
+                    item.element.remove();
+                }
+            });
+        }
+    };
+
     var LiftView = GestureAwareView.extend({
         el: '#stage',
 
         updateItemsAtCurrentPosition: function() {
             var indexData = this.items[this.currentIndex];
             if (!indexData.item) {
-                var newItem = new Item(this.currentIndex, PIXELS_PER_ITEM * this.currentIndex);
+                var newItem = new Item(this.currentIndex, PIXELS_PER_ITEM * this.currentIndex, itemOptions);
                 this.$el.append(newItem.element);
                 indexData.item = newItem;
             }
