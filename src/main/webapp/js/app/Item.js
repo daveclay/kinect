@@ -7,20 +7,18 @@ define(function (require) {
 
     return Backbone.Model.extend({
 
-        constructor: function (index, x) {
+        constructor: function (index, x, options) {
             this.x = x;
             this.index = index;
+            this.options = options;
 
             var itemElement = $("<div/>");
             itemElement.append("This is a test of the session " + index);
             itemElement.addClass("item");
-            itemElement.css({
-                left: this.x + "px",
-                top: window.innerHeight + "px",
-                transform: "scale(.5,.5) rotateX(-10deg) rotateY(-40deg) rotateZ(-154deg)"
-            });
             this.element = itemElement;
             this.enterComplete = false;
+
+            options.initial(this);
         },
 
         enter: function () {
@@ -28,17 +26,7 @@ define(function (require) {
                 return;
             }
             this.enterComplete = 0;
-            this.enterTween = TweenLite.to(this.element[0], 2, {
-                autoAlpha: 1,
-                top: window.innerHeight / 2,
-                scale: 1,
-                rotationZ: 0,
-                rotationX: 0,
-                rotationY: 0,
-                onComplete: function () {
-                    this.enterComplete = true;
-                }.bind(this)
-            });
+            this.enterTween = this.options.enter(this);
         },
 
         exit: function () {
@@ -47,17 +35,7 @@ define(function (require) {
             }
             this.enterTween.kill();
             this.enterTween.eventCallback("onComplete", null);
-            this.exitTween = TweenLite.to(this.element[0], 1, {
-                autoAlpha: 0,
-                top: 0,
-                rotationZ: 140,
-                rotationX: 60,
-                rotationY: 20,
-                scale: .6,
-                onComplete: function () {
-                    this.element.remove();
-                }.bind(this)
-            });
+            this.exitTwean = this.options.exit(this);
         }
     })
 });
