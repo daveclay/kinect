@@ -193,7 +193,7 @@
             }
         };
 
-        ItemStage.prototype.createItemsForPosition = function(x) {
+        ItemStage.prototype.updateItemsAtCurrentPosition = function(x) {
             this.currentIndex = Math.round(x / PIXELS_PER_ITEM);
             this.createItemsForCurrentIndex();
             for (var i = 0; i < this.items.length; i++) {
@@ -221,7 +221,7 @@
             });
 
             itemStage.setOpacity(verticalSpace);
-            itemStage.createItemsForPosition(x);
+            itemStage.updateItemsAtCurrentPosition(x);
         });
     </script>
     </body>

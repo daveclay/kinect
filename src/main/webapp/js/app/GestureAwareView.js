@@ -37,11 +37,13 @@ define(function (require) {
         },
 
         cleanup: function() {
-            this.ws.onopen = null;
-            this.ws.onmessage = null;
-            this.ws.onclose = null;
-            this.ws.onerror = null;
-            this.ws = null;
+            if (this.ws) {
+                this.ws.onopen = null;
+                this.ws.onmessage = null;
+                this.ws.onclose = null;
+                this.ws.onerror = null;
+                this.ws = null;
+            }
         },
 
         onConnect: function(callback) {
