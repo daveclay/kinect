@@ -6,12 +6,13 @@ define(function (require) {
     var GestureAwareView = require("app/GestureAwareView");
     var Numbers = require("app/util/Numbers");
     require("tweenmax");
-    var Item = require("app/Item");
 
     var WIDTH = window.innerWidth;
     var HEIGHT = window.innerHeight;
     var NUMBER_OF_ITEMS = 25;
+    var TRANSITION_TIME = 2000;
     var PIXELS_PER_ITEM = WIDTH / NUMBER_OF_ITEMS;
+    var OPACITY_DISTANCE = 200;
     var currentPosition = {
         x: 0,
         y: 0
@@ -23,7 +24,7 @@ define(function (require) {
         updateItemsAtCurrentPosition: function() {
             var indexData = this.items[this.currentIndex];
             if (!indexData.item) {
-                var newItem = new Item(this.currentIndex, PIXELS_PER_ITEM * this.currentIndex);
+                var newItem = new Item(this.currentIndex);
                 this.$el.append(newItem.element);
                 indexData.item = newItem;
             }
@@ -135,4 +136,5 @@ define(function (require) {
         }),
         defaultRoute: true
     });
+
 });
