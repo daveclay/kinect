@@ -54,11 +54,11 @@ define(function (require) {
             var stopColor = "rgba(" + color.r + ", " + color.g + ", " + color.b + ", 0)";
             return TweenLite.to(item.element[0], 1, {
                 autoAlpha: 0,
-                top: window.innerHeight * .3,
+                top: window.innerHeight * .9,
                 backgroundImage:"radial-gradient(circle," + startColor + " 0%, " + stopColor + " 80%)",
-                rotationZ: 90,
-                rotationX: 93,
-                rotationY: 29,
+                rotationZ: 0,
+                rotationX: 3,
+                rotationY: 9,
                 scale: 20,
                 onComplete: function () {
                     item.element.remove();
