@@ -1,4 +1,4 @@
-#background {
+#title {
     position: absolute;
     top: 0;
     left: 0;
@@ -7,7 +7,7 @@
     transition: all 1.3s;
 }
 
-#background .content {
+#title .content {
     color: #382849;
     font-size: 19em;
     width: 100%;
