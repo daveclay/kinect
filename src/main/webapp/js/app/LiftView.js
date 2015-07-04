@@ -6,6 +6,7 @@ define(function (require) {
     var GestureAwareView = require("app/GestureAwareView");
     var Numbers = require("app/util/Numbers");
     require("tweenmax");
+    var Item = require("app/Item");
 
     var WIDTH = window.innerWidth;
     var HEIGHT = window.innerHeight;
@@ -16,13 +17,13 @@ define(function (require) {
         y: 0
     };
 
-    var LiftView = GestureAwareView.extend({
+    return GestureAwareView.extend({
         el: '#stage',
 
         updateItemsAtCurrentPosition: function() {
             var indexData = this.items[this.currentIndex];
             if (!indexData.item) {
-                var newItem = new Item(this.currentIndex);
+                var newItem = new Item(this.currentIndex, PIXELS_PER_ITEM * this.currentIndex, this.itemOptions);
                 this.$el.append(newItem.element);
                 indexData.item = newItem;
             }
@@ -87,6 +88,7 @@ define(function (require) {
         constructor: function(params) {
             GestureAwareView.prototype.constructor.apply(this, params);
             var self = this;
+            this.itemOptions = params.itemOptions;
 
             this.title = $("#title");
             this.titlePosition = this.title[0].style.height;
@@ -127,12 +129,4 @@ define(function (require) {
             // this.connect();
         }
     });
-
-    mvc.addRouteConfig({
-        path: "presentation",
-        view: new LiftView({
-        }),
-        defaultRoute: true
-    });
-
 });
