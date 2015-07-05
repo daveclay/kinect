@@ -12,6 +12,7 @@ public class StageMonitor {
     private final HUD hud;
     private final int width;
     private final int height;
+    private final int alpha = 180;
     private final StageBounds stageBounds;
     private final Stage.CenterZone centerZone;
     private final Stage.LeftFrontZone leftFrontZone;
@@ -72,7 +73,7 @@ public class StageMonitor {
         this(stage, hud, 400, 400);
     }
 
-    public void draw(PApplet canvas) {
+    public synchronized void draw(PApplet canvas) {
         this.currentCanvas = canvas;
 
         if ( ! stageBounds.initialized()) {
@@ -99,7 +100,11 @@ public class StageMonitor {
         hud.log("Within Right Back", rightBackZone.isWithinBounds(position));
         */
 
-        canvas.background(100);
+        canvas.pushMatrix();
+        canvas.translate(0, canvas.getHeight() - height);
+        canvas.fill(100, alpha);
+        canvas.noStroke();
+        canvas.rect(0, 0, width, height);
         canvas.stroke(255, 255, 255);
         canvas.strokeWeight(2);
 
@@ -110,6 +115,7 @@ public class StageMonitor {
         drawCenterZone();
 
         drawPosition(position);
+        canvas.popMatrix();
     }
 
     void drawPosition(PVector position) {
@@ -143,9 +149,9 @@ public class StageMonitor {
 
     void setFill(Stage.StageZone stageZone) {
         if (stageZone == this.currentStageZone) {
-            currentCanvas.fill(0, 255, 0);
+            currentCanvas.fill(0, 255, 0, alpha);
         } else {
-            currentCanvas.fill(100);
+            currentCanvas.fill(100, alpha);
         }
     }
 
