@@ -12,7 +12,9 @@ public class StageMonitor {
     private final HUD hud;
     private final int width;
     private final int height;
-    private final int alpha = 180;
+    private final float halfWidth;
+    private final float halfHeight;
+    private final int alpha = 100;
     private final StageBounds stageBounds;
     private final Stage.CenterZone centerZone;
     private final Stage.LeftFrontZone leftFrontZone;
@@ -42,6 +44,8 @@ public class StageMonitor {
         this.height = height;
         this.hud = hud;
         this.stage = stage;
+        this.halfWidth = width / 2;
+        this.halfHeight = height / 2;
 
         this.currentStageZone = null;
 
@@ -91,6 +95,7 @@ public class StageMonitor {
         position = stage.getPosition();
 
         hud.logVector("Stage Position", position);
+        hud.log("Zone", currentStageZone.getID());
 
         /*
         hud.log("Within Center", centerZone.isWithinBounds(position));
@@ -101,7 +106,9 @@ public class StageMonitor {
         */
 
         canvas.pushMatrix();
+        canvas.pushStyle();
         canvas.translate(0, canvas.getHeight() - height);
+
         canvas.fill(100, alpha);
         canvas.noStroke();
         canvas.rect(0, 0, width, height);
@@ -116,18 +123,26 @@ public class StageMonitor {
 
         drawPosition(position);
         canvas.popMatrix();
+        canvas.popStyle();
     }
 
     void drawPosition(PVector position) {
         float mappedPositionX = map(position.x, left, right, 0, width);
         float mappedPositionZ = map(position.z, front, back, 0, height);
-        currentCanvas.fill(150, 125, 0);
-        currentCanvas.rect(mappedPositionX, mappedPositionZ, 50, 50);
+        currentCanvas.noStroke();
+        currentCanvas.fill(250, 185, 0);
+        currentCanvas.ellipse(mappedPositionX, mappedPositionZ, 25, 25);
     }
 
     private void drawCenterZone() {
-        float mappedVerticalCenterRadius = map(centerRadius, 0, realWorldDepth, 0, height) * 2;
-        float mappedHorizontalCenterRadius = map(centerRadius, 0, realWorldWidth, 0, width) * 2;
+        float mappedVerticalCenterRadius = currentCanvas.min(
+                height,
+                map(centerRadius, 0, realWorldDepth, 0, height) * 2);
+
+        float mappedHorizontalCenterRadius = currentCanvas.min(
+                width,
+                map(centerRadius, 0, realWorldWidth, 0, width) * 2);
+
         float mappedCenterX = map(center.x, left, right, 0, width);
         float mappedCenterZ = map(center.z, front, back, 0, height);
         setFill(centerZone);
@@ -137,14 +152,22 @@ public class StageMonitor {
     public void drawMappedZone(Stage.RectStageZone stageZone) {
         PVector leftBottomFront = stageZone.getLeftBottomFront();
 
-        float mappedX = map(leftBottomFront.x, stageBounds.getLeft(), stageBounds.getRight(), 0, width - 2); // leave room for the bounds.
-        float mappedY = map(leftBottomFront.z, stageBounds.getFront(), stageBounds.getBack(), 0, height - 2);
+        float mappedX = currentCanvas.min(halfWidth,
+                map(leftBottomFront.x, stageBounds.getLeft(), stageBounds.getRight(), 0, width - 2)); // leave room for the bounds.
+        float mappedY = currentCanvas.min(halfHeight,
+                map(leftBottomFront.z, stageBounds.getFront(), stageBounds.getBack(), 0, height - 2));
 
-        float mappedWidth = map(stageZone.getWidth(), 0, realWorldWidth, 0, width);
-        float mappedDepth = map(stageZone.getDepth(), 0, realWorldDepth, 0, height);
+        float mappedWidth = currentCanvas.min(halfWidth,
+                map(stageZone.getWidth(), 0, realWorldWidth, 0, width));
+        float mappedDepth = currentCanvas.min(halfHeight,
+                map(stageZone.getDepth(), 0, realWorldDepth, 0, height));
 
         setFill(stageZone);
-        currentCanvas.rect(mappedX, mappedY, mappedWidth, mappedDepth);
+        currentCanvas.rect(
+                mappedX,
+                mappedY,
+                currentCanvas.max(mappedWidth, halfWidth),
+                currentCanvas.max(mappedDepth, halfHeight));
     }
 
     void setFill(Stage.StageZone stageZone) {

@@ -4,7 +4,6 @@ import KinectPV2.KinectPV2;
 import KinectPV2.*;
 
 import com.daveclay.processing.api.HUD;
-import com.daveclay.processing.kinect.api.stage.StageMonitor;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -22,37 +21,20 @@ public class UserTrackingSketch extends PApplet {
         abstract public void draw();
     }
 
-    private final Map<Integer, UserTrackingState> userTrackingStateByIndex = new HashMap<Integer, UserTrackingState>();
-    private final List<UserEnteredHandler> userEnteredHandlers =  new ArrayList<UserEnteredHandler>();
-    private final List<UserWasLostHandler> userWasLostHandlers = new ArrayList<UserWasLostHandler>();
+    private final Map<Integer, UserTrackingState> userTrackingStateByIndex = new HashMap<>();
+    private final List<UserEnteredHandler> userEnteredHandlers =  new ArrayList<>();
+    private final List<UserWasLostHandler> userWasLostHandlers = new ArrayList<>();
 
     private UserEventsConfig perUserEventsConfig = new UserEventsConfig();
 
     private SketchCallback sketchCallback;
     private KinectPV2 kinect;
     protected HUD hud;
-    protected StageMonitor stageMonitor;
 
     public final void setup() {
         size(1920, 1080, P2D);
-
         kinect = new KinectPV2(this);
-
-        /*
-        // TODO:
-        if (this.enableColorImg()) {
-          then bother actually retriving image data or skeleton data.
-         */
-        // required to enable user tracking
-        /*
-        kinect.enableColorImg(true);
-        kinect.enableSkeleton(true);
-        kinect.enableSkeleton3dMap(true);
-        kinect.enableSkeletonColorMap(true);
-        */
-
         sketchCallback.setup(kinect);
-
         kinect.init();
     }
 
@@ -86,7 +68,10 @@ public class UserTrackingSketch extends PApplet {
         if (sketchCallback != null) {
             sketchCallback.draw();
         }
+        //logPerformance(start);
+    }
 
+    private void logPerformance(long start) {
         long time = System.currentTimeMillis() - start;
         if (time > max) {
             max = time;

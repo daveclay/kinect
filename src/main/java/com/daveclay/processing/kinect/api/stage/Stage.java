@@ -11,10 +11,10 @@ import java.util.Map;
 
 public class Stage {
 
-    private final List<BodyLocatorListener> listeners = new ArrayList<BodyLocatorListener>();
+    private final List<BodyLocatorListener> listeners = new ArrayList<>();
     private final StageBounds stageBounds = new StageBounds();
-    private Map<String, StageZone> stageZoneById = new HashMap<String, StageZone>();
-    private List<StageZone> stageZones = new ArrayList<StageZone>();
+    private Map<String, StageZone> stageZoneById = new HashMap<>();
+    private List<StageZone> stageZones = new ArrayList<>();
     private PVector position = new PVector();
 
     // Todo: ths should be its own listener, not a BodyLocator.Listener - the stage only sends
@@ -46,13 +46,18 @@ public class Stage {
 
     private StageZone currentStageZone = null;
 
+    private PVector getMirroredPosition(PVector position) {
+        return VectorMath.reflectVertically(position);
+    }
+
     public void updatePosition(PVector position) {
-        this.position = position;
-        stageBounds.expandStageBounds(position);
+        this.position = getMirroredPosition(position);
+
+        stageBounds.expandStageBounds(this.position);
         boolean foundMatchingZone = false;
         for (StageZone stageZone : stageZones) {
             stageZone.updateStageBounds(stageBounds);
-            if ( ! foundMatchingZone && stageZone.isWithinBounds(position)) {
+            if ( ! foundMatchingZone && stageZone.isWithinBounds(this.position)) {
                 // We haven't found a matching zone yet, and this one matches.
                 foundMatchingZone = true;
                 if (stageZone != currentStageZone) {
@@ -63,7 +68,7 @@ public class Stage {
             }
         }
 
-        fireUserStagePositionEvent(position);
+        fireUserStagePositionEvent(this.position);
     }
 
     private void fireUserStagePositionEvent(PVector position) {
@@ -144,7 +149,7 @@ public class Stage {
         public static final String ID = "Center";
 
         private final PVector center = new PVector();
-        private float centerRadius = .2f;
+        private float centerRadius = .35f;
 
         @Override
         public String getID() {
