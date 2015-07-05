@@ -19,6 +19,6 @@
 
 * Has a stupid name
 * Recognizes only one person at a time for the moment (no particular reason it can't do more).
-* Circle gesture is counter-clockwise - Kinect V2 is not mirrored like the original Kinect SimpleOpenNI was.
-* Records the wrong hand - same reason as above. Gonna fix that like, today, so this is probably already out of date.
+* Circle gesture is only detected clockwise (need to try the mirrored gesture).
 * I should probably split up the kinect-focused stuff from the other processing sketches.
+* a "Z" gesture would probably work fine.
