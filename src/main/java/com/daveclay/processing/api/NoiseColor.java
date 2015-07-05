@@ -19,21 +19,14 @@ public class NoiseColor {
         }
     }
 
-    final PApplet pApplet;
-    float rNoise;
-    float gNoise;
-    float bNoise;
-    float tick;
-    int alpha = 55;
-    float rate = .00001f;
+    Noise2D rNoise;
+    Noise2D gNoise;
+    Noise2D bNoise;
 
     public NoiseColor(PApplet pApplet, float rate) {
-        this.pApplet = pApplet;
-        rNoise = pApplet.random(10);
-        gNoise = rNoise + 1;
-        bNoise = rNoise + 2;
-        tick = pApplet.random(10);
-        this.rate = rate;
+        rNoise = new Noise2D(pApplet, rate);
+        gNoise = rNoise.newRelated(1);
+        bNoise = rNoise.newRelated(2);
     }
 
     public int nextColor(int alpha) {
@@ -41,22 +34,14 @@ public class NoiseColor {
     }
 
     public int r() {
-        rNoise += rate;
-        return increment(rNoise);
+        return (int)(255 * rNoise.next());
     }
 
     public int g() {
-        gNoise += rate;
-        return increment(gNoise);
+        return (int)(255 * gNoise.next());
     }
 
     public int b() {
-        bNoise += rate;
-        return increment(bNoise);
-    }
-
-    public int increment(float noise) {
-        tick += rate;
-        return (int)(255 * pApplet.noise(noise, tick));
+        return (int)(255 * bNoise.next());
     }
 }
