@@ -81,10 +81,12 @@ define(function (require) {
                 }
             } else if (payload.type === 'userDidMove') {
                 var position = payload.data;
+                /*
                 if (position.x == 0 && position.y == 0 && position.z == 0) {
                     // Todo: Hrm, not sure why we get a zero-position vector here?
                     return;
                 }
+                */
 
                 if (this.userDidMove) {
                     this.userDidMove(position);

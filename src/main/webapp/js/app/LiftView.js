@@ -4,6 +4,7 @@ define(function (require) {
     var _ = require("underscore");
     var mvc = require("app/mvc");
     var GestureAwareView = require("app/GestureAwareView");
+    var LogView = require("app/LogView");
     var Numbers = require("app/util/Numbers");
     require("tweenmax");
     var Item = require("app/Item");
@@ -72,10 +73,9 @@ define(function (require) {
             this.currentIndex = nextIndex;
             this.updateItemsAtCurrentPosition();
 
-            var self = this;
             this.thread = window.requestAnimationFrame(function() {
-                self.updatePosition();
-            })
+                this.updatePosition();
+            }.bind(this))
         },
 
         isViewerInBounds: function() {
@@ -84,13 +84,10 @@ define(function (require) {
 
         constructor: function(params) {
             GestureAwareView.prototype.constructor.apply(this, params);
-            var self = this;
             this.options = params.itemOptions;
             this.pixelsPerItem = window.innerWidth / this.options.NUMBER_OF_ITEMS;
 
             this.title = $("#title");
-            this.titlePosition = this.title[0].style.height;
-            console.log(this.titlePosition);
 
             this.items = [];
             for (var i = 0; i < this.options.NUMBER_OF_ITEMS; i++) {
@@ -100,13 +97,15 @@ define(function (require) {
             }
 
             this.onConnect(function() {
-                console.log("Connected.");
-            });
+                this.thread = window.requestAnimationFrame(function() {
+                    this.updatePosition();
+                }.bind(this));
+            }.bind(this));
 
             this.onUserDidMove(function(position) {
-                var hi = {
-                    x: Numbers.map(position.x, -300, 300, window.innerWidth, 0),
-                    y: Numbers.map(position.z, 900, 2200, window.innerHeight, 0)
+                currentPosition = {
+                    x: Numbers.map(position.fromLeft, 0, 1, 0, window.innerWidth),
+                    y: Numbers.map(position.fromFront, 0, 1, 0, window.innerHeight)
                 };
             });
 
@@ -120,11 +119,7 @@ define(function (require) {
                 };
             });
 
-            this.thread = window.requestAnimationFrame(function() {
-                self.updatePosition();
-            });
-
-            // this.connect();
+            this.connect();
         }
     });
 });
