@@ -2,7 +2,6 @@ package com.daveclay.processing.kinect.bodylocator;
 
 import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.HUD;
-import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.gestures.*;
 import com.daveclay.processing.gestures.GestureDataStore;
@@ -64,6 +63,7 @@ public class BodyLocator extends UserTrackingSketch {
     private long lastNotification;
     private int drawGestureRecognizedState;
     private User user;
+    private StageMonitor stageMonitor;
 
     public BodyLocator(GestureDataStore gestureDataStore,
                        Stage stage,
@@ -137,20 +137,12 @@ public class BodyLocator extends UserTrackingSketch {
             }
         });
 
-        onUserEntered(new UserEnteredHandler() {
-            @Override
-            public void userDidEnter(User user) {
-                System.out.println("HELLO User " + user.getID() + "!");
-                BodyLocator.this.user = user;
-            }
+        onUserEntered(user -> {
+            BodyLocator.this.user = user;
         });
 
-        onUserWasLost(new UserWasLostHandler() {
-            @Override
-            public void userWasLost(User user) {
-                System.out.println("User " + user.getID() + " LOST, eh well...");
-                BodyLocator.this.user = null;
-            }
+        onUserWasLost(user -> {
+            BodyLocator.this.user = null;
         });
 
         gestureRecorder.onGestureRecognized(new GestureRecognizedHandler() {
@@ -183,10 +175,6 @@ public class BodyLocator extends UserTrackingSketch {
 
     private void drawBodyLocator() {
         setKinectRGBImageAsBackground();
-
-        // Note: this might be what the native kinect is getting, but it's not necessarily what we're processing...
-        // hud.logRounded("FPS", frameRate);
-
         updateUserDataAndDrawStuff();
         drawGestureRecognitionNotification();
         drawHUD();
@@ -221,11 +209,19 @@ public class BodyLocator extends UserTrackingSketch {
     }
 
     private void drawLostUser() {
+        screenMessage("Lost User");
+    }
+
+    private void screenMessage(String msg) {
         fill(0, 0, 0, 200);
         rect(0, 0, getWidth(), getHeight());
         fill(255);
-        textSize(100);
-        text("Lost User", getHeight() / 3, getWidth() / 3);
+        float fontSize = 100;
+        textSize(fontSize);
+        float textWidth = textWidth(msg);
+        float x = (width - textWidth) / 2;
+        float y = (height - fontSize) / 2;
+        text(msg, x, y);
     }
 
     private void drawGestureRecognitionNotification() {
