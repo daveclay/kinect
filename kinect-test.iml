@@ -30,5 +30,7 @@
     <orderEntry type="library" name="windows64" level="application" />
     <orderEntry type="library" name="library" level="application" />
     <orderEntry type="library" name="processing-all" level="application" />
+    <orderEntry type="library" name="KinectPV2" level="application" />
+    <orderEntry type="library" name="Shapes3D" level="application" />
   </component>
 </module>
