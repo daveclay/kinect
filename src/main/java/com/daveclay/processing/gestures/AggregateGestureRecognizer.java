@@ -1,5 +1,7 @@
 package com.daveclay.processing.gestures;
 
+import processing.core.PVector;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +13,7 @@ public class AggregateGestureRecognizer implements GestureRecognizer {
         this.recognizers.add(gestureRecognizer);
     }
 
-    public RecognitionResult recognize(List<Point2D> points) {
+    public RecognitionResult recognize(List<PVector> points) {
         RecognitionResult bestResult = null;
         for (GestureRecognizer gestureRecognizer : recognizers) {
             // Todo: we could implement some sort of "decider filter" that would say, for example, if the point's

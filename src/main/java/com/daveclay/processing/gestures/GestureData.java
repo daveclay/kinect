@@ -1,15 +1,17 @@
 package com.daveclay.processing.gestures;
 
+import processing.core.PVector;
+
 import java.util.List;
 
 public class GestureData {
     public String name;
-    public List<Point2D> points;
+    public List<PVector> points;
 
     public GestureData() {
     }
 
-    public GestureData(String name, List<Point2D> points) {
+    public GestureData(String name, List<PVector> points) {
         this.name = name;
         this.points = points;
     }
@@ -22,11 +24,11 @@ public class GestureData {
         this.name = name;
     }
 
-    public List<Point2D> getPoints() {
+    public List<PVector> getPoints() {
         return points;
     }
 
-    public void setPoints(List<Point2D> points) {
+    public void setPoints(List<PVector> points) {
         this.points = points;
     }
 }

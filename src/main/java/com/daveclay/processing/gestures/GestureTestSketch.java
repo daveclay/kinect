@@ -2,6 +2,8 @@ package com.daveclay.processing.gestures;
 
 import com.daveclay.processing.api.SketchRunner;
 import processing.core.PApplet;
+import processing.core.PVector;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ public class GestureTestSketch extends PApplet {
 
     private GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
     private boolean drawing = false;
-    private List<Point2D> points = new ArrayList<Point2D>();
+    private List<PVector> points = new ArrayList<PVector>();
 
     @Override
     public void setup() {
@@ -24,7 +26,7 @@ public class GestureTestSketch extends PApplet {
     public void draw() {
         fill(255, 0, 0);
         if (drawing) {
-            points.add(new Point2D(mouseX, mouseY));
+            points.add(new PVector(mouseX, mouseY));
             ellipse(mouseX, mouseY, 10, 10);
         }
     }
