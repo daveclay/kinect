@@ -4,6 +4,7 @@ import com.daveclay.processing.gestures.utils.BoundingBox;
 import com.daveclay.processing.gestures.utils.Centroid;
 import com.daveclay.processing.gestures.utils.Rotate;
 import com.daveclay.processing.gestures.utils.Score;
+import processing.core.PVector;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public class LineGestureRecognizer implements GestureRecognizer {
         return recognize(gestureData.getPoints());
     }
 
-    public RecognitionResult recognize(List<Point2D> points) {
+    public RecognitionResult recognize(List<PVector> points) {
         float bestScore = 0;
         String bestName = null;
         for (Map.Entry<String, RecognizerAlgorithm> recognizerAlgorithmEntry : recognizerAlgorithmsByName.entrySet()) {
@@ -44,23 +45,23 @@ public class LineGestureRecognizer implements GestureRecognizer {
     }
 
     public static interface RecognizerAlgorithm {
-        public float recognize(List<Point2D> points);
+        public float recognize(List<PVector> points);
     }
 
     public abstract static class LineRecognizerAlgorithm implements  RecognizerAlgorithm {
 
-        public float recognize(List<Point2D> points) {
+        public float recognize(List<PVector> points) {
 
             points = rotatePoints(points);
 
-            Point2D centroid = Centroid.centroid(points);
+            PVector centroid = Centroid.centroid(points);
             BoundingBox boundingBox = BoundingBox.find(points);
-            Point2D comparisonPoint = new Point2D(centroid.x, centroid.y);
+            PVector comparisonPoint = new PVector(centroid.x, centroid.y);
             float distance = 0;
             float interval = boundingBox.width / points.size();
             float startX = getStartPoint(boundingBox);
             for (int i = 0; i < points.size(); i++) {
-                Point2D point = points.get(i);
+                PVector point = points.get(i);
                 comparisonPoint.x = getComparisonPoint(startX, (interval * i));
                 distance += findDistance(point, comparisonPoint);
             }
@@ -79,7 +80,7 @@ public class LineGestureRecognizer implements GestureRecognizer {
             return score;
         }
 
-        protected List<Point2D> rotatePoints(List<Point2D> points) {
+        protected List<PVector> rotatePoints(List<PVector> points) {
             return points;
         }
 
@@ -114,7 +115,7 @@ public class LineGestureRecognizer implements GestureRecognizer {
     public static class BottomToTopLineRecognizer extends RightToLeftLineRecognizer {
 
         @Override
-        protected List<Point2D> rotatePoints(List<Point2D> points) {
+        protected List<PVector> rotatePoints(List<PVector> points) {
             return Rotate.rotateBy(points, -90);
         }
     }
@@ -122,7 +123,7 @@ public class LineGestureRecognizer implements GestureRecognizer {
     public static class TopToBottomLineRecognizer extends LeftToRightLineRecognizer {
 
         @Override
-        protected List<Point2D> rotatePoints(List<Point2D> points) {
+        protected List<PVector> rotatePoints(List<PVector> points) {
             return Rotate.rotateBy(points, -90);
         }
     }

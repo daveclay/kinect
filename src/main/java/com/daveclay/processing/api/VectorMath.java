@@ -2,7 +2,18 @@ package com.daveclay.processing.api;
 
 import processing.core.PVector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VectorMath {
+
+    public static List<PVector> reflectVertically(List<PVector> vectors) {
+        List<PVector> mirrored = new ArrayList<>(vectors.size());
+        for (PVector vector : vectors) {
+            mirrored.add(reflectVertically(vector));
+        }
+        return mirrored;
+    }
 
     public static PVector reflectVertically(PVector vector) {
         PVector verticalNormal = new PVector(1, 0, 0);

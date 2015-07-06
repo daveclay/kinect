@@ -2,6 +2,7 @@ package com.daveclay.processing.gestures;
 
 import com.daveclay.processing.api.SketchRunner;
 import processing.core.PApplet;
+import processing.core.PVector;
 
 import java.util.List;
 
@@ -37,8 +38,8 @@ public class GestureTemplatesSketch extends PApplet {
 
         stroke(2);
         translate(width / 2, height / 2);
-        Point2D previous = null;
-        for (Point2D point : gestureData.points) {
+        PVector previous = null;
+        for (PVector point : gestureData.points) {
             if (previous != null) {
                 line(previous.x, previous.y, point.x, point.y);
             }

@@ -3,6 +3,7 @@ package com.daveclay.processing.kinect.bodylocator;
 import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.api.SketchRunner;
+import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.gestures.*;
 import com.daveclay.processing.gestures.GestureDataStore;
 import com.daveclay.processing.kinect.api.*;
@@ -93,6 +94,7 @@ public class BodyLocator extends UserTrackingSketch {
 
         GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
         geometricRecognizer.addTemplate("Circle", gestureDataStore.getPointsByName("Circle"));
+        geometricRecognizer.addTemplate("Circle", VectorMath.reflectVertically(gestureDataStore.getPointsByName("Circle")));
 
         LineGestureRecognizer lineGestureRecognizer = new LineGestureRecognizer();
         lineGestureRecognizer.addRecognizerAlgorithm("LeftToRightLine", LineGestureRecognizer.LEFT_TO_RIGHT_LINE_RECOGNIZER);

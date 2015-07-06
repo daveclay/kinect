@@ -3,6 +3,7 @@ package com.daveclay.processing.gestures;
 import com.daveclay.processing.gestures.utils.BoundingBox;
 import com.daveclay.processing.gestures.utils.Centroid;
 import com.daveclay.processing.gestures.utils.Score;
+import processing.core.PVector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class GeometricRecognizer implements GestureRecognizer {
         goldenRatio = 0.5f * (-1f + (float)Math.sqrt(5f));
     }
 
-    public RecognitionResult recognize(List<Point2D> points) {
+    public RecognitionResult recognize(List<PVector> points) {
         //--- Make sure we have some templates to compare this to
         //---  or else recognition will be impossible
         if (templates.isEmpty()) {
@@ -131,17 +132,17 @@ public class GeometricRecognizer implements GestureRecognizer {
         addTemplate(name, gestureData.getPoints());
     }
 
-    public void addTemplate(String name, List<Point2D> points) {
+    public void addTemplate(String name, List<PVector> points) {
         points = normalizePath(points);
         templates.add(new GestureData(name, points));
     }
 
-    private float distanceAtAngle(List<Point2D> points, GestureData aTemplate, float rotation) {
-        List<Point2D> newPoints = rotateBy(points, rotation);
+    private float distanceAtAngle(List<PVector> points, GestureData aTemplate, float rotation) {
+        List<PVector> newPoints = rotateBy(points, rotation);
         return pathDistance(newPoints, aTemplate.points);
     }
 
-    private float distanceAtBestAngle(List<Point2D> points, GestureData aTemplate) {
+    private float distanceAtBestAngle(List<PVector> points, GestureData aTemplate) {
         float startRange = -angleRange;
         float endRange = angleRange;
         float x1 = goldenRatio * startRange + (1f - goldenRatio) * endRange;
@@ -166,7 +167,7 @@ public class GeometricRecognizer implements GestureRecognizer {
         return Math.min(f1, f2);
     }
 
-    private List<Point2D> normalizePath(List<Point2D> points) {
+    private List<PVector> normalizePath(List<PVector> points) {
         /* Recognition algorithm from
             http://faculty.washington.edu/wobbrock/pubs/uist-07.1.pdf
             Step 1: Resample the Point Path
@@ -195,7 +196,7 @@ public class GeometricRecognizer implements GestureRecognizer {
         return points;
     }
 
-    private float pathLength(List<Point2D> points) {
+    private float pathLength(List<PVector> points) {
         float distance = 0;
         for (int i = 1; i < points.size(); i++) {
             distance += findDistance(points.get(i - 1), points.get(i));
@@ -203,21 +204,21 @@ public class GeometricRecognizer implements GestureRecognizer {
         return distance;
     }
 
-    private List<Point2D> resample(List<Point2D> points) {
+    private List<PVector> resample(List<PVector> points) {
         float interval = pathLength(points) / (numPointsInGesture - 1); // interval length
         float D = 0f;
-        List<Point2D> newPoints = new ArrayList<Point2D>();
+        List<PVector> newPoints = new ArrayList<PVector>();
 
         //--- Store first point since we'll never resample it out of existence
         newPoints.add(points.get(0));
         for (int i = 1; i < points.size(); i++) {
-            Point2D currentPoint = points.get(i);
-            Point2D previousPoint = points.get(i - 1);
+            PVector currentPoint = points.get(i);
+            PVector previousPoint = points.get(i - 1);
             float d = findDistance(previousPoint, currentPoint);
             if ((D + d) >= interval) {
                 float qx = previousPoint.x + ((interval - D) / d) * (currentPoint.x - previousPoint.x);
                 float qy = previousPoint.y + ((interval - D) / d) * (currentPoint.y - previousPoint.y);
-                Point2D point = new Point2D(qx, qy);
+                PVector point = new PVector(qx, qy);
                 newPoints.add(point);
                 points.add(i, point);
                 D = 0f;
@@ -238,7 +239,7 @@ public class GeometricRecognizer implements GestureRecognizer {
      * This probably becomes a problem for line gestures. The incoming actual gesture contains
      * a lot of noise, and scaling the line to a box amplifies that noise.
      */
-    private List<Point2D> scaleToSquare(List<Point2D> points) {
+    private List<PVector> scaleToSquare(List<PVector> points) {
         //--- Figure out the smallest box that can contain the path
         BoundingBox box = BoundingBox.find(points);
         if (box.width == 0) {
@@ -247,8 +248,8 @@ public class GeometricRecognizer implements GestureRecognizer {
         if (box.height == 0) {
             box.height = this.squareSize;
         }
-        List<Point2D> newPoints = new ArrayList<Point2D>();
-        for (Point2D point : points) {
+        List<PVector> newPoints = new ArrayList<>();
+        for (PVector point : points) {
             //--- Scale the points to fit the main box
             //--- So if we wanted everything 100x100 and this was 50x50,
             //---  we'd multiply every point by 2
@@ -257,7 +258,7 @@ public class GeometricRecognizer implements GestureRecognizer {
             //--- Why are we adding them to a new list rather than
             //---  just scaling them in-place?
             // TODO: try scaling in place (once you know this way works)
-            newPoints.add(new Point2D(scaledX, scaledY));
+            newPoints.add(new PVector(scaledX, scaledY));
         }
         return newPoints;
     }

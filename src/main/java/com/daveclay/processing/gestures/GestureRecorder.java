@@ -9,7 +9,7 @@ public class GestureRecorder {
 
     private final GestureRecognizer recognizer;
     private boolean recording = false;
-    private List<Point2D> points = new ArrayList<Point2D>();
+    private List<PVector> points = new ArrayList<PVector>();
     private GestureRecognizedHandler gestureRecognizedHandler;
     private int gesturePointCountThreshold = 10;
     private int testNumber;
@@ -24,7 +24,7 @@ public class GestureRecorder {
 
     public void addPoint(float x, float y) {
         if (recording) {
-            points.add(new Point2D(x, y));
+            points.add(new PVector(x, y));
         }
     }
 
@@ -50,7 +50,7 @@ public class GestureRecorder {
         this.gestureRecognizedHandler = gestureRecognizedHandler;
     }
 
-    private void dumpPoints(List<Point2D> points) {
+    private void dumpPoints(List<PVector> points) {
         GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR + "../recorded/");
         testNumber++;
         gestureDataStore.save(new GestureData("ActualGesture" + testNumber, points));
