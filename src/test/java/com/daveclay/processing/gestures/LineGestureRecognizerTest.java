@@ -5,13 +5,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import processing.core.PVector;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,7 +43,7 @@ public class LineGestureRecognizerTest {
         recognizer.addRecognizerAlgorithm("BottomToTopLine", LineGestureRecognizer.BOTTOM_TO_TOP_LINE_RECOGNIZER);
 
         GestureData gestureData = actualGestureData.getGestureByName("LeftToRightActualGesture");
-        List<Point2D> rotated = Rotate.rotateBy(gestureData.getPoints(), 90);
+        List<PVector> rotated = Rotate.rotateBy(gestureData.getPoints(), 90);
 
         RecognitionResult result = recognizer.recognize(rotated);
         logMatch(gestureData, result);
@@ -52,7 +52,7 @@ public class LineGestureRecognizerTest {
 
     @Test
     public void shouldNotHaveNegativeScore() {
-        List<Point2D> template = recordedGestureData.getPointsByName("ActualGesture19");
+        List<PVector> template = recordedGestureData.getPointsByName("ActualGesture19");
         RecognitionResult result = recognizer.recognize(template);
         assertThat(result.getScorePercent(), greaterThan(0));
         System.out.println("Matched template " + result.name + " with " + result.getScorePercent() + "%");
