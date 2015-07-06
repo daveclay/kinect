@@ -1,18 +1,18 @@
 package com.daveclay.processing.gestures.utils;
 
-import com.daveclay.processing.gestures.Point2D;
+import processing.core.PVector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Centroid {
 
-    public static List<Point2D> translateToOrigin(List<Point2D> points, Point2D c) {
-        List<Point2D> newPoints = new ArrayList<Point2D>();
-        for (Point2D point : points) {
+    public static List<PVector> translateToOrigin(List<PVector> points, PVector c) {
+        List<PVector> newPoints = new ArrayList<>();
+        for (PVector point : points) {
             float qx = point.x - c.x;
             float qy = point.y - c.y;
-            newPoints.add(new Point2D(qx, qy));
+            newPoints.add(new PVector(qx, qy));
         }
         return newPoints;
     }
@@ -26,19 +26,19 @@ public class Centroid {
      * would have a hard time matching shapes drawn at the bottom
      * of the screen
      */
-    public static List<Point2D> translateToOrigin(List<Point2D> points) {
-        Point2D c = centroid(points);
+    public static List<PVector> translateToOrigin(List<PVector> points) {
+        PVector c = centroid(points);
         return translateToOrigin(points, c);
     }
 
-    public static Point2D centroid(List<Point2D> points) {
+    public static PVector centroid(List<PVector> points) {
         float x = 0f, y = 0f;
-        for (Point2D point : points) {
+        for (PVector point : points) {
             x += point.x;
             y += point.y;
         }
         x /= points.size();
         y /= points.size();
-        return new Point2D(x, y);
+        return new PVector(x, y);
     }
 }

@@ -1,6 +1,7 @@
 package com.daveclay.processing.gestures;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import processing.core.PVector;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class GestureDataStore {
         return data;
     }
 
-    public List<Point2D> getPointsByName(String name) {
+    public List<PVector> getPointsByName(String name) {
         return getGestureByName(name).getPoints();
     }
 

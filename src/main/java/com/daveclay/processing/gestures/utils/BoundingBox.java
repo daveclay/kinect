@@ -1,18 +1,18 @@
 package com.daveclay.processing.gestures.utils;
 
-import com.daveclay.processing.gestures.Point2D;
+import processing.core.PVector;
 
 import java.util.List;
 
 public class BoundingBox {
 
-    public static BoundingBox find(List<Point2D> points) {
+    public static BoundingBox find(List<PVector> points) {
         float minX = Float.MAX_VALUE;
         float maxX = -Float.MAX_VALUE;
         float minY = Float.MAX_VALUE;
         float maxY = -Float.MAX_VALUE;
 
-        for (Point2D point : points) {
+        for (PVector point : points) {
             if (point.x < minX) {
                 minX = point.x;
             }
