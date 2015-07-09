@@ -48,13 +48,13 @@ public class HandState {
 
     private void handWasExtended() {
         for (HandExtendedHandler handListeners : getHandExtendedHandlers()) {
-            handListeners.onHandExtended();
+            handListeners.onHandExtended(user);
         }
     }
 
     private void handWasRetracted() {
         for (HandExtendedHandler handListeners : getHandExtendedHandlers()) {
-            handListeners.onHandRetracted();
+            handListeners.onHandRetracted(user);
         }
     }
 }

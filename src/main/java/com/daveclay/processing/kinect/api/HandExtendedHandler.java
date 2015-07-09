@@ -1,6 +1,6 @@
 package com.daveclay.processing.kinect.api;
 
 public interface HandExtendedHandler {
-    void onHandExtended();
-    void onHandRetracted();
+    void onHandExtended(User user);
+    void onHandRetracted(User user);
 }

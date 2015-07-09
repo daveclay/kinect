@@ -2,6 +2,7 @@ package com.daveclay.processing.kinect.api.stage;
 
 import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.gestures.RecognitionResult;
+import com.daveclay.processing.kinect.api.User;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -51,16 +52,16 @@ public class StageMonitor {
 
         stage.addListener(new BodyLocatorListener() {
             @Override
-            public void gestureWasRecognized(RecognitionResult gesture) {
+            public void gestureWasRecognized(User user, RecognitionResult gesture) {
             }
 
             @Override
-            public void userDidEnteredZone(Stage.StageZone stageZone) {
+            public void userDidEnteredZone(User user, Stage.StageZone stageZone) {
                 StageMonitor.this.currentStageZone = stageZone;
             }
 
             @Override
-            public void userDidMove(StagePosition stagePosition) {
+            public void userDidMove(User user, StagePosition stagePosition) {
             }
         });
 
@@ -92,6 +93,8 @@ public class StageMonitor {
         realWorldDepth = stageBounds.getDepth();
         centerRadius = centerZone.getCenterRadius();
         center = stageBounds.getCenter();
+
+        // TODO: refactor, position should be per-user.
         position = stage.getPosition();
 
         hud.logVector("Stage Position", position);

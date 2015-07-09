@@ -1,14 +1,15 @@
 package com.daveclay.processing.kinect.bodylocator;
 
 import com.daveclay.processing.gestures.RecognitionResult;
+import com.daveclay.processing.kinect.api.User;
 import com.daveclay.processing.kinect.api.stage.Stage;
 import com.daveclay.processing.kinect.api.stage.StagePosition;
 
 public interface BodyLocatorListener {
 
-    void gestureWasRecognized(RecognitionResult gesture);
+    void gestureWasRecognized(User user, RecognitionResult gesture);
 
-    void userDidEnteredZone(Stage.StageZone stageZone);
+    void userDidEnteredZone(User user,Stage.StageZone stageZone);
 
-    void userDidMove(StagePosition stagePosition);
+    void userDidMove(User user, StagePosition stagePosition);
 }
