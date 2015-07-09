@@ -1,5 +1,6 @@
 package com.daveclay.processing.gestures;
 
+import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.gestures.utils.BoundingBox;
 import com.daveclay.processing.gestures.utils.Centroid;
 import com.daveclay.processing.gestures.utils.Score;

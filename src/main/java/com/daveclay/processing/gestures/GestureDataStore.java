@@ -12,6 +12,13 @@ import java.util.List;
 import java.util.Map;
 
 public class GestureDataStore {
+
+    public static GestureDataStore getDefaultInstance() {
+        GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR);
+        gestureDataStore.load();
+        return gestureDataStore;
+    }
+
     public static final String GESTURE_DIR = "/gestures";
 
     private final String gestureDirectory;

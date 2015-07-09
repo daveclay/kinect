@@ -37,6 +37,7 @@ public class StageTest {
     private PVector backRightTop = new PVector();
 
     private PVector position;
+    private User user = mock(User.class);
 
     @Before
     public void setUp() {
@@ -60,16 +61,16 @@ public class StageTest {
         stage.addListener(listener);
 
         position.set(centerX + 100, top - 50, centerZ + 100);
-        stage.updatePosition(position);
-        verify(listener, times(1)).userDidEnteredZone(stage.getStageZoneById("Center"));
+        stage.updatePosition(user, position);
+        verify(listener, times(1)).userDidEnteredZone(user, stage.getStageZoneById("Center"));
         reset(listener);
-        stage.updatePosition(position);
-        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Center"));
+        stage.updatePosition(user, position);
+        verify(listener, never()).userDidEnteredZone(user, stage.getStageZoneById("Center"));
         reset(listener);
         position.set(left - 50, top - 50, back - 50);
-        stage.updatePosition(position);
-        verify(listener, times(1)).userDidEnteredZone(stage.getStageZoneById("Left Back"));
-        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Center"));
+        stage.updatePosition(user, position);
+        verify(listener, times(1)).userDidEnteredZone(user, stage.getStageZoneById("Left Back"));
+        verify(listener, never()).userDidEnteredZone(user, stage.getStageZoneById("Center"));
     }
 
     @Test
@@ -80,21 +81,21 @@ public class StageTest {
         stage.addListener(listener);
 
         position.set(centerX + 100, top - 50, centerZ + 100);
-        stage.updatePosition(position);
+        stage.updatePosition(user, position);
         assertThat("Should be within center zone", stage.isWithinCenter(position), equalTo(true));
         assertThat("Should be within left back zone", stage.isWithinLeftBack(position), equalTo(true));
 
-        verify(listener, times(1)).userDidEnteredZone(stage.getStageZoneById("Center"));
-        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Left Back"));
+        verify(listener, times(1)).userDidEnteredZone(user, stage.getStageZoneById("Center"));
+        verify(listener, never()).userDidEnteredZone(user, stage.getStageZoneById("Left Back"));
 
         reset(listener);
 
-        stage.updatePosition(position);
+        stage.updatePosition(user, position);
         assertThat("Should be within center zone", stage.isWithinCenter(position), equalTo(true));
         assertThat("Should be within left back zone", stage.isWithinLeftBack(position), equalTo(true));
 
-        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Center"));
-        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Left Back"));
+        verify(listener, never()).userDidEnteredZone(user, stage.getStageZoneById("Center"));
+        verify(listener, never()).userDidEnteredZone(user, stage.getStageZoneById("Left Back"));
     }
 
     @Test
@@ -105,12 +106,12 @@ public class StageTest {
         stage.addListener(listener);
 
         position.set(centerX + 100, top - 50, centerZ + 100);
-        stage.updatePosition(position);
+        stage.updatePosition(user, position);
         assertThat("Should be within center zone", stage.isWithinCenter(position), equalTo(true));
         assertThat("Should be within left back zone", stage.isWithinLeftBack(position), equalTo(true));
 
-        verify(listener, times(1)).userDidEnteredZone(stage.getStageZoneById("Center"));
-        verify(listener, never()).userDidEnteredZone(stage.getStageZoneById("Left Back"));
+        verify(listener, times(1)).userDidEnteredZone(user, stage.getStageZoneById("Center"));
+        verify(listener, never()).userDidEnteredZone(user, stage.getStageZoneById("Left Back"));
     }
 
     @Test
@@ -125,8 +126,8 @@ public class StageTest {
         stage.addListener(listener);
 
         position.set(left - 50, top - 50, back - 50); // 550, -130, 2250
-        stage.updatePosition(position);
-        verify(listener).userDidMove(argThat(stagePositionWithin(new StagePosition(.055f, .56f, .96f))));
+        stage.updatePosition(user, position);
+        verify(listener).userDidMove(eq(user), argThat(stagePositionWithin(new StagePosition(.055f, .56f, .96f))));
     }
 
 
@@ -186,7 +187,7 @@ public class StageTest {
 
     private void givenTheStageIsCalibrated() {
         for (PVector position: Arrays.asList(frontLeftBottom, frontRightBottom, backLeftTop, backRightTop)) {
-            stage.updatePosition(position);
+            stage.updatePosition(user, position);
         }
     }
 }

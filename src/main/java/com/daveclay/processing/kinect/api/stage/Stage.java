@@ -1,6 +1,7 @@
 package com.daveclay.processing.kinect.api.stage;
 
 import com.daveclay.processing.api.VectorMath;
+import com.daveclay.processing.kinect.api.User;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import processing.core.PVector;
 
@@ -50,7 +51,12 @@ public class Stage {
         return VectorMath.reflectVertically(position);
     }
 
-    public void updatePosition(PVector position) {
+    /**
+     * TODO: refactor StageBounds and zones that can support multiple users from the position/events that happen per-user.
+     * @param user
+     * @param position
+     */
+    public void updatePosition(User user, PVector position) {
         this.position = getMirroredPosition(position);
 
         stageBounds.expandStageBounds(this.position);
@@ -62,16 +68,16 @@ public class Stage {
                 foundMatchingZone = true;
                 if (stageZone != currentStageZone) {
                     // But, only fire the event if the user has changed zones.
-                    fireUserDidEnterZoneEvent(stageZone);
+                    fireUserDidEnterZoneEvent(user, stageZone);
                     currentStageZone = stageZone;
                 }
             }
         }
 
-        fireUserStagePositionEvent(this.position);
+        fireUserStagePositionEvent(user, this.position);
     }
 
-    private void fireUserStagePositionEvent(PVector position) {
+    private void fireUserStagePositionEvent(User user, PVector position) {
         StagePosition stagePosition = new StagePosition();
 
         float left = stageBounds.getLeft();
@@ -87,7 +93,7 @@ public class Stage {
         stagePosition.setFromFrontPercent(mapWithin1(position.z, front, back));
 
         for (BodyLocatorListener listener : this.listeners) {
-            listener.userDidMove(stagePosition);
+            listener.userDidMove(user, stagePosition);
         }
     }
 
@@ -103,9 +109,9 @@ public class Stage {
         return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
 
-    private void fireUserDidEnterZoneEvent(StageZone stageZone) {
+    private void fireUserDidEnterZoneEvent(User user, StageZone stageZone) {
         for (BodyLocatorListener listener : this.listeners) {
-            listener.userDidEnteredZone(stageZone);
+            listener.userDidEnteredZone(user, stageZone);
         }
     }
 

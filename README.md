@@ -17,8 +17,9 @@
 
 ### TODO BodyLocator ###
 
+* Working on multi-user version.
+* Stage could support multi-user, but the user-based events would need to be refactored out from the stage size.
 * Has a stupid name
 * Recognizes only one person at a time for the moment (no particular reason it can't do more).
-* Circle gesture is only detected clockwise (need to try the mirrored gesture).
 * I should probably split up the kinect-focused stuff from the other processing sketches.
 * a "Z" gesture would probably work fine.

@@ -10,43 +10,17 @@ import com.daveclay.processing.kinect.api.*;
 import com.daveclay.processing.kinect.api.stage.Stage;
 import com.daveclay.processing.kinect.api.stage.StageMonitor;
 import com.daveclay.server.presentation.PresentationServer;
-import com.daveclay.server.presentation.PresentationWebSocketListener;
 import processing.core.PVector;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BodyLocator extends UserTrackingSketch {
+public class SingleBodyLocator extends UserTrackingSketch implements BodyLocator {
 
     public static void main(String[] args) {
-        HUD hud = new HUD();
-        GestureDataStore gestureDataStore = new GestureDataStore(GestureDataStore.GESTURE_DIR);
-        gestureDataStore.load();
-
-        Stage stage = new Stage();
-        stage.setupDefaultStageZones();
-
-        StageMonitor stageMonitor = new StageMonitor(stage, hud);
-
-        BodyLocator bodyLocator = new BodyLocator(
-                gestureDataStore,
-                stage,
-                stageMonitor,
-                hud);
-
-        try {
-            PresentationServer presentationServer = new PresentationServer(12345);
-            presentationServer.start();
-            PresentationWebSocketListener listener = new PresentationWebSocketListener(
-                    presentationServer,
-                    gestureDataStore);
-
-            bodyLocator.setListener(listener);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        GestureDataStore gestureDataStore = GestureDataStore.getDefaultInstance();
+        SingleBodyLocator bodyLocator = new SingleBodyLocator(gestureDataStore);
+        PresentationServer.register(gestureDataStore, bodyLocator);
 
         SketchRunner.run(bodyLocator);
         bodyLocator.frame.setLocation(0, 0);
@@ -56,21 +30,31 @@ public class BodyLocator extends UserTrackingSketch {
     HandBox leftHandBox;
     HandBox rightHandBox;
     Stage stage;
-    AggregateGestureRecognizer gestureRecognizer = new AggregateGestureRecognizer();
-    GestureRecorder gestureRecorder = new GestureRecorder(gestureRecognizer);
+    GestureRecognizer gestureRecognizer;
+    GestureRecorder gestureRecorder;
 
-    List<PVector> drawingPoints = new ArrayList<PVector>();
+    List<PVector> drawingPoints = new ArrayList<>();
     boolean drawGestureRecording;
     private long lastNotification;
     private int drawGestureRecognizedState;
     private User user;
     private StageMonitor stageMonitor;
 
-    public BodyLocator(GestureDataStore gestureDataStore,
-                       Stage stage,
-                       StageMonitor stageMonitor,
-                       HUD hud) {
-        super();
+    public SingleBodyLocator(GestureDataStore gestureDataStore) {
+        hud = new HUD();
+        stage = new Stage();
+        stage.setupDefaultStageZones();
+        stageMonitor = new StageMonitor(stage, hud);
+
+        leftHandBox = new HandBox();
+        leftHandBox.color = color(255, 120, 0);
+
+        rightHandBox = new HandBox();
+        rightHandBox.color = color(0, 80, 255);
+
+        gestureRecognizer = GestureRecognizer.Factory.defaultInstance(gestureDataStore);
+        gestureRecorder = new GestureRecorder(gestureRecognizer);
+
         setSketchCallback(new SketchCallback() {
             @Override
             public void draw() {
@@ -86,32 +70,10 @@ public class BodyLocator extends UserTrackingSketch {
             }
         });
 
-        leftHandBox = new HandBox();
-        leftHandBox.color = color(255, 120, 0);
-
-        rightHandBox = new HandBox();
-        rightHandBox.color = color(0, 80, 255);
-
-        GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
-        geometricRecognizer.addTemplate("Circle", gestureDataStore.getPointsByName("Circle"));
-        geometricRecognizer.addTemplate("Circle", VectorMath.reflectVertically(gestureDataStore.getPointsByName("Circle")));
-
-        LineGestureRecognizer lineGestureRecognizer = new LineGestureRecognizer();
-        lineGestureRecognizer.addRecognizerAlgorithm("LeftToRightLine", LineGestureRecognizer.LEFT_TO_RIGHT_LINE_RECOGNIZER);
-        lineGestureRecognizer.addRecognizerAlgorithm("RightToLeftLine", LineGestureRecognizer.RIGHT_TO_LEFT_LINE_RECOGNIZER);
-        lineGestureRecognizer.addRecognizerAlgorithm("BottomToTopLine", LineGestureRecognizer.BOTTOM_TO_TOP_LINE_RECOGNIZER);
-        lineGestureRecognizer.addRecognizerAlgorithm("TopToBottomLine", LineGestureRecognizer.TOP_TO_BOTTOM_LINE_RECOGNIZER);
-
-        gestureRecognizer.addRecognizer(geometricRecognizer);
-        gestureRecognizer.addRecognizer(lineGestureRecognizer);
-
-        this.stage = stage;
-        this.hud = hud;
-        this.stageMonitor = stageMonitor;
-
         registerEventListeners();
     }
 
+    @Override
     public void setListener(BodyLocatorListener listener) {
         this.listener = listener;
         this.stage.addListener(listener);
@@ -125,14 +87,14 @@ public class BodyLocator extends UserTrackingSketch {
 
         onRightHandExtended(new HandExtendedHandler() {
             @Override
-            public void onHandExtended() {
+            public void onHandExtended(User user) {
                 hud.log("Right Hand Gesture", "Extended.");
                 gestureRecorder.startRecording();
                 drawGestureRecording = true;
             }
 
             @Override
-            public void onHandRetracted() {
+            public void onHandRetracted(User user) {
                 hud.log("Right Hand Gesture", "Retracted.");
                 gestureRecorder.stopRecording();
                 drawGestureRecording = false;
@@ -140,17 +102,17 @@ public class BodyLocator extends UserTrackingSketch {
         });
 
         onUserEntered(user -> {
-            BodyLocator.this.user = user;
+            SingleBodyLocator.this.user = user;
         });
 
         onUserWasLost(user -> {
-            BodyLocator.this.user = null;
+            SingleBodyLocator.this.user = null;
         });
 
         gestureRecorder.onGestureRecognized(new GestureRecognizedHandler() {
             @Override
             public void gestureRecognized(RecognitionResult gesture) {
-                listener.gestureWasRecognized(gesture);
+                listener.gestureWasRecognized(user, gesture);
                 drawGestureRecognizedAlert(true, gesture, null);
             }
 
@@ -192,7 +154,7 @@ public class BodyLocator extends UserTrackingSketch {
 
             PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
 
-            stage.updatePosition(newUserPosition);
+            stage.updatePosition(user, newUserPosition);
 
             // Todo: refactor - have a gesture aware delegate doing this based on userDidEnter() callbacks.
             gestureRecorder.addPoint(user.getRightHandPosition());

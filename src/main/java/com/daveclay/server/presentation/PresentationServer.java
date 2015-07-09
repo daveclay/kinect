@@ -9,12 +9,30 @@ import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.daveclay.processing.gestures.GestureDataStore;
+import com.daveclay.processing.kinect.bodylocator.BodyLocator;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 public class PresentationServer extends WebSocketServer {
+
+    public static void register(GestureDataStore gestureDataStore, BodyLocator bodyLocator) {
+        try {
+            PresentationServer presentationServer = new PresentationServer(12345);
+            presentationServer.start();
+            PresentationWebSocketListener listener = new PresentationWebSocketListener(
+                    presentationServer,
+                    gestureDataStore);
+
+            bodyLocator.setListener(listener);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+    }
 
     public static interface Delegate {
         public void messageWasReceived(WebSocket conn, String message);
