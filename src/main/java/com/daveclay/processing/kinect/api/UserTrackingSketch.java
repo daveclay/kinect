@@ -82,14 +82,6 @@ public class UserTrackingSketch extends PApplet {
         hud.log("max time", max + "ms");
     }
 
-    public void onLeftHandExtended(HandExtendedHandler handExtendedHandler) {
-        perUserEventsConfig.addLeftHandExtendedHandler(handExtendedHandler);
-    }
-
-    public void onRightHandExtended(HandExtendedHandler handExtendedHandler) {
-        perUserEventsConfig.addRightHandExtendedHandler(handExtendedHandler);
-    }
-
     public void onUserEntered(UserEnteredHandler userEnteredHandler) {
         this.userEnteredHandlers.add(userEnteredHandler);
     }
@@ -113,6 +105,8 @@ public class UserTrackingSketch extends PApplet {
                                     Skeleton colorSkeleton) {
         UserTrackingState userTrackingState;
         if ( ! userTrackingStateByIndex.containsKey(index)) {
+            // TODO: perUserEventsConfig here contains the handlers... which should be set on the thing that
+            // listens for users themselves?
             User user = new User(skeleton3D, colorSkeleton, perUserEventsConfig, index);
             userTrackingState = new UserTrackingState(user);
             userTrackingStateByIndex.put(index, userTrackingState);
@@ -149,7 +143,7 @@ public class UserTrackingSketch extends PApplet {
                     triggerUserEnteredListeners(user);
                     currentlyTracked = true;
                 }
-                user.triggerUserInteractionListeners();
+                user.update();
             } else {
                 if (currentlyTracked) {
                     triggerUserLostListeners(user);

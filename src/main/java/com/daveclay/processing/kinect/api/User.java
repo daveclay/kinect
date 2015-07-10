@@ -29,7 +29,15 @@ public class User {
         return id;
     }
 
-    public void triggerUserInteractionListeners() {
+    public void onRightHandExtended(HandExtendedHandler handExtendedHandler) {
+        rightHandState.addHandExtendedHandler(handExtendedHandler);
+    }
+
+    public void onLeftHandExtended(HandExtendedHandler handExtendedHandler) {
+        leftHandState.addHandExtendedHandler(handExtendedHandler);
+    }
+
+    public void update() {
         leftHandState.triggerHandStateEvents();
         rightHandState.triggerHandStateEvents();
     }
@@ -74,27 +82,13 @@ public class User {
         return VectorMath.reflectVertically(position);
     }
 
-    public boolean isHandExtended(int hand, float threshold) {
+    boolean isHandExtended(int hand, float threshold) {
         PVector handPosition = getJointPosition3D(hand);
         PVector torsoPosition = getJointPosition3D(KinectPV2.JointType_SpineBase);
         return ! VectorMath.isWithinZ(
                 handPosition,
                 torsoPosition,
                 threshold);
-    }
-
-    public boolean isRightHandExtended(float threshold) {
-        /*
-        double distance = Math.sqrt(VectorMath.getZDistanceSquared(rightHand.position, centerOfMass));
-        hud.logRounded("Left hand distance", distance);
-        hud.logVector("Left Hand Pos", rightHand.position);
-        hud.logVector("Torso", torso.position);
-        */
-        return isHandExtended(KinectPV2.JointType_HandRight, threshold);
-    }
-
-    public boolean isLeftHandExtended(float threshold) {
-        return isHandExtended(KinectPV2.JointType_HandLeft, threshold);
     }
 
     private KJoint findJoint(int which) {

@@ -3,7 +3,6 @@ package com.daveclay.processing.kinect.bodylocator;
 import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.api.SketchRunner;
-import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.gestures.*;
 import com.daveclay.processing.gestures.GestureDataStore;
 import com.daveclay.processing.kinect.api.*;
@@ -85,24 +84,24 @@ public class SingleBodyLocator extends UserTrackingSketch implements BodyLocator
 
     protected void registerEventListeners() {
 
-        onRightHandExtended(new HandExtendedHandler() {
-            @Override
-            public void onHandExtended(User user) {
-                hud.log("Right Hand Gesture", "Extended.");
-                gestureRecorder.startRecording();
-                drawGestureRecording = true;
-            }
-
-            @Override
-            public void onHandRetracted(User user) {
-                hud.log("Right Hand Gesture", "Retracted.");
-                gestureRecorder.stopRecording();
-                drawGestureRecording = false;
-            }
-        });
-
         onUserEntered(user -> {
             SingleBodyLocator.this.user = user;
+            user.onRightHandExtended(new HandExtendedHandler() {
+                @Override
+                public void onHandExtended(User user) {
+                    hud.log("Right Hand Gesture", "Extended.");
+                    gestureRecorder.startRecording();
+                    drawGestureRecording = true;
+                }
+
+                @Override
+                public void onHandRetracted(User user) {
+                    hud.log("Right Hand Gesture", "Retracted.");
+                    gestureRecorder.stopRecording();
+                    drawGestureRecording = false;
+                }
+            });
+
         });
 
         onUserWasLost(user -> {
