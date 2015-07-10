@@ -1,7 +1,6 @@
 package com.daveclay.processing.kinect.api;
 
-import KinectPV2.KinectPV2;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class HandState {
@@ -9,11 +8,17 @@ public class HandState {
     private final User user;
     private final int hand;
     private UserEventsConfig userEventsConfig = new UserEventsConfig();
+    // TODO: WeakReference - when a user is lost, the corresponding handler should go away.
+    private List<HandExtendedHandler> handExtendedHandlers = new ArrayList<>();
     private boolean handWasPreviouslyExtended;
 
     public HandState(User user, int hand) {
         this.user = user;
         this.hand = hand;
+    }
+
+    public void addHandExtendedHandler(HandExtendedHandler handExtendedHandler) {
+        this.handExtendedHandlers.add(handExtendedHandler);
     }
 
     public void setUserEventsConfig(UserEventsConfig userEventsConfig) {
@@ -36,24 +41,14 @@ public class HandState {
         handWasPreviouslyExtended = handCurrentlyExtended;
     }
 
-    private List<HandExtendedHandler> getHandExtendedHandlers() {
-        if (hand == KinectPV2.JointType_HandLeft) {
-            return this.userEventsConfig.getLeftHandExtendedHandlers();
-        } else if (hand == KinectPV2.JointType_HandRight) {
-            return this.userEventsConfig.getRightHandExtendedHandlers();
-        } else {
-            throw new IllegalStateException("Unknown hand joint type: " + hand);
-        }
-    }
-
     private void handWasExtended() {
-        for (HandExtendedHandler handListeners : getHandExtendedHandlers()) {
+        for (HandExtendedHandler handListeners : handExtendedHandlers) {
             handListeners.onHandExtended(user);
         }
     }
 
     private void handWasRetracted() {
-        for (HandExtendedHandler handListeners : getHandExtendedHandlers()) {
+        for (HandExtendedHandler handListeners : handExtendedHandlers) {
             handListeners.onHandRetracted(user);
         }
     }
