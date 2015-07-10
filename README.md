@@ -19,6 +19,8 @@
 
 * Working on multi-user version.
 * Stage could support multi-user, but the user-based events would need to be refactored out from the stage size.
+* StageMonitor for each user line up at the bottom with background colors matching the user?
+* Shade the outline of the user with that user's color. Or large circles at their hand and head positions with those colors.
 * Has a stupid name
 * Recognizes only one person at a time for the moment (no particular reason it can't do more).
 * I should probably split up the kinect-focused stuff from the other processing sketches.
