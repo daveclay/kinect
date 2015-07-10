@@ -51,14 +51,13 @@ public class UserData {
             @Override
             public void gestureRecognized(RecognitionResult gesture) {
                 listener.gestureWasRecognized(user, gesture);
-                setGestureRecogniionAlert(true, gesture, null);
+                setGestureRecognitionAlert(true, gesture, null);
             }
 
             @Override
             public void gestureWasNotRecognized(String message) {
-                setGestureRecogniionAlert(false, null, message);
-                // TODO: per-user hud
-                // hud.log("Gesture", message);
+                setGestureRecognitionAlert(false, null, message);
+                hud.log(user.getID() + ": Gesture", message);
             }
         });
 
@@ -138,16 +137,14 @@ public class UserData {
         user.onRightHandExtended(new HandExtendedHandler() {
             @Override
             public void onHandExtended(User user) {
-                // TODO: per-user hud
-                hud.log("Right Hand Gesture", "Extended.");
+                hud.log(user.getID() + ": Right Hand Gesture", "Extended.");
                 gestureRecorder.startRecording();
                 drawGestureRecording = true;
             }
 
             @Override
             public void onHandRetracted(User user) {
-                // TODO: per-user hud
-                hud.log("Right Hand Gesture", "Retracted.");
+                hud.log(user.getID() + ": Right Hand Gesture", "Retracted.");
                 gestureRecorder.stopRecording();
                 drawGestureRecording = false;
             }
@@ -165,10 +162,13 @@ public class UserData {
             PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
             stage.updatePosition(user, newUserPosition);
 
+            // TODO: This code seems to arbitrarily decide what join to record. Maybe the record should register
+            // a listener for a given joint: gestureRecorder.listenFor(user, Joint.RIGHT_HAND)
+            // That would move the joint/threshold logic elsewhere.
             PVector rightHandPosition2d = user.getRightHandPosition2D();
             gestureRecorder.addPoint(rightHandPosition2d);
             if (drawGestureRecording) {
-                // TODO: these should be retrieved from the GestureRecorder so we don't have to infer which hand the points are coming from.
+                // TODO: yeah, because the recorder's already checking to see if it's recording. MAke it the master record.
                 drawingPoints.add(rightHandPosition2d);
             }
 
@@ -179,15 +179,15 @@ public class UserData {
         }
     }
 
-    private void setGestureRecogniionAlert(boolean recognized, RecognitionResult gesture, String message) {
+    private void setGestureRecognitionAlert(boolean recognized, RecognitionResult gesture, String message) {
         if (recognized || drawGestureRecognizedState != 1 || System.currentTimeMillis() - lastNotification > 1000) {
             drawGestureRecognizedState = recognized ? 1 : 2;
             lastNotification = System.currentTimeMillis();
 
             if (gesture != null) {
-                hud.logRounded("Gesture", gesture.name, gesture.score * 100d);
+                hud.logRounded(user.getID() + ": Gesture", gesture.name, gesture.score * 100d);
             } else {
-                hud.log("Gesture", message);
+                hud.log(user.getID() + ": Gesture", message);
             }
         }
     }
