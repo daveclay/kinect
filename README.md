@@ -15,7 +15,7 @@
 * Open a web browser (probably Chrome)
 * Open src/main/webapp/index.html
 
-### TODO BodyLocator ###    
+### TODO BodyLocator ###
 
 * Stage could support multi-user, but the user-based events would need to be refactored out from the stage size.
 * There appear to be bugs in the stage in multi-user mode.

@@ -7,6 +7,14 @@ import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import processing.core.PApplet;
 import processing.core.PVector;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.WeakHashMap;
+import java.util.stream.Stream;
+
+import static processing.core.PApplet.*;
+import static processing.core.PApplet.max;
+
 public class StageMonitor {
 
     private final Stage stage;
@@ -25,9 +33,9 @@ public class StageMonitor {
 
     private PApplet currentCanvas;
 
-    private Stage.StageZone currentStageZone;
+    private List<UserPosition> currentUserPositions = new ArrayList<>();
+    private WeakHashMap<User, Stage.StageZone> currentUserStageZones = new WeakHashMap<>();
 
-    private PVector position;
     private float left;
     private float right;
     private float front;
@@ -36,6 +44,16 @@ public class StageMonitor {
     private float realWorldDepth;
     private float centerRadius;
     private PVector center;
+
+    private class UserPosition {
+        public final User user;
+        public final StagePosition stagePosition;
+
+        public UserPosition(User user, StagePosition stagePosition) {
+            this.user = user;
+            this.stagePosition = stagePosition;
+        }
+    }
 
     public StageMonitor(Stage stage,
                         HUD hud,
@@ -48,8 +66,6 @@ public class StageMonitor {
         this.halfWidth = width / 2;
         this.halfHeight = height / 2;
 
-        this.currentStageZone = null;
-
         stage.addListener(new BodyLocatorListener() {
             @Override
             public void gestureWasRecognized(User user, RecognitionResult gesture) {
@@ -57,11 +73,12 @@ public class StageMonitor {
 
             @Override
             public void userDidEnteredZone(User user, Stage.StageZone stageZone) {
-                StageMonitor.this.currentStageZone = stageZone;
+                currentUserStageZones.put(user, stageZone);
             }
 
             @Override
             public void userDidMove(User user, StagePosition stagePosition) {
+                currentUserPositions.add(new UserPosition(user, stagePosition));
             }
         });
 
@@ -94,20 +111,6 @@ public class StageMonitor {
         centerRadius = centerZone.getCenterRadius();
         center = stageBounds.getCenter();
 
-        // TODO: refactor, position should be per-user.
-        position = stage.getPosition();
-
-        hud.logVector("Stage Position", position);
-        hud.log("Zone", currentStageZone.getID());
-
-        /*
-        hud.log("Within Center", centerZone.isWithinBounds(position));
-        hud.log("Within Left Front", leftFrontZone.isWithinBounds(position));
-        hud.log("Within Right Front", rightFrontZone.isWithinBounds(position));
-        hud.log("Within Left Back", leftBackZone.isWithinBounds(position));
-        hud.log("Within Right Back", rightBackZone.isWithinBounds(position));
-        */
-
         canvas.pushMatrix();
         canvas.pushStyle();
         canvas.translate(0, canvas.getHeight() - height);
@@ -124,25 +127,28 @@ public class StageMonitor {
         drawMappedZone(rightBackZone);
         drawCenterZone();
 
-        drawPosition(position);
+        currentUserPositions.forEach(this::drawPosition);
+        currentUserPositions.clear();
+
         canvas.popMatrix();
         canvas.popStyle();
     }
 
-    void drawPosition(PVector position) {
-        float mappedPositionX = map(position.x, left, right, 0, width);
-        float mappedPositionZ = map(position.z, front, back, 0, height);
+    void drawPosition(UserPosition userPosition) {
+        StagePosition stagePosition = userPosition.stagePosition;
+        float mappedPositionX = map(stagePosition.getFromLeftPercent(), 0, 1f, 0, width);
+        float mappedPositionZ = map(stagePosition.getFromFrontPercent(), 0, 1f, 0, height);
         currentCanvas.noStroke();
         currentCanvas.fill(250, 185, 0);
         currentCanvas.ellipse(mappedPositionX, mappedPositionZ, 25, 25);
     }
 
     private void drawCenterZone() {
-        float mappedVerticalCenterRadius = currentCanvas.min(
+        float mappedVerticalCenterRadius = min(
                 height,
                 map(centerRadius, 0, realWorldDepth, 0, height) * 2);
 
-        float mappedHorizontalCenterRadius = currentCanvas.min(
+        float mappedHorizontalCenterRadius = min(
                 width,
                 map(centerRadius, 0, realWorldWidth, 0, width) * 2);
 
@@ -155,33 +161,37 @@ public class StageMonitor {
     public void drawMappedZone(Stage.RectStageZone stageZone) {
         PVector leftBottomFront = stageZone.getLeftBottomFront();
 
-        float mappedX = currentCanvas.min(halfWidth,
+        float mappedX = min(halfWidth,
                 map(leftBottomFront.x, stageBounds.getLeft(), stageBounds.getRight(), 0, width - 2)); // leave room for the bounds.
-        float mappedY = currentCanvas.min(halfHeight,
+        float mappedY = min(halfHeight,
                 map(leftBottomFront.z, stageBounds.getFront(), stageBounds.getBack(), 0, height - 2));
 
-        float mappedWidth = currentCanvas.min(halfWidth,
+        float mappedWidth = min(halfWidth,
                 map(stageZone.getWidth(), 0, realWorldWidth, 0, width));
-        float mappedDepth = currentCanvas.min(halfHeight,
+        float mappedDepth = min(halfHeight,
                 map(stageZone.getDepth(), 0, realWorldDepth, 0, height));
 
         setFill(stageZone);
         currentCanvas.rect(
                 mappedX,
                 mappedY,
-                currentCanvas.max(mappedWidth, halfWidth),
-                currentCanvas.max(mappedDepth, halfHeight));
+                max(mappedWidth, halfWidth),
+                max(mappedDepth, halfHeight));
     }
 
     void setFill(Stage.StageZone stageZone) {
-        if (stageZone == this.currentStageZone) {
-            currentCanvas.fill(0, 255, 0, alpha);
-        } else {
+        Stream<Stage.StageZone> drawnZones = this.currentUserStageZones.entrySet().stream().map((entry) -> {
+            if (stageZone == entry.getValue()) {
+                // TODO: with user color tint
+                currentCanvas.fill(0, 255, 0, alpha);
+                return stageZone;
+            } else {
+                return null;
+            }
+        }).filter((zone) -> zone != null);
+
+        if ( ! drawnZones.anyMatch((zone) -> stageZone == zone)) {
             currentCanvas.fill(100, alpha);
         }
-    }
-
-    public static final float map(float value, float start1, float stop1, float start2, float stop2) {
-        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
 }

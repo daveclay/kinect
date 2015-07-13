@@ -3,6 +3,7 @@ package com.daveclay.processing.kinect.bodylocator;
 import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.Drawing;
 import com.daveclay.processing.api.HUD;
+import com.daveclay.processing.api.VectorMath;
 import com.daveclay.processing.gestures.GestureRecognizedHandler;
 import com.daveclay.processing.gestures.GestureRecognizer;
 import com.daveclay.processing.gestures.GestureRecorder;
@@ -12,6 +13,7 @@ import com.daveclay.processing.kinect.api.User;
 import com.daveclay.processing.kinect.api.stage.Stage;
 import processing.core.PApplet;
 import processing.core.PVector;
+import shapes3d.utils.VectorUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,7 +152,12 @@ public class UserData {
 
     public void update() {
         PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
+        hud.logVector(user.getID() + ": Stage Position", newUserPosition);
+
         stage.updatePosition(user, newUserPosition);
+
+        PVector reflected = VectorMath.reflectVertically(newUserPosition);
+        stage.updatePosition(user, reflected);
 
         // TODO: This code seems to arbitrarily decide what join to record. Maybe the record should register
         // a listener for a given joint: gestureRecorder.listenFor(user, Joint.RIGHT_HAND)

@@ -2,6 +2,14 @@ package com.daveclay.processing.kinect.api.stage;
 
 public class StagePosition {
 
+    public static StagePosition reflected(StagePosition stagePosition) {
+        StagePosition reflected = new StagePosition();
+        reflected.fromLeftPercent = 1f - stagePosition.fromLeftPercent;
+        reflected.fromBottomPercent = stagePosition.fromBottomPercent;
+        reflected.fromFrontPercent = stagePosition.fromFrontPercent;
+        return reflected;
+    }
+
     private float fromLeftPercent;
     private float fromBottomPercent;
     private float fromFrontPercent;
