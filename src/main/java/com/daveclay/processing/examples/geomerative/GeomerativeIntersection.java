@@ -9,33 +9,37 @@ public class GeomerativeIntersection extends PApplet {
         SketchRunner.run(new GeomerativeIntersection());
     }
 
-    RMesh m;
-
-    float t=0;
+    RPolygon frontLeftZone;
+    RPolygon frontRightZone;
+    RPolygon backLeftZone;
+    RPolygon backRightZone;
 
     public void setup(){
-        size(400,400,P3D);
+        size(400, 400, P3D);
         //smooth();
         noStroke();
         fill(0);
+        frontLeftZone = RPolygon.createRectangle(0, 0, 200, 200);
+        frontRightZone = RPolygon.createRectangle(200, 0, 200, 200);
+        backLeftZone = RPolygon.createRectangle(0, 200, 200, 200);
+        backRightZone = RPolygon.createRectangle(200, 200, 200, 200);
+
     }
 
     public void draw(){
-        RPolygon p = RPolygon.createCircle(120,70,6);
-        RPolygon p2 = RPolygon.createStar(60,50,30);
-        p=p.diff(p2);
+        RPolygon centerCircle = RPolygon.createCircle(getWidth() / 2, getHeight() / 2, getWidth() / 4);
+        frontLeftZone = frontLeftZone.diff(centerCircle);
+        frontRightZone = frontRightZone.diff(centerCircle);
+        backLeftZone = backLeftZone.diff(centerCircle);
+        backRightZone = backRightZone.diff(centerCircle);
 
-        m = p.toMesh();
-        background(255);
-        translate(width/2,height/2);
+        fill(128);
+        stroke(255);
+        frontLeftZone.draw(this);
+        frontRightZone.draw(this);
+        backLeftZone.draw(this);
+        backRightZone.draw(this);
+        centerCircle.draw(this);
 
-        rotateX(t/39);
-        m.draw(g);
-
-        rotateY(-t/5);
-        scale(0.3f);
-        m.draw(g);
-
-        t++;
     }
 }
