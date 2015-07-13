@@ -1,5 +1,6 @@
 package com.daveclay.processing.kinect.api.stage;
 
+import com.daveclay.processing.api.ColorUtils;
 import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.api.User;
@@ -139,7 +140,7 @@ public class StageMonitor {
         float mappedPositionX = map(stagePosition.getFromLeftPercent(), 0, 1f, 0, width);
         float mappedPositionZ = map(stagePosition.getFromFrontPercent(), 0, 1f, 0, height);
         currentCanvas.noStroke();
-        currentCanvas.fill(250, 185, 0);
+        currentCanvas.fill(userPosition.user.getColor());
         currentCanvas.ellipse(mappedPositionX, mappedPositionZ, 25, 25);
     }
 
@@ -182,8 +183,7 @@ public class StageMonitor {
     void setFill(Stage.StageZone stageZone) {
         Stream<Stage.StageZone> drawnZones = this.currentUserStageZones.entrySet().stream().map((entry) -> {
             if (stageZone == entry.getValue()) {
-                // TODO: with user color tint
-                currentCanvas.fill(0, 255, 0, alpha);
+                currentCanvas.fill(userColor(entry.getKey()));
                 return stageZone;
             } else {
                 return null;
@@ -193,5 +193,9 @@ public class StageMonitor {
         if ( ! drawnZones.anyMatch((zone) -> stageZone == zone)) {
             currentCanvas.fill(100, alpha);
         }
+    }
+
+    int userColor(User user) {
+        return ColorUtils.addAlpha(user.getColor(), .4f);
     }
 }

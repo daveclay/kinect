@@ -5,9 +5,9 @@ import processing.core.PApplet;
 
 import java.awt.*;
 
-public class RandomColor extends PApplet {
+public class SplitColorAcrossIndexes extends PApplet {
     public static void main(String[] args) {
-        SketchRunner.run(new RandomColor());
+        SketchRunner.run(new SplitColorAcrossIndexes());
     }
 
     public void setup() {

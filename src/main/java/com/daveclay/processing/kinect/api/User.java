@@ -2,15 +2,21 @@ package com.daveclay.processing.kinect.api;
 
 import KinectPV2.*;
 import com.daveclay.processing.api.VectorMath;
+import processing.core.PApplet;
 import processing.core.PVector;
 
+import java.awt.*;
+
 public class User {
+
+    public static final float EIGHTH = 1f / 8f;
 
     private final int id;
     private final Skeleton skeleton3D;
     private final Skeleton colorSkeleton;
     private final HandState leftHandState;
     private final HandState rightHandState;
+    private final int color;
 
     public User(Skeleton skeleton3D,
                 Skeleton colorSkeleton,
@@ -23,10 +29,15 @@ public class User {
         this.rightHandState = new HandState(this, KinectPV2.JointType_HandRight);
         this.leftHandState.setUserEventsConfig(userEventsConfig);
         this.rightHandState.setUserEventsConfig(userEventsConfig);
+        this.color = Color.HSBtoRGB(EIGHTH * index, 1f, .9f);
     }
 
     public int getID() {
         return id;
+    }
+
+    public int getColor() {
+        return color;
     }
 
     public void onRightHandExtended(HandExtendedHandler handExtendedHandler) {
