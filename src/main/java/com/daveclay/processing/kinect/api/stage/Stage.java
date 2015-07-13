@@ -5,10 +5,7 @@ import com.daveclay.processing.kinect.api.User;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
 import processing.core.PVector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Stage {
 
@@ -16,7 +13,8 @@ public class Stage {
     private final StageBounds stageBounds = new StageBounds();
     private Map<String, StageZone> stageZoneById = new HashMap<>();
     private List<StageZone> stageZones = new ArrayList<>();
-    private PVector position = new PVector();
+
+    private WeakHashMap<User, StageZone> currentUserStageZones = new WeakHashMap<>();
 
     // Todo: ths should be its own listener, not a BodyLocator.Listener - the stage only sends
     // stage update events, doens't care about gestures.
@@ -33,10 +31,6 @@ public class Stage {
         return stageBounds;
     }
 
-    public PVector getPosition() {
-        return position;
-    }
-
     public void setupDefaultStageZones() {
         addStageZone(new CenterZone());
         addStageZone(new LeftFrontZone());
@@ -44,8 +38,6 @@ public class Stage {
         addStageZone(new LeftBackZone());
         addStageZone(new RightBackZone());
     }
-
-    private StageZone currentStageZone = null;
 
     private PVector getMirroredPosition(PVector position) {
         return VectorMath.reflectVertically(position);
@@ -57,24 +49,23 @@ public class Stage {
      * @param position
      */
     public void updatePosition(User user, PVector position) {
-        this.position = getMirroredPosition(position);
-
-        stageBounds.expandStageBounds(this.position);
+        position = getMirroredPosition(position);
+        stageBounds.expandStageBounds(position);
         boolean foundMatchingZone = false;
         for (StageZone stageZone : stageZones) {
             stageZone.updateStageBounds(stageBounds);
-            if ( ! foundMatchingZone && stageZone.isWithinBounds(this.position)) {
+            if ( ! foundMatchingZone && stageZone.isWithinBounds(position)) {
                 // We haven't found a matching zone yet, and this one matches.
                 foundMatchingZone = true;
-                if (stageZone != currentStageZone) {
+                if (stageZone != currentUserStageZones.get(user)) {
                     // But, only fire the event if the user has changed zones.
                     fireUserDidEnterZoneEvent(user, stageZone);
-                    currentStageZone = stageZone;
+                    currentUserStageZones.put(user, stageZone);
                 }
             }
         }
 
-        fireUserStagePositionEvent(user, this.position);
+        fireUserStagePositionEvent(user, position);
     }
 
     private void fireUserStagePositionEvent(User user, PVector position) {
@@ -155,7 +146,7 @@ public class Stage {
         public static final String ID = "Center";
 
         private final PVector center = new PVector();
-        private float centerRadius = .35f;
+        private float centerRadius = .35f; // arbitrary - based on kinect v2 values.
 
         @Override
         public String getID() {
