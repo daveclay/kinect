@@ -11,14 +11,14 @@
 ### Running BodyLocator ###
 
 * Plug in the kinect
-* Run BodyLocator
+* Run SingleBodyLocator (or MultipleBodyLocator)
 * Open a web browser (probably Chrome)
 * Open src/main/webapp/index.html
 
-### TODO BodyLocator ###
+### TODO BodyLocator ###    
 
-* Working on multi-user version.
 * Stage could support multi-user, but the user-based events would need to be refactored out from the stage size.
+* There appear to be bugs in the stage in multi-user mode.
 * StageMonitor for each user line up at the bottom with background colors matching the user?
 * Shade the outline of the user with that user's color. Or large circles at their hand and head positions with those colors.
 * Has a stupid name
