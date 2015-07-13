@@ -8,7 +8,6 @@ public class HandState {
     private final User user;
     private final int hand;
     private UserEventsConfig userEventsConfig = new UserEventsConfig();
-    // TODO: WeakReference - when a user is lost, the corresponding handler should go away.
     private List<HandExtendedHandler> handExtendedHandlers = new ArrayList<>();
     private boolean handWasPreviouslyExtended;
 

@@ -34,9 +34,13 @@ public class UserData {
     private int gestureLineAlpha = 255;
 
     public UserData(PApplet canvas,
+                    User user,
+                    BodyLocatorListener listener,
                     HUD hud,
                     Stage stage,
                     GestureRecognizer gestureRecognizer) {
+        this.user = user;
+        this.listener = listener;
         this.hud = hud;
         this.stage = stage;
 
@@ -126,14 +130,7 @@ public class UserData {
                 rect(0, 0, getWidth(), getHeight());
             }
         };
-    }
 
-    public void setListener(BodyLocatorListener listener) {
-        this.listener = listener;
-    }
-
-    public void userDidEnter(User user) {
-        this.user = user;
         user.onRightHandExtended(new HandExtendedHandler() {
             @Override
             public void onHandExtended(User user) {
@@ -149,34 +146,24 @@ public class UserData {
                 drawGestureRecording = false;
             }
         });
-
-    }
-
-    public void userWasLost() {
-        // tODO: make sure it's the right user (by index, I think)
-        this.user = null;
     }
 
     public void update() {
-        if (user != null) {
-            PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
-            stage.updatePosition(user, newUserPosition);
+        PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
+        stage.updatePosition(user, newUserPosition);
 
-            // TODO: This code seems to arbitrarily decide what join to record. Maybe the record should register
-            // a listener for a given joint: gestureRecorder.listenFor(user, Joint.RIGHT_HAND)
-            // That would move the joint/threshold logic elsewhere.
-            PVector rightHandPosition2d = user.getRightHandPosition2D();
-            gestureRecorder.addPoint(rightHandPosition2d);
-            if (drawGestureRecording) {
-                // TODO: yeah, because the recorder's already checking to see if it's recording. MAke it the master record.
-                drawingPoints.add(rightHandPosition2d);
-            }
-
-            // draw user data.
-            userDrawing.draw();
-        } else {
-            // TODO: drawLostUser();
+        // TODO: This code seems to arbitrarily decide what join to record. Maybe the record should register
+        // a listener for a given joint: gestureRecorder.listenFor(user, Joint.RIGHT_HAND)
+        // That would move the joint/threshold logic elsewhere.
+        PVector rightHandPosition2d = user.getRightHandPosition2D();
+        gestureRecorder.addPoint(rightHandPosition2d);
+        if (drawGestureRecording) {
+            // TODO: yeah, because the recorder's already checking to see if it's recording. MAke it the master record.
+            drawingPoints.add(rightHandPosition2d);
         }
+
+        // draw user data.
+        userDrawing.draw();
     }
 
     private void setGestureRecognitionAlert(boolean recognized, RecognitionResult gesture, String message) {

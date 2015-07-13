@@ -9,7 +9,11 @@ import com.daveclay.processing.kinect.api.stage.Stage;
 import com.daveclay.processing.kinect.api.stage.StageMonitor;
 import com.daveclay.server.presentation.PresentationServer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocator {
+
 
     public static void main(String[] args) {
         GestureDataStore gestureDataStore = GestureDataStore.getDefaultInstance();
@@ -19,20 +23,19 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
         bodyLocator.frame.setLocation(0, 0);
     }
 
-    Stage stage;
-    GestureRecognizer gestureRecognizer;
+    private Stage stage;
+    private GestureRecognizer gestureRecognizer;
+    private BodyLocatorListener listener;
 
-    UserData userData;
+    private Map<Integer, UserData> userDataById = new HashMap<>();
     private StageMonitor stageMonitor;
 
     public MultipleBodyLocator(GestureDataStore gestureDataStore) {
-
         hud = new HUD();
         stage = new Stage();
         stage.setupDefaultStageZones();
         stageMonitor = new StageMonitor(stage, hud);
         gestureRecognizer = GestureRecognizer.Factory.defaultInstance(gestureDataStore);
-        userData = new UserData(this, hud, stage, gestureRecognizer);
 
         setSketchCallback(new SketchCallback() {
             @Override
@@ -53,7 +56,7 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
     }
 
     public void setListener(BodyLocatorListener listener) {
-        this.userData.setListener(listener);
+        this.listener = listener;
         this.stage.addListener(listener);
     }
 
@@ -62,22 +65,26 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
     }
 
     protected void registerEventListeners() {
-
         onUserEntered(user -> {
-            // TODO: construct new UserData that only exists while the user exists?
-            MultipleBodyLocator.this.userData.userDidEnter(user);
+            UserData userData = new UserData(this,
+                    user,
+                    this.listener,
+                    hud,
+                    stage,
+                    gestureRecognizer);
+            this.userDataById.put(user.getID(), userData);
         });
 
-        // tODO: make sure it's the right user (by index, I think)
         onUserWasLost(user -> {
-            MultipleBodyLocator.this.userData.userWasLost();
+            userDataById.remove(user.getID());
         });
     }
 
     private void drawBodyLocator() {
         setKinectRGBImageAsBackground();
-        // TODO: update all user positions, not just this one guy.
-        userData.update();
+        for (UserData userData : userDataById.values()) {
+            userData.update();
+        }
         drawHUD();
     }
 
