@@ -35,6 +35,7 @@
 }
 
 .item {
+    -webkit-clip-path: polygon(0% 0%, 100% 0, 100% 100%, 0% 100%);
     width: 100px;
     height: 50px;
     color: white;
