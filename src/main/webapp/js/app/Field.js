@@ -35,13 +35,32 @@ define(function (require) {
 
         scheduleExpand: function(item) {
             item.enterTween.eventCallback("onComplete", null);
+
+
+            var clipPath1 = [0, 100, 0, 0, 100, 0, 100, 100, 100];
+            var clipPath2 = [0, 100, 0, 0, 100, 0, 80, 100, 400];
+
+            clipPath2.onUpdate = function() {
+                TweenMax.set(item.element[0], {
+                    webkitClipPath: 'polygon(' +
+                        clipPath1[0] + '% ' + clipPath1[1] + '%,' + clipPath1[2] + '% ' + clipPath1[3] + '%,' +
+                        clipPath1[4] + '% ' + clipPath1[5] + '%,' + clipPath1[6] + '% ' + clipPath1[7] + '%)',
+                    width: clipPath1[8],
+                    ease: Power4.easeInOut
+                });
+            };
+
+            item.expandTween = TweenLite.to(clipPath1, .75, clipPath2).delay(1);
+            /*
             item.expandTween = TweenLite.to(item.element[0], .75, {
                 width: 400,
+                webkitClipPath: "polygon(25% 0%, 100% 0, 75% 100%, 0% 100%)",
                 onComplete: function() {
                     item.expandTween.eventCallback("onComplete", null);
                     this.showText(item);
                 }.bind(this)
             }).delay(1);
+            */
         },
 
         enter: function(item) {
@@ -53,6 +72,7 @@ define(function (require) {
                 top: 0,
                 backgroundColor: backgroundColor,
                 color: color,
+                ease: Power4.easeInOut,
                 onComplete: function() {
                     this.scheduleExpand(item);
                     item.enterComplete = true;
@@ -88,6 +108,7 @@ define(function (require) {
             var color = Colors.HSVtoRGB(index / 255, 1, 1);
             return TweenLite.to(item.element[0], 1, {
                 autoAlpha: 0,
+                ease: Power4.easeInOut,
                 top: window.innerHeight * .9,
                 onComplete: function () {
                     item.element.remove();
