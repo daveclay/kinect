@@ -11,6 +11,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="core" level="application" />
+    <orderEntry type="library" name="windows64" level="application" />
+    <orderEntry type="library" name="library" level="application" />
+    <orderEntry type="library" name="processing-all" level="application" />
+    <orderEntry type="library" name="KinectPV2" level="application" />
+    <orderEntry type="library" name="Shapes3D" level="application" />
+    <orderEntry type="library" name="geomerative" level="application" />
     <orderEntry type="library" name="Maven: org.processing:core:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:jogl-all:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:gluegen-rt:2.0.3" level="project" />
@@ -26,12 +33,5 @@
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-all:1.1" level="project" />
-    <orderEntry type="library" name="core" level="application" />
-    <orderEntry type="library" name="windows64" level="application" />
-    <orderEntry type="library" name="library" level="application" />
-    <orderEntry type="library" name="processing-all" level="application" />
-    <orderEntry type="library" name="KinectPV2" level="application" />
-    <orderEntry type="library" name="Shapes3D" level="application" />
-    <orderEntry type="library" name="geomerative" level="application" />
   </component>
 </module>
