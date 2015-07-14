@@ -2,9 +2,10 @@ try {
     console.log("App.Initializing");
 
     var initializeAppComponents = function($) {
+        var app = getUrlVars()["app"];
         require([
             "app/Router",
-            "app/Sing",
+            "app/" + app,
             "tweenmax"
         ], function(Router) {
             var router = Router.createRouter();
