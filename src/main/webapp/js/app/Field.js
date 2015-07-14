@@ -37,8 +37,9 @@ define(function (require) {
             item.enterTween.eventCallback("onComplete", null);
 
 
+            //  [ x, lower left corner, upper right corner, X, X, X, lower right corner, X, X]
             var clipPath1 = [0, 100, 0, 0, 100, 0, 100, 100, 100];
-            var clipPath2 = [0, 100, 0, 0, 100, 0, 80, 100, 400];
+            var clipPath2 = [0, 100, 20, 0, 100, 0, 80, 100, 400];
 
             clipPath2.onUpdate = function() {
                 TweenMax.set(item.element[0], {
@@ -46,21 +47,15 @@ define(function (require) {
                         clipPath1[0] + '% ' + clipPath1[1] + '%,' + clipPath1[2] + '% ' + clipPath1[3] + '%,' +
                         clipPath1[4] + '% ' + clipPath1[5] + '%,' + clipPath1[6] + '% ' + clipPath1[7] + '%)',
                     width: clipPath1[8],
-                    ease: Power4.easeInOut
+                    ease: Power4.easeInOut,
+                    onComplete: function() {
+                        item.expandTween.eventCallback("onComplete", null);
+                        this.showText(item);
+                    }.bind(this)
                 });
-            };
+            }.bind(this);
 
             item.expandTween = TweenLite.to(clipPath1, .75, clipPath2).delay(1);
-            /*
-            item.expandTween = TweenLite.to(item.element[0], .75, {
-                width: 400,
-                webkitClipPath: "polygon(25% 0%, 100% 0, 75% 100%, 0% 100%)",
-                onComplete: function() {
-                    item.expandTween.eventCallback("onComplete", null);
-                    this.showText(item);
-                }.bind(this)
-            }).delay(1);
-            */
         },
 
         enter: function(item) {
