@@ -82,6 +82,12 @@ define(function (require) {
             return currentPosition.y  < HEIGHT / 2;
         },
 
+        start: function() {
+            this.thread = window.requestAnimationFrame(function() {
+                this.updatePosition();
+            }.bind(this));
+        },
+
         constructor: function(params) {
             GestureAwareView.prototype.constructor.apply(this, params);
             this.options = params.itemOptions;
@@ -97,9 +103,7 @@ define(function (require) {
             }
 
             this.onConnect(function() {
-                this.thread = window.requestAnimationFrame(function() {
-                    this.updatePosition();
-                }.bind(this));
+                this.start();
             }.bind(this));
 
             this.onUserDidMove(function(position) {
@@ -119,7 +123,8 @@ define(function (require) {
                 };
             });
 
-            this.connect();
+            //this.connect();
+            this.start();
         }
     });
 });
