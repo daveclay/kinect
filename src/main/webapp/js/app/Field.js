@@ -24,6 +24,23 @@ define(function (require) {
             });
         },
 
+        showText: function(item) {
+            item.element.append("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.");
+            //item.element.append(item.index);
+            //item.expandAnimation.eventCallback("onComplete", null);
+        },
+
+        scheduleExpand: function(item) {
+            item.enterTween.eventCallback("onComplete", null);
+            item.expandAnimation = TweenLite.to(item.element[0], .75, {
+                width: 400,
+                onComplete: function() {
+                    item.expandAnimation.eventCallback("onComplete", null);
+                    this.showText(item);
+                }.bind(this)
+            }).delay(1);
+        },
+
         enter: function(item) {
             var color = Colors.HSVtoRGB(item.index / 25, 1, 1);
             var cssColor = "rgba(" + color.r + ", " + color.g + ", " + color.b + ")";
@@ -32,13 +49,15 @@ define(function (require) {
                 alpha: 1,
                 top: 0,
                 backgroundColor: cssColor,
-                onComplete: function () {
+                onComplete: function() {
+                    this.scheduleExpand(item);
                     item.enterComplete = true;
-                }
+                }.bind(this)
             });
         },
 
         exit: function(item) {
+            item.expandAnimation.kill();
             var index = item.index;
             // 0 <= h, s, v <= 1
             var color = Colors.HSVtoRGB(index / 255, 1, 1);
