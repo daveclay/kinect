@@ -6,10 +6,10 @@ import processing.core.PVector;
 import java.util.List;
 
 public interface GestureRecognizer {
-    public RecognitionResult recognize(List<PVector> points);
+    RecognitionResult recognize(List<PVector> points);
 
-    public static class Factory {
-        public static GeometricRecognizer defaultInstance(GestureDataStore gestureDataStore) {
+    class Factory {
+        public static AggregateGestureRecognizer defaultInstance(GestureDataStore gestureDataStore) {
             AggregateGestureRecognizer gestureRecognizer = new AggregateGestureRecognizer();
 
             GeometricRecognizer geometricRecognizer = new GeometricRecognizer();
@@ -25,7 +25,7 @@ public interface GestureRecognizer {
             gestureRecognizer.addRecognizer(geometricRecognizer);
             gestureRecognizer.addRecognizer(lineGestureRecognizer);
 
-            return geometricRecognizer;
+            return gestureRecognizer;
         }
     }
 }

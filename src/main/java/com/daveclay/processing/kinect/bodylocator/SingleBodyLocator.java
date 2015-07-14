@@ -144,6 +144,7 @@ public class SingleBodyLocator extends UserTrackingSketch implements BodyLocator
     }
 
     private void drawHUD() {
+        hud.log("Frame Rate", frameRate);
         hud.draw(this);
         stageMonitor.draw(this);
     }

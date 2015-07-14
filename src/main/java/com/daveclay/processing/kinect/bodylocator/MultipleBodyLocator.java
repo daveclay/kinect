@@ -89,6 +89,7 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
     }
 
     private void drawHUD() {
+        hud.log("Frame Rate", frameRate);
         hud.draw(this);
         stageMonitor.draw(this);
     }
