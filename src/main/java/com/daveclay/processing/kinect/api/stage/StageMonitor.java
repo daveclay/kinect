@@ -45,6 +45,8 @@ public class StageMonitor {
     private float realWorldWidth;
     private float realWorldDepth;
     private float centerRadius;
+    private float mappedHorizontalCenterRadius;
+    private float mappedVerticalCenterRadius;
     private PVector center;
 
     private StageRect frontLeft;
@@ -118,6 +120,14 @@ public class StageMonitor {
         centerRadius = centerZone.getCenterRadius();
         center = stageBounds.getCenter();
 
+        mappedVerticalCenterRadius = min(
+                height,
+                map(centerRadius, 0, realWorldDepth, 0, height) * 2);
+
+        mappedHorizontalCenterRadius = min(
+                width,
+                map(centerRadius, 0, realWorldWidth, 0, width) * 2);
+
         canvas.pushMatrix();
         canvas.pushStyle();
         canvas.translate(0, canvas.getHeight() - height);
@@ -156,14 +166,6 @@ public class StageMonitor {
     }
 
     private void drawCenterZone() {
-        float mappedVerticalCenterRadius = min(
-                height,
-                map(centerRadius, 0, realWorldDepth, 0, height) * 2);
-
-        float mappedHorizontalCenterRadius = min(
-                width,
-                map(centerRadius, 0, realWorldWidth, 0, width) * 2);
-
         float mappedCenterX = map(center.x, left, right, 0, width);
         float mappedCenterZ = map(center.z, front, back, 0, height);
         setFill(centerZone);
@@ -185,10 +187,7 @@ public class StageMonitor {
         currentCanvas.pushMatrix();
         currentCanvas.translate(mappedX, mappedY);
         stageRect.size(max(mappedWidth, halfWidth));
-        float mappedHorizontalCenterRadius = min(
-                width,
-                map(centerRadius, 0, realWorldWidth, 0, width) * 2);
-        stageRect.intersect(mappedHorizontalCenterRadius);
+        stageRect.intersect(mappedHorizontalCenterRadius, mappedVerticalCenterRadius);
         stageRect.draw();
 
         currentCanvas.popMatrix();

@@ -12,12 +12,14 @@ public class StageRect extends Drawing {
     public static final int BACK_RIGHT = 4;
 
     private float size;
-    private float circleWidth;
+    private float width;
+    private float height;
     private int corner = FRONT_LEFT;
     private PShape shape;
 
     public StageRect(PApplet canvas, int corner) {
         super(canvas);
+        shape = createShape();
         this.corner = corner;
     }
 
@@ -25,12 +27,16 @@ public class StageRect extends Drawing {
         this.size = size;
     }
 
+    public void intersect(float width, float height) {
+        this.width = width;
+        this.height = height;
+    }
+
     public void intersect(float circleWidth) {
-        this.circleWidth = circleWidth;
+        this.width = this.height = circleWidth;
     }
 
     public void draw() {
-        shape = createShape();
         shape.beginShape();
 
         shape.vertex(0, 0);
@@ -51,19 +57,19 @@ public class StageRect extends Drawing {
 
         float circleX, circleY;
         if (corner == FRONT_LEFT) {
-            circleX = size - circleWidth / 2;
-            circleY = circleX;
+            circleX = size - width / 2;
+            circleY = size - height / 2;
         } else if (corner == BACK_RIGHT) {
-            circleX = -1 * (circleWidth / 2);
-            circleY = circleX;
+            circleX = -1 * (width / 2);
+            circleY = -1 * (height / 2);
         } else if (corner == BACK_LEFT) {
-            circleX = size - circleWidth / 2;
-            circleY = -1 * (circleWidth / 2);
+            circleX = size - width / 2;
+            circleY = -1 * (height / 2);
         } else {
-            circleY = size - circleWidth / 2;
-            circleX = -1 * (circleWidth / 2);
+            circleX = -1 * (width / 2);
+            circleY = size - height / 2;
         }
-        PShape circle = createShape(PConstants.ELLIPSE, circleX, circleY, circleWidth, circleWidth);
+        PShape circle = createShape(PConstants.ELLIPSE, circleX, circleY, width, height);
         for (int i = 1; i < circle.getVertexCount(); i++) {
             PVector vertex = circle.getVertex(i);
             float x = vertex.x;
