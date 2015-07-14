@@ -2,7 +2,6 @@ package com.daveclay.processing.kinect.api.stage;
 
 import com.daveclay.processing.api.ColorUtils;
 import com.daveclay.processing.api.HUD;
-import com.daveclay.processing.api.StageRect;
 import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.api.User;
 import com.daveclay.processing.kinect.bodylocator.BodyLocatorListener;
@@ -46,11 +45,6 @@ public class StageMonitor {
     private float realWorldDepth;
     private float centerRadius;
     private PVector center;
-
-    private StageRect frontLeft;
-    private StageRect frontRight;
-    private StageRect backLeft;
-    private StageRect backRight;
 
     private class UserPosition {
         public final User user;
@@ -128,15 +122,10 @@ public class StageMonitor {
         canvas.stroke(255, 255, 255);
         canvas.strokeWeight(2);
 
-        frontLeft = new StageRect(canvas, StageRect.FRONT_LEFT);
-        frontRight = new StageRect(canvas, StageRect.FRONT_RIGHT);
-        backLeft = new StageRect(canvas, StageRect.BACK_LEFT);
-        backRight = new StageRect(canvas, StageRect.BACK_RIGHT);
-
-        drawMappedZone(leftFrontZone, frontLeft);
-        drawMappedZone(rightFrontZone, frontRight);
-        drawMappedZone(leftBackZone, backLeft);
-        drawMappedZone(rightBackZone, backRight);
+        drawMappedZone(leftFrontZone);
+        drawMappedZone(rightFrontZone);
+        drawMappedZone(leftBackZone);
+        drawMappedZone(rightBackZone);
         drawCenterZone();
 
         currentUserPositions.forEach(this::drawPosition);
@@ -170,7 +159,7 @@ public class StageMonitor {
         currentCanvas.ellipse(mappedCenterX, mappedCenterZ, mappedHorizontalCenterRadius, mappedVerticalCenterRadius);
     }
 
-    public void drawMappedZone(Stage.RectStageZone stageZone, StageRect stageRect) {
+    public void drawMappedZone(Stage.RectStageZone stageZone) {
         PVector leftBottomFront = stageZone.getLeftBottomFront();
 
         float mappedX = min(halfWidth,
@@ -180,18 +169,15 @@ public class StageMonitor {
 
         float mappedWidth = min(halfWidth,
                 map(stageZone.getWidth(), 0, realWorldWidth, 0, width));
+        float mappedDepth = min(halfHeight,
+                map(stageZone.getDepth(), 0, realWorldDepth, 0, height));
 
         setFill(stageZone);
-        currentCanvas.pushMatrix();
-        currentCanvas.translate(mappedX, mappedY);
-        stageRect.size(max(mappedWidth, halfWidth));
-        float mappedHorizontalCenterRadius = min(
-                width,
-                map(centerRadius, 0, realWorldWidth, 0, width) * 2);
-        stageRect.intersect(mappedHorizontalCenterRadius);
-        stageRect.draw();
-
-        currentCanvas.popMatrix();
+        currentCanvas.rect(
+                mappedX,
+                mappedY,
+                max(mappedWidth, halfWidth),
+                max(mappedDepth, halfHeight));
     }
 
     void setFill(Stage.StageZone stageZone) {
