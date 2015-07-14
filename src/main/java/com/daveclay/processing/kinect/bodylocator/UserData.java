@@ -1,6 +1,7 @@
 package com.daveclay.processing.kinect.bodylocator;
 
 import KinectPV2.KinectPV2;
+import com.daveclay.processing.api.ColorUtils;
 import com.daveclay.processing.api.Drawing;
 import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.api.VectorMath;
@@ -80,6 +81,11 @@ public class UserData {
                 line(leftHandPosition2d.x, leftHandPosition2d.y, rightHandPosition2d.x, rightHandPosition2d.y);
                 leftHandBox.drawAt(leftHandPosition2d);
                 rightHandBox.drawAt(rightHandPosition2d);
+
+                fill(ColorUtils.addAlpha(user.getColor(), .5f));
+                PVector location = user.getJointPosition2D(KinectPV2.JointType_Head);
+                ellipse(location.x, location.y + 70, 100, 100); // shrug, just above the head.
+
                 popMatrix();
 
                 if (drawGestureRecording || drawGestureRecognizedState > 0) {

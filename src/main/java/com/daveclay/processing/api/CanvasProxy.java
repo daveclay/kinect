@@ -79,6 +79,10 @@ public interface CanvasProxy {
         getCanvas().stroke(v1, v2, v3, alpha);
     }
 
+    default void fill(int color) {
+        getCanvas().fill(color);
+    }
+
     default void fill(float v1, float v2, float v3) {
         getCanvas().fill(v1, v2, v3);
     }
