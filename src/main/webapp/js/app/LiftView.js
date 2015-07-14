@@ -17,7 +17,7 @@ define(function (require) {
 
     return GestureAwareView.extend({
         el: '#stage',
-
+        currentIndexData: null,
         updateItemsAtCurrentPosition: function() {
             var indexData = this.items[this.currentIndex];
             if (!indexData.item) {
@@ -25,7 +25,9 @@ define(function (require) {
                 this.$el.append(newItem.element);
                 indexData.item = newItem;
             }
-            if (this.isViewerInBounds()) {
+            if (this.isViewerInBounds() &&
+                (this.currentIndexData == null || this.currentIndex != this.currentIndexData.index)) {
+                this.currentIndexData = indexData;
                 var item = indexData.item;
                 item.enter();
             }

@@ -35,7 +35,7 @@ define(function (require) {
             }
             this.enterTween.kill();
             this.enterTween.eventCallback("onComplete", null);
-            this.exitTwean = this.options.exit(this);
+            this.exitTween = this.options.exit(this);
         }
     })
 });
