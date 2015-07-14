@@ -13,7 +13,9 @@ define(function (require) {
     var itemOptions = {
         NUMBER_OF_ITEMS: 25,
         template: function(item) {
-            return "<h1>Statistics #" + item.index + "</h1>"
+            return "<h3>Statistics #" + item.index + "</h3><div class=\"info-text\">" +
+                "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc." +
+                "</div>";
         },
 
         initial: function(item) {
@@ -25,30 +27,32 @@ define(function (require) {
         },
 
         showText: function(item) {
-            item.element.append("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.");
-            //item.element.append(item.index);
-            //item.expandAnimation.eventCallback("onComplete", null);
+            var textElem = item.element.find(".info-text");
+            item.textTween = TweenLite.to(textElem[0],.5, {
+                opacity: 1
+            });
         },
 
         scheduleExpand: function(item) {
             item.enterTween.eventCallback("onComplete", null);
-            item.expandAnimation = TweenLite.to(item.element[0], .75, {
+            item.expandTween = TweenLite.to(item.element[0], .75, {
                 width: 400,
                 onComplete: function() {
-                    item.expandAnimation.eventCallback("onComplete", null);
+                    item.expandTween.eventCallback("onComplete", null);
                     this.showText(item);
                 }.bind(this)
             }).delay(1);
         },
 
         enter: function(item) {
-            var color = Colors.HSVtoRGB(item.index / 25, 1, 1);
-            var cssColor = "rgba(" + color.r + ", " + color.g + ", " + color.b + ")";
+            var backgroundColor = Colors.cssHSV(item.index / 25, 1, 1, 1);
+            var color = Colors.cssHSV((this.NUMBER_OF_ITEMS - item.index) / 15, 1, .25);
 
             return TweenLite.to(item.element[0], 2, {
                 alpha: 1,
                 top: 0,
-                backgroundColor: cssColor,
+                backgroundColor: backgroundColor,
+                color: color,
                 onComplete: function() {
                     this.scheduleExpand(item);
                     item.enterComplete = true;
@@ -57,7 +61,28 @@ define(function (require) {
         },
 
         exit: function(item) {
-            item.expandAnimation.kill();
+            item.expandTween.kill();
+
+            var reverseExpand = function() {
+                item.expandTween.eventCallback("onReverseComplete", function () {
+                    this.goAway(item);
+                }.bind(this));
+                item.expandTween.reverse();
+            }.bind(this);
+
+            if (item.textTween && item.textTween.progress() > 0) {
+                item.textTween.eventCallback("onReverseComplete", function () {
+                    reverseExpand();
+                }.bind(this));
+                item.textTween.reverse();
+            } else if (item.expandTween && item.expandTween.progress() > 0) {
+                reverseExpand();
+            } else {
+                this.goAway(item);
+            }
+        },
+
+        goAway: function(item) {
             var index = item.index;
             // 0 <= h, s, v <= 1
             var color = Colors.HSVtoRGB(index / 255, 1, 1);

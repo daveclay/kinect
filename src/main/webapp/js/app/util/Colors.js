@@ -1,6 +1,18 @@
 define(function (require) {
 
-    return {
+    var Colors = {
+        cssColor: function(color, alpha) {
+            var css = "rgba(" + color.r + ", " + color.g + ", " + color.b;
+            if (alpha) {
+                css += ", " + alpha;
+            }
+            return css + ")";
+        },
+
+        cssHSV: function(h, s, v, alpha) {
+            return Colors.cssColor(Colors.HSVtoRGB(h, s, v), alpha);
+        },
+
         /* accepts parameters
          * r  Object = {r:x, g:y, b:z}
          * OR
@@ -83,4 +95,6 @@ define(function (require) {
             };
         }
     };
+
+    return Colors;
 });
