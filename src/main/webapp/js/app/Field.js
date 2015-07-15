@@ -36,10 +36,9 @@ define(function (require) {
         scheduleExpand: function(item) {
             item.enterTween.eventCallback("onComplete", null);
 
-
             //  [ x, lower left corner, upper right corner, X, X, X, lower right corner, X, X]
             var clipPath1 = [0, 100, 0, 0, 100, 0, 100, 100, 100];
-            var clipPath2 = [0, 100, 10, 0, 100, 0, 80, 100, 400];
+            var clipPath2 = [0, 100, 2, 0, 100, 0, 80, 100, 400];
 
             clipPath2.onUpdate = function() {
                 TweenMax.set(item.element[0], {
@@ -51,13 +50,13 @@ define(function (require) {
             }.bind(this);
 
             item.expandTween = new TimelineLite({
-                ease: Power4.easeInOut,
+                ease: Power2.easeInOut,
                 onComplete: function () {
                     item.expandTween.eventCallback("onComplete", null);
                     this.showText(item);
                 }.bind(this)
             });
-            item.expandTween.to(clipPath1, .75, clipPath2).delay(.25);
+            item.expandTween.to(clipPath1, .3, clipPath2).delay(.25);
         },
 
         enter: function(item) {
