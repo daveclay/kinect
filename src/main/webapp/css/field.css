@@ -36,14 +36,14 @@
 
 .item {
     -webkit-clip-path: polygon(0% 0%, 100% 0, 100% 100%, 0% 100%);
-    width: 100px;
+    width: 120px;
     height: 50px;
     color: white;
     background-color: rgba(100, 180, 163, 129);
-    padding: 3px;
+    padding-left: 20px;
+    padding-right: 40px;
     position: absolute;
     opacity: 0;
     font-family: HelveticaNeue-Light;
-    font-size: 11px;
 }
 
