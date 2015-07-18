@@ -22,7 +22,7 @@ public class deJong extends PApplet {
     int stepCounter;
 
     public void setup() {
-        size(640, 640);
+        size(1400, 1000);
         noFill();
         smooth();
         colorMode(HSB, 255);
@@ -38,7 +38,7 @@ public class deJong extends PApplet {
                 return;
             }
             dj.incrementalupdate();
-            image(dj.pi, 0, 0, width, height);
+            image(dj.image, 0, 0, width, height);
         }
     }
 
@@ -52,7 +52,7 @@ public class deJong extends PApplet {
     }
 
     class deJongAttractor {
-        PImage pi;
+        PImage image;
         float pa, pb, pc, pd, newx, newy, oldx, oldy, logmaxd;
         int IMAGE_SIZE = width;
         int maxdense = 0;
@@ -137,10 +137,10 @@ public class deJong extends PApplet {
 
         PImage plot(int factor, boolean clear) {
             //Plot image from density array
-            if (clear) {
-                pi = createImage(IMAGE_SIZE, IMAGE_SIZE, RGB);
+            if (image == null) {
+                image = createImage(IMAGE_SIZE, IMAGE_SIZE, RGB);
             }
-            pi.loadPixels();
+            image.loadPixels();
             for (int i = 0; i < IMAGE_SIZE; i++) {
                 for (int j = 0; j < IMAGE_SIZE; j++) {
                     if (density[i][j] > 0) {
@@ -148,14 +148,14 @@ public class deJong extends PApplet {
                         float mysat = map(log(density[i][j]), 0, logmaxd, 128, 0);
                         float mybright = map(log(density[i][j]), 0, logmaxd, 0, 255) + factor;
                         int newc = color(myhue, mysat, mybright);
-                        int oldc = pi.pixels[i * IMAGE_SIZE + j];
+                        int oldc = image.pixels[i * IMAGE_SIZE + j];
                         newc = blendColor(newc, oldc, SOFT_LIGHT);
-                        pi.pixels[i * IMAGE_SIZE + j] = newc;
+                        image.pixels[i * IMAGE_SIZE + j] = newc;
                     }
                 }
             }
-            pi.updatePixels();
-            return pi;
+            image.updatePixels();
+            return image;
         }
 
     }
