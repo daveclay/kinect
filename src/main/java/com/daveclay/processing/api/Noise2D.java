@@ -8,6 +8,7 @@ public class Noise2D {
     float baseCoordinate;
     float tick;
     float rate = .00001f;
+    float scale = 1f;
 
     public Noise2D(PApplet pApplet, float rate) {
         this(pApplet, rate, pApplet.random(10), pApplet.random(10));
@@ -24,8 +25,16 @@ public class Noise2D {
         return new Noise2D(pApplet, rate, baseCoordinate + relatedAmount, tick);
     }
 
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
+
     public float next() {
         tick += rate;
-        return pApplet.noise(baseCoordinate, tick);
+        return pApplet.noise(baseCoordinate, tick) * scale;
     }
 }

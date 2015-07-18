@@ -120,7 +120,7 @@ public class Tubish extends PApplet {
 
     public void makeBezierForTube() {
         points.add(new PVector(xControlPoint(), yControlPoint(), zControlPoint()));
-        if (points.size() > 300) {
+        if (points.size() > 900) {
             points.remove(0);
         }
         PVector[] array = points.toArray(new PVector[points.size()]);
