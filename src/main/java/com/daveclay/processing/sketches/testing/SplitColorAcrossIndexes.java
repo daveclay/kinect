@@ -1,4 +1,4 @@
-package com.daveclay.processing.sketches;
+package com.daveclay.processing.sketches.testing;
 
 import com.daveclay.processing.api.SketchRunner;
 import processing.core.PApplet;
