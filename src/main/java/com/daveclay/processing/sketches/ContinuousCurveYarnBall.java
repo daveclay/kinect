@@ -32,6 +32,7 @@ public class ContinuousCurveYarnBall extends PApplet {
         yControlPointNoise.setScale(1.9f);
         zControlPointNoise.setScale(1.3f);
         lastAnchorPoint = nextPoint();
+        frameRate(1000);
     }
 
     void makeTube() {
@@ -62,7 +63,10 @@ public class ContinuousCurveYarnBall extends PApplet {
     }
 
     public void draw() {
-        makeTube();
+        for (int i = 0; i < 3; i++) {
+            makeTube();
+            redraw();
+        }
         glitchP5.run();
     }
 
