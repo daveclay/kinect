@@ -5,27 +5,27 @@ import processing.core.PApplet;
 public class Noise2D {
 
     private final PApplet pApplet;
-    float baseCoordinate;
-    float tick;
-    float rate = .00001f;
+    double baseCoordinate;
+    double tick;
+    double rate = .00001f;
     float scale = 1f;
 
-    public Noise2D(PApplet pApplet, float rate) {
+    public Noise2D(PApplet pApplet, double rate) {
         this(pApplet, rate, pApplet.random(10), pApplet.random(10));
     }
 
-    public Noise2D(PApplet pApplet, float rate, float baseCoordinate, float tick) {
+    public Noise2D(PApplet pApplet, double rate, double baseCoordinate, double tick) {
         this.pApplet = pApplet;
         this.baseCoordinate = baseCoordinate;
         this.rate = rate;
         this.tick = tick;
     }
 
-    public Noise2D newRelated(float relatedAmount) {
+    public Noise2D newRelated(double relatedAmount) {
         return new Noise2D(pApplet, rate, baseCoordinate + relatedAmount, tick);
     }
 
-    public void setRate(float rate) {
+    public void setRate(double rate) {
         this.rate = rate;
     }
 
@@ -34,7 +34,8 @@ public class Noise2D {
     }
 
     public float next() {
+        // at 2048, adding .00001 doesn't change 2048. Because doubles.
         tick += rate;
-        return pApplet.noise(baseCoordinate, tick) * scale;
+        return pApplet.noise((float)baseCoordinate, (float)tick, .0321f) * scale;
     }
 }

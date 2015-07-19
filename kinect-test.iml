@@ -34,5 +34,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-all:1.1" level="project" />
     <orderEntry type="library" name="glitchP5" level="application" />
+    <orderEntry type="library" name="gstreamer-java" level="application" />
   </component>
 </module>
