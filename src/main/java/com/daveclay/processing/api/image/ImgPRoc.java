@@ -53,7 +53,7 @@ public class ImgProc {
     public void simpleBlur() {
         pApplet.loadPixels();
         int[] tempFrame = new int[width * height];
-        blur(pApplet.pixels, tempFrame, width, height);
+        blur3x3(pApplet.pixels, tempFrame, width, height);
         PApplet.arraycopy(tempFrame, pApplet.pixels);
         pApplet.updatePixels();
     }
@@ -71,7 +71,7 @@ public class ImgProc {
         //imgProc.scaleBrightness(tempFrame, tempFrame, width, height, 0.99f);
     }
 
-    public void blur(int[] src, int[] dst, int w, int h) {
+    public void blur3x3(int[] src, int[] dst, int w, int h) {
         int c;
         int a;
         int r;
@@ -96,6 +96,37 @@ public class ImgProc {
                 r /= 9;
                 g /= 9;
                 b /= 9;
+                dst[x + y * w] = (a << 24) | (r << 16) | (g << 8) | b;
+            }
+        }
+    }
+
+    public void blur(int[] src, int[] dst, int w, int h) {
+        int size = 9;
+        int right = (int) Math.floor(size / 2);
+        int left = -1 * right;
+        int divisor = size * size;
+        int c, a, r, g, b;
+
+        for (int y = right; y < h - right; y++) {
+            for (int x = right; x < w - right; x++) {
+                a = 0;
+                r = 0;
+                g = 0;
+                b = 0;
+                for (int yb = left; yb <= right; yb++) { // 3 iters: -1, 0, 1
+                    for (int xb = left; xb <= right; xb++) { // 3 iters: -1, 0, 1
+                        c = src[(x + xb) + (y - yb) * w];
+                        a += (c >> 24) & 0xFF;
+                        r += (c >> 16) & 0xFF;
+                        g += (c >> 8) & 0xFF;
+                        b += (c) & 0xFF;
+                    }
+                }
+                a /= divisor;
+                r /= divisor;
+                g /= divisor;
+                b /= divisor;
                 dst[x + y * w] = (a << 24) | (r << 16) | (g << 8) | b;
             }
         }
