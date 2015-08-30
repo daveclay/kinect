@@ -7,18 +7,21 @@ public class BlurProc implements PixelsProc {
     int amount = 3;
     int width;
     int height;
+    int right;
+    int left;
+    int divisor;
+    int c, a, r, g, b;
 
     public BlurProc(PApplet canvas, int amount) {
         this.height = canvas.height;
         this.width = canvas.width;
         this.amount = amount;
+        right = (int) Math.floor(amount / 2);
+        left = -1 * right;
+        divisor = amount * amount;
     }
 
     public void process(Pixels src, Pixels dest, int x, int y) {
-        int right = (int) Math.floor(amount / 2);
-        int left = -1 * right;
-        int divisor = amount * amount;
-        int c, a, r, g, b;
         if (y < right || x < right || y > (height - right) || x > (width - right)) {
             return;
         }

@@ -34,13 +34,13 @@ public class CPUDesigner extends PApplet {
         final int[] last = new int[] { 0 };
         patchSeq.forEach((i) -> {
             if (i != 0) {
-                int color = cnoise.nextColor(70);
+                int color = cnoise.nextColor(140);
                 fill(color);
                 stroke(0, 20);
                 int o = last[0];
                 int size = i - o;
                 pushMatrix();
-                translate((width / 2) - random(width), (height / 2) - random(height), -1 * random(1000) - 500);
+                translate((width / 2) - random(width), (height / 2) - random(height), -1 * random(1400) - 600);
                 box(size);
                 fill(0, 200);
                 noStroke();

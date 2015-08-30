@@ -27,8 +27,8 @@ public class LiveVideoDriftThreshold extends PApplet {
         video.start();
 
         simpleProcessPixels = new SimpleProcessPixels(this);
-        //simpleProcessPixels.addPixelsProc(new BlurProc(this, 2));
         simpleProcessPixels.addPixelsProc(new VideoDriftPixelsProc(this, video));
+        //simpleProcessPixels.addPixelsProc(new BlurProc(this, 15));
 
         background(0);
         /*
@@ -68,8 +68,16 @@ public class LiveVideoDriftThreshold extends PApplet {
         @Override
         public void process(Pixels src, Pixels dest, int i, int j) {
             int newColor = video.get(i, j);
+            int threshold = 128;
+            float drift = ((newColor >> 16 & 0xff) > threshold ||
+                    (newColor >> 8 & 0xff) > threshold ||
+                    (newColor & 0xff) > threshold) ? .1f : .02f;
+
+
             int old = src.get(i, j);
-            int c = lerpColor(old, newColor, .02f);
+
+            int c = lerpColor(old, newColor, drift);
+
             int red = c >> 16 & 0xff;
             int green = c >> 8 & 0xff;
             int blue = c & 0xff;

@@ -7,12 +7,8 @@ import peasy.PeasyCam;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
-import processing.core.PVector;
-import processing.opengl.*;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Peter de Jong attractor applet by Thor Fr&#248;lich.<br>
@@ -21,10 +17,10 @@ import java.util.List;
  * Release mouse button to render attractor in high quality.
  */
 
-public class deJongRealtime extends PApplet {
+public class CityOfDeJongStatic extends PApplet {
 
     public static void main(String[] args) {
-        SketchRunner.run(new deJongRealtime());
+        SketchRunner.run(new CityOfDeJongStatic());
     }
 
     private PeasyCam cam;
@@ -51,28 +47,12 @@ public class deJongRealtime extends PApplet {
 
         cam = new PeasyCam(this, 200);
         cam.setFreeRotationMode();
+        plot();
     }
 
     public void draw() {
         background(0);
         plot();
-    }
-
-    public void plot() {
-        for (int i = 0; i < 4 * 10000; i++) {
-            newx = (((sin(pa * oldy) - cos(pb * oldx)) * imageWidth) + imageWidth /2);
-            newy = (((sin(pc * oldx) - cos(pd * oldy)) * imageWidth) + imageWidth /2);
-            if ((newx > 0) && (newx < imageWidth) && (newy > 0) && (newy < imageWidth) ) {
-                int hi = pointsImage[(int)newx][(int)newy];
-                if (hi > maxdensity) {
-                    maxdensity = hi;
-                }
-                pointsImage[(int)newx][(int)newy] = ++hi;
-            }
-            oldx = newx;
-            oldy = newy;
-        }
-
         noLights();
         for (int i = 0; i < pointsImageSize; i += 10) {
             int x = i / pointsImage.length;
@@ -113,6 +93,21 @@ public class deJongRealtime extends PApplet {
         pd = 0.008024001f;
     }
 
+    public void plot() {
+        for (int i = 0; i < 4 * 10000; i++) {
+            newx = (((sin(pa * oldy) - cos(pb * oldx)) * imageWidth) + imageWidth /2);
+            newy = (((sin(pc * oldx) - cos(pd * oldy)) * imageWidth) + imageWidth /2);
+            if ((newx > 0) && (newx < imageWidth) && (newy > 0) && (newy < imageWidth) ) {
+                int hi = pointsImage[(int)newx][(int)newy];
+                if (hi > maxdensity) {
+                    maxdensity = hi;
+                }
+                pointsImage[(int)newx][(int)newy] = ++hi;
+            }
+            oldx = newx;
+            oldy = newy;
+        }
+    }
 
     class deJongAttractor {
         PImage image;
