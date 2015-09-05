@@ -1,4 +1,4 @@
-package com.daveclay.processing.openprocessing;
+package com.daveclay.processing.sketches;
 
 import com.daveclay.processing.api.*;
 import peasy.PeasyCam;

@@ -1,11 +1,9 @@
 package com.daveclay.processing.api;
 
-import com.daveclay.processing.kinect.api.FloatValueMeasurement;
 import processing.core.PApplet;
 import processing.core.PVector;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

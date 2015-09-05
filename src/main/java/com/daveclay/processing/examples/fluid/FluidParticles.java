@@ -3,7 +3,7 @@ package com.daveclay.processing.examples.fluid;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.image.ImgProc;
-import com.daveclay.processing.kinect.api.FloatValueMeasurement;
+import com.daveclay.processing.api.FloatValueMeasurement;
 import processing.core.PApplet;
 
 public class FluidParticles extends PApplet {
