@@ -1,10 +1,7 @@
 package com.daveclay.processing.kinect.bodylocator;
 
 import KinectPV2.KinectPV2;
-import com.daveclay.processing.api.FrameExporter;
-import com.daveclay.processing.api.HUD;
-import com.daveclay.processing.api.LogSketch;
-import com.daveclay.processing.api.SketchRunner;
+import com.daveclay.processing.api.*;
 import com.daveclay.processing.kinect.api.*;
 import processing.core.PVector;
 

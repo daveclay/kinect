@@ -1,11 +1,6 @@
 package com.daveclay.processing.api;
 
-import com.daveclay.processing.kinect.api.FloatValueMeasurement;
 import processing.core.PApplet;
-import processing.core.PVector;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class LogSketch extends PApplet {
 

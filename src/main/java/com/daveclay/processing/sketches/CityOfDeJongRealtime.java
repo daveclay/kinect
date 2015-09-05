@@ -1,4 +1,4 @@
-package com.daveclay.processing.openprocessing;/* OpenProcessing Tweak of *@*http://www.openprocessing.org/sketch/2097*@* */
+package com.daveclay.processing.sketches;/* OpenProcessing Tweak of *@*http://www.openprocessing.org/sketch/2097*@* */
 /* !do not delete the line above, required for linking your tweak if you upload again */
 
 import com.daveclay.processing.api.ColorUtils;

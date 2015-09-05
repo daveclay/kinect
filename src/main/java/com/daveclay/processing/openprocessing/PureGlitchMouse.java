@@ -31,11 +31,13 @@ public class PureGlitchMouse extends PApplet {
 
     int i = 0;
     public void draw() {
-        textSize(48);
+        textSize(18);
+        imgProc.simpleBlur();
+        fill(120);
         text("AFT" + ((int)random(9)) + "R", 20, 60);
-        int x = 0, y = 0;
+        int x, y;
         for(int i = 0; i < w*h; i += patch) {
-            x = (this.x = i / w) ^ (int)(xnoise.next() * w);
+            x = (this.x = i / w) | (int)(xnoise.next() * w);
             y = (this.y = i % h) ^ (int)(ynoise.next() * w);
 
             for (int j = 0; j < patch; j++) {
@@ -47,7 +49,6 @@ public class PureGlitchMouse extends PApplet {
                 }
             }
         }
-        //imgProc.simpleBlur();
         // textSize(48);
         // text("AFT" + random(9) + "R", 20, 60);
     }
