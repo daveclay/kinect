@@ -43,30 +43,25 @@ public class ImgProc {
         pApplet.updatePixels();
     }
 
-    public void bullshitBlur() {
+    public BlurResult simpleBlur() {
         pApplet.loadPixels();
-        int[] tempFrame = new int[width * height];
-        otherFastBlur(pApplet.pixels, tempFrame);
-        PApplet.arraycopy(tempFrame, pApplet.pixels);
+        BlurResult result = simpleBlur(pApplet.pixels, pApplet.pixels, pApplet.width, pApplet.height);
         pApplet.updatePixels();
+        return result;
     }
 
-    public void simpleBlur() {
-        pApplet.loadPixels();
-        simpleBlur(pApplet.pixels, pApplet.pixels, pApplet.width, pApplet.height);
-        pApplet.updatePixels();
-    }
-
-    public void simpleBlur(PImage image) {
+    public BlurResult simpleBlur(PImage image) {
         image.loadPixels();
-        simpleBlur(image.pixels, image.pixels, image.width, image.height);
+        BlurResult result = simpleBlur(image.pixels, image.pixels, image.width, image.height);
         image.updatePixels();
+        return result;
     }
 
-    public void simpleBlur(int[] src, int[] dest, int width, int height) {
+    public BlurResult simpleBlur(int[] src, int[] dest, int width, int height) {
         int[] tempFrame = new int[width * height];
-        blur3x3(src, tempFrame, width, height);
+        BlurResult result = blur3x3(src, tempFrame, width, height);
         PApplet.arraycopy(tempFrame, dest);
+        return result;
     }
 
     public void simpleBrightness(float scale) {
@@ -77,12 +72,27 @@ public class ImgProc {
         pApplet.updatePixels();
     }
 
-    public void blur() {
-        blur(prevFrame, tempFrame, width, height);
+    public BlurResult blur() {
+        return blur(prevFrame, tempFrame, width, height);
         //imgProc.scaleBrightness(tempFrame, tempFrame, width, height, 0.99f);
     }
 
-    public static void blur3x3(int[] src, int[] dst, int w, int h) {
+    public static class BlurResult {
+        public boolean allBlack = true;
+        public boolean allWhite = true;
+
+        void check(int r, int g, int b) {
+            if (allBlack && r > 0 && g > 0 && b > 0) {
+                allBlack = false;
+            } else if (allWhite && r == 255 && g == 255 && b == 255) {
+                allWhite = false;
+            }
+
+        }
+    }
+
+    public static BlurResult blur3x3(int[] src, int[] dst, int w, int h) {
+        BlurResult blurResult = new BlurResult();
         int c;
         int a;
         int r;
@@ -107,12 +117,17 @@ public class ImgProc {
                 r /= 9;
                 g /= 9;
                 b /= 9;
+
+                blurResult.check(r, g, b);
                 dst[x + y * w] = (a << 24) | (r << 16) | (g << 8) | b;
             }
         }
+
+        return blurResult;
     }
 
-    public static void blur(int[] src, int[] dst, int w, int h) {
+    public static BlurResult blur(int[] src, int[] dst, int w, int h) {
+        BlurResult blurResult = new BlurResult();
         int size = 9;
         int right = (int) Math.floor(size / 2);
         int left = -1 * right;
@@ -138,9 +153,13 @@ public class ImgProc {
                 r /= divisor;
                 g /= divisor;
                 b /= divisor;
+
+                blurResult.check(r, g, b);
+
                 dst[x + y * w] = (a << 24) | (r << 16) | (g << 8) | b;
             }
         }
+        return blurResult;
     }
 
     //you must be in RGB colorModel

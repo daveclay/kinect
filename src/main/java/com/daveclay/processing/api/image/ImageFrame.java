@@ -7,6 +7,7 @@ public class ImageFrame implements Pixels {
 
     final PImage img;
     public final PApplet canvas;
+    ImgProc imgProc;
     int x;
     int y;
     int width;
@@ -22,6 +23,11 @@ public class ImageFrame implements Pixels {
         this.width = img.width;
         this.height = img.height;
         this.canvas = canvas;
+        this.imgProc = new ImgProc(canvas);
+    }
+
+    public ImgProc.BlurResult blur() {
+        return imgProc.simpleBlur(img);
     }
 
     public void draw() {
