@@ -1,6 +1,7 @@
 package com.daveclay.processing.api.image;
 
 import processing.core.PApplet;
+import processing.core.PImage;
 
 public class ImgProc {
 
@@ -52,10 +53,20 @@ public class ImgProc {
 
     public void simpleBlur() {
         pApplet.loadPixels();
-        int[] tempFrame = new int[width * height];
-        blur3x3(pApplet.pixels, tempFrame, width, height);
-        PApplet.arraycopy(tempFrame, pApplet.pixels);
+        simpleBlur(pApplet.pixels, pApplet.pixels, pApplet.width, pApplet.height);
         pApplet.updatePixels();
+    }
+
+    public void simpleBlur(PImage image) {
+        image.loadPixels();
+        simpleBlur(image.pixels, image.pixels, image.width, image.height);
+        image.updatePixels();
+    }
+
+    public void simpleBlur(int[] src, int[] dest, int width, int height) {
+        int[] tempFrame = new int[width * height];
+        blur3x3(src, tempFrame, width, height);
+        PApplet.arraycopy(tempFrame, dest);
     }
 
     public void simpleBrightness(float scale) {
@@ -71,7 +82,7 @@ public class ImgProc {
         //imgProc.scaleBrightness(tempFrame, tempFrame, width, height, 0.99f);
     }
 
-    public void blur3x3(int[] src, int[] dst, int w, int h) {
+    public static void blur3x3(int[] src, int[] dst, int w, int h) {
         int c;
         int a;
         int r;
@@ -101,7 +112,7 @@ public class ImgProc {
         }
     }
 
-    public void blur(int[] src, int[] dst, int w, int h) {
+    public static void blur(int[] src, int[] dst, int w, int h) {
         int size = 9;
         int right = (int) Math.floor(size / 2);
         int left = -1 * right;

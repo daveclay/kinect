@@ -26,7 +26,7 @@ public class LiveVideoDriftThreshold extends PApplet {
         video = new Capture(this, width, height);
         video.start();
 
-        simpleProcessPixels = new SimpleProcessPixels(this);
+        simpleProcessPixels = SimpleProcessPixels.create(this);
         simpleProcessPixels.addPixelsProc(new VideoDriftPixelsProc(this, video));
         //simpleProcessPixels.addPixelsProc(new BlurProc(this, 15));
 
@@ -45,7 +45,7 @@ public class LiveVideoDriftThreshold extends PApplet {
             video.read();
         }
         blendMode(SCREEN);
-        simpleProcessPixels.draw();
+        simpleProcessPixels.process();
         /*
         textSize(32);
         fill(10);

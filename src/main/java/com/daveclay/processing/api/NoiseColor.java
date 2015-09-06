@@ -2,7 +2,7 @@ package com.daveclay.processing.api;
 
 import processing.core.PApplet;
 
-import java.awt.*;
+import static processing.core.PApplet.map;
 
 public class NoiseColor {
 
@@ -24,8 +24,16 @@ public class NoiseColor {
     Noise2D rNoise;
     Noise2D gNoise;
     Noise2D bNoise;
+    int range;
+    int rangeTop;
 
     public NoiseColor(PApplet pApplet, float rate) {
+        this(pApplet, rate, 255, 255);
+    }
+
+    public NoiseColor(PApplet pApplet, float rate, int range, int rangeTop) {
+        this.range = range;
+        this.rangeTop = rangeTop;
         rNoise = new Noise2D(pApplet, rate);
         gNoise = rNoise.newRelated(pApplet.random(2));
         bNoise = rNoise.newRelated(pApplet.random(2) + 2);
@@ -35,16 +43,20 @@ public class NoiseColor {
         return alpha << 24 | r() << 16 | g() << 8 | b();
     }
 
+    private int range(float value) {
+        return (int)map(value, 0f, 1f, rangeTop - range, range);
+    }
+
     public int r() {
-        return (int)(255 * rNoise.next());
+        return range(rNoise.next());
     }
 
     public int g() {
-        return (int)(255 * gNoise.next());
+        return range(gNoise.next());
     }
 
     public int b() {
-        return (int)(255 * bNoise.next());
+        return range(bNoise.next());
     }
 
 }
