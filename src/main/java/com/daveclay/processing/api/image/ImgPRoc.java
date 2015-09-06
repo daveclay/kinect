@@ -50,11 +50,15 @@ public class ImgProc {
         return result;
     }
 
-    public BlurResult simpleBlur(PImage image) {
+    public BlurResult simpleBlur(PImage image, PImage dest) {
         image.loadPixels();
-        BlurResult result = simpleBlur(image.pixels, image.pixels, image.width, image.height);
-        image.updatePixels();
+        BlurResult result = simpleBlur(image.pixels, dest.pixels, image.width, image.height);
+        dest.updatePixels();
         return result;
+    }
+
+    public BlurResult simpleBlur(PImage image) {
+        return simpleBlur(image, image);
     }
 
     public BlurResult simpleBlur(int[] src, int[] dest, int width, int height) {

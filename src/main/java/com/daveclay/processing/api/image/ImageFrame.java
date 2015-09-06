@@ -6,6 +6,7 @@ import processing.core.PImage;
 public class ImageFrame implements Pixels {
 
     final PImage img;
+    PImage mutableImg;
     public final PApplet canvas;
     ImgProc imgProc;
     int x;
@@ -18,6 +19,8 @@ public class ImageFrame implements Pixels {
                       int x,
                       int y) {
         this.img = img;
+        this.mutableImg = new PImage(img.width, img.height);
+        PApplet.arraycopy(img.pixels, mutableImg.pixels);
         this.x = x;
         this.y = y;
         this.width = img.width;
@@ -27,11 +30,11 @@ public class ImageFrame implements Pixels {
     }
 
     public ImgProc.BlurResult blur() {
-        return imgProc.simpleBlur(img);
+        return imgProc.simpleBlur(mutableImg);
     }
 
     public void draw() {
-        canvas.image(img, x, y);
+        canvas.image(mutableImg, x, y);
     }
 
     @Override
