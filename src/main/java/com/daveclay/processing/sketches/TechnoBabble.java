@@ -6,13 +6,13 @@ import com.daveclay.processing.api.NoiseColor;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.image.ImageFrame;
 import com.daveclay.processing.api.image.ImgProc;
-import com.daveclay.processing.api.image.SimpleProcessPixels;
 import org.apache.commons.lang3.StringUtils;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
 
 public class TechnoBabble extends PApplet {
+
 
     public static void main(String[] args) {
         SketchRunner.run(new TechnoBabble());
@@ -22,12 +22,18 @@ public class TechnoBabble extends PApplet {
     ImgProc imgProc;
     Info[] infos;
     ImageLib artLib;
-    GeneticGraphic geneticGraphic;
+    BlurGeneticGraphic blurGeneticGraphic;
+    GeneticID geneticID;
+    GlitchImages glitchImages;
+    ImageFrame screenOverlay;
     ImageFrame imageFrame;
-    private SimpleProcessPixels blur;
+    PFont orator23;
+    PFont orator9;
 
     public void setup() {
         size(800, 800, P2D);
+        orator9 = createFont("OratorStd", 9);
+        orator23 = createFont("OratorStd", 23);
 
         infos = new Info[] {
                 info(10, 60),
@@ -35,37 +41,94 @@ public class TechnoBabble extends PApplet {
                 info(10, 660),
         };
         artLib = ImageLib.art(this);
-        geneticGraphic = new GeneticGraphic(this);
-
+        geneticID = new GeneticID();
+        blurGeneticGraphic = new BlurGeneticGraphic(this);
+        screenOverlay = new ImageFrame(this, loadImageByName(this, "screen-lines.png"), 0, 0);
+        glitchImages = new GlitchImages(this, ImageLib.glitches(this));
         /*
         String[] fontList = PFont.list();
         for (String f : fontList) {
             System.out.println(f);
         }
         */
-        PFont font = createFont("OratorStd", 9);
-        textFont(font);
-        imageFrame = new ImageFrame(this, artLib.loadImageByName(artLib.files[3]), 10, 10);
+        imageFrame = new ImageFrame(this, loadImageByName(this, artLib.files[3]), 10, 10);
     }
 
     public void draw() {
         background(0);
-        geneticGraphic.draw();
-        geneticID();
+        blendMode(SCREEN);
+        blurGeneticGraphic.draw();
+        geneticID.draw();
         for (Info info : infos) {
-            info.tick();
+            info.draw();
+        }
+        screenOverlay.draw();
+        glitchImages.draw();
+    }
+
+    class GeneticID {
+
+        String s;
+
+        void draw() {
+            if (s == null || random(1) > .78f) {
+                next();
+            }
+
+            pushStyle();
+            textFont(orator23);
+            text(s, 10, 50);
+            popStyle();
+        }
+
+        void next() {
+            s = random(1) > .15f ? "AUX" : "ERR";
+            s += StringUtils.rightPad(Integer.toHexString(64 + (int) random(670)).toUpperCase(), 4, "X") + ".";
+            s += random(1) > .9f ? "GEN" : "RNA";
         }
     }
 
-    void geneticID() {
-        text("GENE." + StringUtils.leftPad((int) random(100) + "", 3), 10, 50);
-    }
-
-    static class GeneticGraphic extends CanvasAware {
+    static class GlitchImages extends CanvasAware {
         private final ImageLib imageLib;
         private ImageFrame imageFrame;
 
-        public GeneticGraphic(PApplet canvas) {
+        public GlitchImages(PApplet canvas, ImageLib imageLib) {
+            super(canvas);
+            this.imageLib = imageLib;
+            imageLib.loadImages();
+            next();
+        }
+
+        void draw() {
+            if (canvas.random(1) > .6f) {
+                next();
+            }
+            if (canvas.random(1) > .8f) {
+                imageFrame.draw();
+            }
+        }
+
+        void next() {
+            PImage image = imageLib.pickRandomImage();
+            float ratio = 1f;
+            if (image.width > canvas.width) {
+                ratio = (float) canvas.width / (float) image.width;
+            } else if (image.height > canvas.height) {
+                ratio = (float) canvas.height / (float) image.height;
+            }
+
+            if (ratio != 1f) {
+                image.resize((int) (image.width * ratio), (int)(image.height * ratio));
+            }
+            imageFrame = new ImageFrame(canvas, image, 0, 0);
+        }
+    }
+
+    static class BlurGeneticGraphic extends CanvasAware {
+        private final ImageLib imageLib;
+        private ImageFrame imageFrame;
+
+        public BlurGeneticGraphic(PApplet canvas) {
             super(canvas);
             imageLib = ImageLib.genetics(canvas);
             imageLib.loadImages();
@@ -232,7 +295,7 @@ public class TechnoBabble extends PApplet {
             next();
         }
 
-        void tick() {
+        void draw() {
             if (random(1) > .5f) {
                 if (position < s.length()) {
                     position++;
@@ -240,7 +303,10 @@ public class TechnoBabble extends PApplet {
                     next();
                 }
             }
+            pushStyle();
+            textFont(orator9);
             text(s.substring(0, position), x, y);
+            popStyle();
         }
 
         private void next() {
@@ -276,15 +342,19 @@ public class TechnoBabble extends PApplet {
             return images[index];
         }
 
-        PImage loadImageByName(String name) {
-            return canvas.loadImage("/Users/daveclay/work/rebel belly after video/" + name);
-        }
 
-        void loadImages() {
+        ImageLib loadImages() {
             for (int i = 0; i < files.length; i++) {
-                images[i] = loadImageByName(files[i]);
+                images[i] = loadImageByName(canvas, files[i]);
                 images[i].loadPixels();
             }
+            return this;
+        }
+
+        public static ImageLib geneticsOverlay(PApplet canvas) {
+            return new ImageLib(canvas, new String[] {
+                    "screen-lines.png"
+            });
         }
 
         public static ImageLib genetics(PApplet canvas) {
@@ -293,6 +363,10 @@ public class TechnoBabble extends PApplet {
                     "genetics-circle-2.png",
                     "genetics-circle-3.png",
                     "genetics-circle-4.png",
+                    "genetics-circle-5.png",
+                    "genetics-circle-6.png",
+                    "genetics-circle-7.png",
+                    "genetics-chart.png",
                     "genetics-column-glow.png"
             });
         }
@@ -327,7 +401,19 @@ public class TechnoBabble extends PApplet {
                     "untitled texture IV.png",
                     "within.png" });
         }
+
+        public static ImageLib glitches(PApplet canvas) {
+            return new ImageLib(canvas, new String[] {
+                    "genetics-circle-glitch-1.png",
+                    "genetics-circle-glitch-2.png",
+                    "genetics-circle-glitch-3.png",
+                    "genetics-circle-glitch-4.png",
+                    "genetics-circle-glitch-5.png"
+            });
+        }
     }
 
-
+        public static PImage loadImageByName(PApplet canvas, String name) {
+            return canvas.loadImage("/Users/daveclay/work/rebel belly after video/" + name);
+        }
 }
