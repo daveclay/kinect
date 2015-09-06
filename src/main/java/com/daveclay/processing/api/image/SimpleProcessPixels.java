@@ -6,25 +6,39 @@ import processing.core.PApplet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleProcessPixels extends Drawing {
+public class SimpleProcessPixels {
+
+    public static SimpleProcessPixels create(ImageFrame imageFrame) {
+        return new SimpleProcessPixels(imageFrame, imageFrame, imageFrame.width, imageFrame.height);
+    }
+
+    public static SimpleProcessPixels create(PApplet canvas) {
+        Pixels src;
+        Pixels dest;
+        src = dest = new PAppletPixels(canvas);
+        return new SimpleProcessPixels(src, dest, canvas.width, canvas.height);
+    }
 
     private List<PixelsProc> pixelsProcList = new ArrayList<>();
     private Pixels src;
     private Pixels dest;
+    int width;
+    int height;
 
-    public SimpleProcessPixels(PApplet canvas) {
-        super(canvas);
-        src = dest = new PAppletPixels(canvas);
+    public SimpleProcessPixels(Pixels src, Pixels dest, int width, int height) {
+        this.src = src;
+        this.dest = dest;
+        this.width = width;
+        this.height = height;
     }
 
     public void addPixelsProc(PixelsProc pixelsProc) {
         pixelsProcList.add(pixelsProc);
     }
 
-    @Override
-    public void draw() {
-        for(int i = 0; i < canvas.width; i++) {
-            for (int j = 0; j < canvas.height; j++) {
+    public void process() {
+        for(int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 process(i, j);
             }
         }

@@ -47,6 +47,10 @@ public interface CanvasProxy {
         return getCanvas().getHeight();
     }
 
+    default void noStroke() {
+        getCanvas().noStroke();
+    }
+
     default void pushMatrix() {
         getCanvas().pushMatrix();
     }
@@ -169,6 +173,36 @@ public interface CanvasProxy {
 
     static int blendColor(int c1, int c2, int mode) {
         return PApplet.blendColor(c1, c2, mode);
+    }
+
+    default void beginShape() {
+        getCanvas().beginShape();
+    }
+
+    default void curveVertex(float x, float y) {
+        getCanvas().curveVertex(x, y);
+    }
+
+    default void endShape() {
+        getCanvas().endShape();
+    }
+
+    default void roundrect(int x, int y, int w, int h, int r) {
+        float corner = w/20f;
+        float midDisp = w/1000f;
+
+        beginShape();
+        curveVertex(x+corner,y);
+        curveVertex(x+w-corner,y);
+        curveVertex(x+w+midDisp,y+h/2f);
+        curveVertex(x+w-corner,y+h);
+        curveVertex(x+corner,y+h);
+        curveVertex(x-midDisp,y+h/2f);
+
+        curveVertex(x+corner,y);
+        curveVertex(x+w-corner,y);
+        curveVertex(x+w+midDisp,y+h/2f);
+        endShape();
     }
 
 }

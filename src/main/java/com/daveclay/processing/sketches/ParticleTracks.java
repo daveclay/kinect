@@ -19,13 +19,12 @@ public class ParticleTracks extends PApplet {
 
     PeasyCam cam;
     ImgProc imgProc;
-    public Noise2D xControlPointNoise = new Noise2D(this, .01f);
-    public Noise2D yControlPointNoise = new Noise2D(this, .01f);
+    public Noise2D yControlPointNoise = new Noise2D(this, .001f);
     public Noise2D zControlPointNoise = new Noise2D(this, .01f);
-    public NoiseColor noiseColor = new NoiseColor(this, .000001f);
+    public NoiseColor noiseColor = new NoiseColor(this, .000001f, 80, 180);
     Map<Point, Integer> zPoints = new HashMap<>();
     int gridSize = 20;
-    int size = 1000;
+    int size = 3000;
 
     public void setup() {
         size(800, 800, P3D);
@@ -33,27 +32,24 @@ public class ParticleTracks extends PApplet {
         cam.setFreeRotationMode();
         zControlPointNoise.setScale(200);
         smooth();
-        background(0);
         imgProc = new ImgProc(this);
-        xControlPointNoise.next();
         yControlPointNoise.next();
     }
 
     public void draw() {
+        background(0);
         beginShape(LINES);
         for (int x = 0; x < size; x += gridSize) {
             for (int y = 0; y < size; y += gridSize) {
-                stroke(220, 220, 220, 10);
-                // x = (int) (xControlPointNoise.next() * x);
-                y = (int) (yControlPointNoise.next() * y);
+                stroke(noiseColor.nextColor(20));
+                int f = (int) (yControlPointNoise.next() * 3f);
                 zvertex(x, y);
-                zvertex(x, y + gridSize);
+                zvertex(f, y + gridSize);
                 zvertex(x + gridSize, y + gridSize);
-                zvertex(x + gridSize, y);
+                zvertex(f + gridSize, y);
             }
         }
         endShape();
-        imgProc.simpleBlur();
     }
 
     void zvertex(int x, int y) {

@@ -4,6 +4,14 @@ import processing.core.PApplet;
 
 public class BlurProc implements PixelsProc {
 
+    public static BlurProc blurCanvas(PApplet canvas, int amount) {
+        return new BlurProc(canvas.width, canvas.height, amount);
+    }
+
+    public static BlurProc blurImage(ImageFrame image, int amount) {
+        return new BlurProc(image.width, image.height, amount);
+    }
+
     int amount = 3;
     int width;
     int height;
@@ -12,9 +20,9 @@ public class BlurProc implements PixelsProc {
     int divisor;
     int c, a, r, g, b;
 
-    public BlurProc(PApplet canvas, int amount) {
-        this.height = canvas.height;
-        this.width = canvas.width;
+    public BlurProc(int width, int height, int amount) {
+        this.height = height;
+        this.width = width;
         this.amount = amount;
         right = (int) Math.floor(amount / 2);
         left = -1 * right;

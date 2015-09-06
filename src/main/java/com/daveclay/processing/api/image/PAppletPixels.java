@@ -1,9 +1,9 @@
 package com.daveclay.processing.api.image;
 
-import com.daveclay.processing.api.image.Pixels;
 import processing.core.PApplet;
 
 public class PAppletPixels implements Pixels {
+
     private final PApplet canvas;
 
     public PAppletPixels(PApplet canvas) {
