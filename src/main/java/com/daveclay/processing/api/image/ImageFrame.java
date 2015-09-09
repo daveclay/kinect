@@ -5,12 +5,13 @@ import processing.core.PImage;
 
 public class ImageFrame implements Pixels {
 
-    final PImage img;
-    PImage mutableImg;
+    public final PImage img;
+    public PImage blurImg;
+    public PImage desaturatedImg;
     public final PApplet canvas;
     ImgProc imgProc;
-    int x;
-    int y;
+    public int x;
+    public int y;
     int width;
     int height;
 
@@ -19,8 +20,8 @@ public class ImageFrame implements Pixels {
                       int x,
                       int y) {
         this.img = img;
-        this.mutableImg = new PImage(img.width, img.height);
-        PApplet.arraycopy(img.pixels, mutableImg.pixels);
+        this.blurImg = ImgProc.copy(img);
+        this.desaturatedImg = ImgProc.copy(img);
         this.x = x;
         this.y = y;
         this.width = img.width;
@@ -30,11 +31,23 @@ public class ImageFrame implements Pixels {
     }
 
     public ImgProc.BlurResult blur() {
-        return imgProc.simpleBlur(mutableImg);
+        return ImgProc.simpleBlur(blurImg);
+    }
+
+    public void desaturate() {
+        ImgProc.desaturate(desaturatedImg);
+    }
+
+    public void drawOriginal() {
+        canvas.image(img, x, y);
+    }
+
+    public void drawDesaturated() {
+        canvas.image(desaturatedImg, x, y);
     }
 
     public void draw() {
-        canvas.image(mutableImg, x, y);
+        canvas.image(blurImg, x, y);
     }
 
     @Override
