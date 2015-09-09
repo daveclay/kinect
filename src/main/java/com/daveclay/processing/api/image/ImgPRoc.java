@@ -50,18 +50,18 @@ public class ImgProc {
         return result;
     }
 
-    public BlurResult simpleBlur(PImage image, PImage dest) {
+    public static BlurResult simpleBlur(PImage image, PImage dest) {
         image.loadPixels();
         BlurResult result = simpleBlur(image.pixels, dest.pixels, image.width, image.height);
         dest.updatePixels();
         return result;
     }
 
-    public BlurResult simpleBlur(PImage image) {
+    public static BlurResult simpleBlur(PImage image) {
         return simpleBlur(image, image);
     }
 
-    public BlurResult simpleBlur(int[] src, int[] dest, int width, int height) {
+    public static BlurResult simpleBlur(int[] src, int[] dest, int width, int height) {
         int[] tempFrame = new int[width * height];
         BlurResult result = blur3x3(src, tempFrame, width, height);
         PApplet.arraycopy(tempFrame, dest);
@@ -92,6 +92,31 @@ public class ImgProc {
                 allWhite = false;
             }
 
+        }
+    }
+
+    public static void desaturate(PImage image) {
+        desaturate(image, image);
+    }
+
+    public static void desaturate(PImage image, PImage dest) {
+        image.loadPixels();
+        desaturate(image.pixels, dest.pixels, image.width, image.height);
+        dest.updatePixels();
+    }
+
+    public static void desaturate(int[] src, int [] dest, int width, int height) {
+        int c, a, r, g, b;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                c = src[x + y * width];
+                a = (c >> 24) & 0xFF;
+                r = (c >> 16) & 0xFF;
+                g = (c >> 8) & 0xFF;
+                b = (c) & 0xFF;
+                r = g = b = (r + b + g) / 3;
+                dest[x + y * width] = (a << 24) | (r << 16) | (g << 8) | b;
+            }
         }
     }
 
@@ -226,5 +251,15 @@ public class ImgProc {
                         0xFF000000;
             }
         }
+    }
+
+    public static PImage copy(PImage img) {
+        PImage copy = new PImage(img.width, img.height);
+        PApplet.arraycopy(img.pixels, copy.pixels);
+        return copy;
+    }
+
+    public static PImage loadImageByName(PApplet canvas, String name) {
+        return canvas.loadImage("/Users/daveclay/work/rebel belly after video/" + name);
     }
 }

@@ -1,6 +1,7 @@
 package com.daveclay.processing.api;
 
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PShape;
 
 public interface CanvasProxy {
@@ -205,6 +206,17 @@ public interface CanvasProxy {
         endShape();
     }
 
+    default void textFont(PFont font) {
+        getCanvas().textFont(font);
+    }
+
+    default void text(String s, float x, float y) {
+        getCanvas().text(s, x, y);
+    }
+
+    default float random(float high) {
+        return getCanvas().random(high);
+    }
 }
 
 
