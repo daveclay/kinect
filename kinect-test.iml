@@ -22,6 +22,7 @@
     <orderEntry type="library" name="gstreamer-java" level="application" />
     <orderEntry type="library" name="peasycam1" level="application" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.0" level="project" />
     <orderEntry type="library" name="Maven: org.processing:core:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:jogl-all:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.processing:gluegen-rt:2.0.3" level="project" />
@@ -38,5 +39,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-all:1.1" level="project" />
+    <orderEntry type="library" name="peasycam" level="application" />
   </component>
 </module>
