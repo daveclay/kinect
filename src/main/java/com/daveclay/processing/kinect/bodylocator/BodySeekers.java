@@ -23,7 +23,7 @@ public class BodySeekers extends UserTrackingSketch {
 
     private User user;
     private FrameExporter frameExporter;
-    private List<Vehicle> vehicles = new ArrayList<Vehicle>();
+    private List<Vehicle> vehicles = new ArrayList<>();
     private FloatValueMeasurement zValues = new FloatValueMeasurement();
     private FloatValueMeasurement hueValues = new FloatValueMeasurement();
 
@@ -57,22 +57,16 @@ public class BodySeekers extends UserTrackingSketch {
     }
 
     protected void registerEventListeners() {
-        onUserEntered(new UserEnteredHandler() {
-            @Override
-            public void userDidEnter(User user) {
-                System.out.println("HELLO User " + user.getID() + "!");
-                BodySeekers.this.user = user;
-                // BodySeek.this.frameExporter.start();
-            }
+        onUserEntered(user1 -> {
+            System.out.println("HELLO User " + user1.getID() + "!");
+            BodySeekers.this.user = user1;
+            // BodySeek.this.frameExporter.start();
         });
 
-        onUserWasLost(new UserWasLostHandler() {
-            @Override
-            public void userWasLost(User user) {
-                System.out.println("User " + user.getID() + " LOST, eh well...");
-                BodySeekers.this.user = null;
-                BodySeekers.this.frameExporter.stop();
-            }
+        onUserWasLost(user1 -> {
+            System.out.println("User " + user1.getID() + " LOST, eh well...");
+            BodySeekers.this.user = null;
+            BodySeekers.this.frameExporter.stop();
         });
     }
 
@@ -101,7 +95,9 @@ public class BodySeekers extends UserTrackingSketch {
         fill(0, 5);
         rect(0, 0, width, height);
 
-        PVector leftHip = user.getJointPosition2D(KinectPV2.JointType_HipLeft);
+        PVector leftHipPosition3d = user.getJointPosition3D(KinectPV2.JointType_HipLeft);
+        PVector leftHipPosition2d = user.getJointPosition2D(KinectPV2.JointType_HipLeft);
+        leftHipPosition2d.z = leftHipPosition3d.z;
 
         PVector leftHandPosition2d = user.getJointPosition2D(KinectPV2.JointType_HandLeft);
         leftHandPosition2d.z = user.getJointPosition3D(KinectPV2.JointType_HandLeft).z;
@@ -115,6 +111,8 @@ public class BodySeekers extends UserTrackingSketch {
 
         hud.logScreenCoords("Right Hand", rightHandPosition2d);
         hud.logScreenCoords("Left Hand", leftHandPosition2d);
+        hud.logScreenCoords("Left Hip", leftHipPosition2d);
+        hud.log("Hue", hueValues);
         hud.log("Z", zValues);
 
         // Draw an ellipse at the mouse location
@@ -134,7 +132,7 @@ public class BodySeekers extends UserTrackingSketch {
             } else if (vehicle.index % 3 == 0) {
                 vehicle.seek(rightHandPosition2d);
             } else {
-                vehicle.seek(leftHip);
+                vehicle.seek(leftHipPosition2d);
             }
             vehicle.update();
             vehicle.display();
@@ -155,11 +153,13 @@ public class BodySeekers extends UserTrackingSketch {
         PVector location;
         PVector velocity;
         PVector acceleration;
+        NoiseColor noiseColor;
         float size;
         float maxforce;    // Maximum steering force
         float maxspeed;    // Maximum speed
 
         public Vehicle(float x, float y, int index) {
+            noiseColor = new NoiseColor(BodySeekers.this, .001f);
             this.index = index;
             if (index % 2 == 0) {
                 this.r = 255;
@@ -225,6 +225,10 @@ public class BodySeekers extends UserTrackingSketch {
         void display() {
             // Draw a triangle rotated in the direction of velocity
             // float theta = velocity.heading() + PI / 2;
+            if (location.x < 0 || location.y < 0) {
+                return;
+            }
+
             float hsb[] = new float[3];
             java.awt.Color.RGBtoHSB(r, g, b, hsb);
             float hue = hsb[0] + alpha;
