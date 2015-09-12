@@ -81,17 +81,52 @@ public class ImgProc {
         //imgProc.scaleBrightness(tempFrame, tempFrame, width, height, 0.99f);
     }
 
+    public static void grayFill(PImage image, int value) {
+        image.loadPixels();
+        grayFill(image.pixels, image.width, image.height, value);
+        image.updatePixels();
+    }
+
+    public static void grayFill(int[] dest, int width, int height, int value) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                dest[x + y * width] = (255 << 24) | (value << 16) | (value << 8) | value;
+            }
+        }
+    }
+
+    public static BlurResult checkImage(PImage image) {
+        BlurResult blurResult = new BlurResult();
+        int a, r, g, b;
+        for (int y = 1; y < image.height; y++) {
+            for (int x = 1; x < image.width; x++) {
+                int c = image.get(x, y);
+                a = (c >> 24) & 0xFF;
+                r = (c >> 16) & 0xFF;
+                g = (c >> 8) & 0xFF;
+                b = (c) & 0xFF;
+                blurResult.check(r, g, b);
+            }
+        }
+        return blurResult;
+    }
+
     public static class BlurResult {
         public boolean allBlack = true;
         public boolean allWhite = true;
+        public int count;
 
         void check(int r, int g, int b) {
-            if (allBlack && r > 0 && g > 0 && b > 0) {
-                allBlack = false;
-            } else if (allWhite && r == 255 && g == 255 && b == 255) {
-                allWhite = false;
+            int value = (r + g + b) / 3;
+            if (value > 20) {
+                count++;
             }
 
+            if (allBlack && r > 0 && g > 0 && b > 0) {
+                allBlack = false;
+            } else if (allWhite && r < 255 && g < 255 && b < 255) {
+                allWhite = false;
+            }
         }
     }
 
