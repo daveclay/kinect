@@ -50,11 +50,8 @@ public class UserData {
         this.stage = stage;
         this.translation = kinectImageTranslation;
 
-        leftHandBox = new HandBox(canvas);
-        leftHandBox.color = canvas.color(255, 120, 0);
-
-        rightHandBox = new HandBox(canvas);
-        rightHandBox.color = canvas.color(0, 80, 255);
+        leftHandBox = new HandBox(canvas, canvas.color(255, 120, 0));
+        rightHandBox = new HandBox(canvas, canvas.color(0, 80, 255));
         gestureRecorder = new GestureRecorder(gestureRecognizer);
 
         gestureRecorder.onGestureRecognized(new GestureRecognizedHandler() {

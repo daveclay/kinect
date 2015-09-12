@@ -41,7 +41,7 @@ public class UserTrackingSketch extends PApplet {
         // TODO: the background image, so can take up the full screen rather than
         // TODO: be limited to just the background image size. For now, just always
         // TODO: go full screen, then optionally translation to the background image.
-        size(displayWidth, displayHeight, P2D);
+        size(displayWidth, displayHeight, OPENGL);
         //size(1920, 1080, P2D);
         kinect = new KinectPV2(this);
         sketchCallback.setup(kinect);
