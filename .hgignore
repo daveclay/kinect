@@ -1,0 +1,6 @@
+src/main/resources/recorded
+target
+.idea
+temp
+.DS_Store
+export

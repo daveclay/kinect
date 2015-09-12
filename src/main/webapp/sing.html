@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <script type="text/javascript">
+            function getUrlVars() {
+                var vars = [], hash;
+                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                for(var i = 0; i < hashes.length; i++)
+                {
+                    hash = hashes[i].split('=');
+                    vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                }
+                return vars;
+            }
+            function loadCSS(filename){
+                var fileref = document.createElement("link");
+                fileref.setAttribute("rel", "stylesheet");
+                fileref.setAttribute("type", "text/css");
+                fileref.setAttribute("href", filename);
+                document.getElementsByTagName("head")[0].appendChild(fileref);
+            }
+
+            loadCSS("css/" + getUrlVars()["app"].toLowerCase() + ".css");
+        </script>
+        <link rel="stylesheet" type="text/css" href="css/LogView.css"/>
+    </head>
+    <body>
+
+    <div id="stage">
+        <div class="item">Test.</div>
+    </div>
+
+    <div id="title">
+        <div class="content">
+            Come closer.
+        </div>
+    </div>
+
+    <div id="log">
+        <textarea id="log-data"></textarea>
+    </div>
+
+    <script data-main="js/main-sing" src="js/vendor/require.js"></script>
+
+    </body>
+</html>
