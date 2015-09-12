@@ -59,13 +59,6 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
         this.stage.addListener(listener);
     }
 
-    /*
-    @Override
-    public boolean sketchFullScreen() {
-        return true;
-    }
-    */
-
     public Stage getStage() {
         return stage;
     }
@@ -77,6 +70,7 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
                     this.listener,
                     hud,
                     stage,
+                    getKinectImageTranslation(),
                     gestureRecognizer);
             this.userDataById.put(user.getID(), userData);
         });
@@ -90,13 +84,14 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
         background(0);
         setKinectRGBImageAsBackground();
         for (UserData userData : userDataById.values()) {
-            userData.update();
+            userData.draw();
         }
         drawHUD();
     }
 
     private void drawHUD() {
         hud.log("Frame Rate", frameRate);
+        hud.log("Translation", getKinectImageTranslation());
         hud.draw(this);
         stageMonitor.draw(this);
     }

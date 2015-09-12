@@ -1,5 +1,7 @@
 package com.daveclay.processing.api;
 
+import com.daveclay.processing.kinect.api.Translation;
+import org.apache.commons.lang3.StringUtils;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -53,7 +55,7 @@ public class HUD {
     }
 
     private synchronized String round(Number value) {
-        return format.format(value);
+        return StringUtils.rightPad(format.format(value), 5);
     }
 
     public void logVector(String label, PVector vector) {
@@ -116,5 +118,9 @@ public class HUD {
 
     public void log(String key, boolean value) {
         log(key, value ? "YES" : "NO");
+    }
+
+    public void log(String key, Translation translation) {
+        log(key, round(translation.x) + ", " + round(translation.y));
     }
 }

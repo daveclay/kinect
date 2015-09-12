@@ -10,11 +10,11 @@ import com.daveclay.processing.gestures.GestureRecognizer;
 import com.daveclay.processing.gestures.GestureRecorder;
 import com.daveclay.processing.gestures.RecognitionResult;
 import com.daveclay.processing.kinect.api.HandExtendedHandler;
+import com.daveclay.processing.kinect.api.Translation;
 import com.daveclay.processing.kinect.api.User;
 import com.daveclay.processing.kinect.api.stage.Stage;
 import processing.core.PApplet;
 import processing.core.PVector;
-import shapes3d.utils.VectorUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,7 @@ public class UserData {
     User user;
     Stage stage;
     HUD hud;
+    Translation translation;
 
     Drawing userDrawing;
 
@@ -41,11 +42,13 @@ public class UserData {
                     BodyLocatorListener listener,
                     HUD hud,
                     Stage stage,
+                    Translation translation,
                     GestureRecognizer gestureRecognizer) {
         this.user = user;
         this.listener = listener;
         this.hud = hud;
         this.stage = stage;
+        this.translation = translation;
 
         leftHandBox = new HandBox(canvas);
         leftHandBox.color = canvas.color(255, 120, 0);
@@ -70,6 +73,10 @@ public class UserData {
 
         userDrawing = new Drawing(canvas) {
             public void draw() {
+                pushMatrix();
+                //translation(translation.width, translation.height);
+                translate(translation.x, translation.y);
+
                 PVector leftHandPosition2d = user.getLeftHandPosition2D();
                 PVector rightHandPosition2d = user.getRightHandPosition2D();
 
@@ -111,6 +118,7 @@ public class UserData {
                         previousPoint = point;
                     }
                 }
+                popMatrix();
             }
 
             private void drawGestureRecognitionNotification() {
@@ -156,7 +164,7 @@ public class UserData {
         });
     }
 
-    public void update() {
+    public void draw() {
         PVector newUserPosition = user.getJointPosition3D(KinectPV2.JointType_SpineMid);
         hud.logVector(user.getID() + ": Stage Position", newUserPosition);
 
