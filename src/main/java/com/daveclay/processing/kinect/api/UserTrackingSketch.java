@@ -7,7 +7,6 @@ import com.daveclay.processing.api.HUD;
 import processing.core.PApplet;
 import processing.core.PImage;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,17 +29,29 @@ public class UserTrackingSketch extends PApplet {
 
     private SketchCallback sketchCallback;
     private KinectPV2 kinect;
+    private Translation translation;
     protected HUD hud;
 
     public final void setup() {
         //size(displayWidth, displayHeight, P2D);
         //frame.setSize(displayWidth, displayHeight);
         //frame.setBackground(Color.black);
+        // TODO: this only applies (along with the scaling) to full screen display
+        // TODO: resize up and down, with or without aspect ratio. Art doesn't use
+        // TODO: the background image, so can take up the full screen rather than
+        // TODO: be limited to just the background image size. For now, just always
+        // TODO: go full screen, then optionally translation to the background image.
         size(displayWidth, displayHeight, P2D);
         //size(1920, 1080, P2D);
         kinect = new KinectPV2(this);
         sketchCallback.setup(kinect);
         kinect.init();
+
+        PImage kinectImage = getKinectImage();
+        int kinectImageX = (displayWidth - kinectImage.width) / 2;
+        int kinectImageY = (displayHeight - kinectImage.height) / 2;
+        translation = new Translation(kinectImageX, kinectImageY);
+        System.out.println(translation);
     }
 
     @Override
@@ -50,9 +61,17 @@ public class UserTrackingSketch extends PApplet {
         super.destroy();
     }
 
+    public Translation getKinectImageTranslation() {
+        return translation;
+    }
+
+    public PImage getKinectImage() {
+        return kinect.getColorImage();
+    }
+
     public void setKinectRGBImageAsBackground() {
-        PImage colorImage = kinect.getColorImage();
-        image(colorImage, 0, 0);
+        PImage colorImage = getKinectImage();
+        image(colorImage, translation.x, translation.y);
         // background(colorImage);
     }
 

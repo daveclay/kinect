@@ -17,7 +17,7 @@ public class Stage {
     private WeakHashMap<User, StageZone> currentUserStageZones = new WeakHashMap<>();
 
     // Todo: ths should be its own listener, not a BodyLocator.Listener - the stage only sends
-    // stage update events, doens't care about gestures.
+    // stage draw events, doens't care about gestures.
     public void addListener(BodyLocatorListener listener) {
         this.listeners.add(listener);
     }
