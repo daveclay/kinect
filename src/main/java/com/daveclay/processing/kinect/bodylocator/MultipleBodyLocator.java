@@ -14,13 +14,17 @@ import java.util.Map;
 
 public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocator {
 
-
     public static void main(String[] args) {
+        MultipleBodyLocator bodyLocator = forPresentation();
+        SketchRunner.runSketchFullScreen(bodyLocator, 0);
+        bodyLocator.frame.setLocation(0, 0);
+    }
+
+    public static MultipleBodyLocator forPresentation() {
         GestureDataStore gestureDataStore = GestureDataStore.getDefaultInstance();
         MultipleBodyLocator bodyLocator = new MultipleBodyLocator(gestureDataStore);
         PresentationServer.register(gestureDataStore, bodyLocator);
-        SketchRunner.runSketchFullScreen(bodyLocator, 0);
-        bodyLocator.frame.setLocation(0, 0);
+        return bodyLocator;
     }
 
     private Stage stage;
@@ -75,17 +79,13 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
             this.userDataById.put(user.getID(), userData);
         });
 
-        onUserWasLost(user -> {
-            userDataById.remove(user.getID());
-        });
+        onUserWasLost(user -> userDataById.remove(user.getID()));
     }
 
     private void drawBodyLocator() {
         background(0);
         setKinectRGBImageAsBackground();
-        for (UserData userData : userDataById.values()) {
-            userData.draw();
-        }
+        userDataById.values().forEach(UserData::draw);
         drawHUD();
     }
 

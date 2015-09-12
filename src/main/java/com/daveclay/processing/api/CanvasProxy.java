@@ -88,6 +88,10 @@ public interface CanvasProxy {
         getCanvas().rect(a, b, c, d);
     }
 
+    default void stroke(int v1) {
+        getCanvas().stroke(v1);
+    }
+
     default void stroke(float v1) {
         getCanvas().stroke(v1);
     }
