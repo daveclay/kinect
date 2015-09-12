@@ -12,6 +12,7 @@ public class ImageFrame implements Pixels {
     ImgProc imgProc;
     public int x;
     public int y;
+    public int iterations = 0;
     int width;
     int height;
 
@@ -19,7 +20,7 @@ public class ImageFrame implements Pixels {
                       PImage img,
                       int x,
                       int y) {
-        this.img = img;
+        this.img = ImgProc.copy(img);
         this.blurImg = ImgProc.copy(img);
         this.desaturatedImg = ImgProc.copy(img);
         this.x = x;

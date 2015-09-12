@@ -30,7 +30,6 @@ public class ImageLib {
         return images[index];
     }
 
-
     ImageLib loadImages() {
         for (int i = 0; i < files.length; i++) {
             images[i] = FaceDrift.loadImageByName(canvas, files[i]);
@@ -41,9 +40,17 @@ public class ImageLib {
 
     public static ImageLib face(PApplet canvas) {
         return new ImageLib(canvas, new String[] {
-                "face.png",
                 "face-2.png",
-                "face-3.png"
+                "face-5.png",
+                "face-6.png",
+                "face-7.png",
+                "face-8.png",
+                "face-9.png",
+                "face-10.png",
+                "face-11.png",
+                "face-12.png",
+                "face-13.png",
+                "face-14.png"
         });
     }
 
