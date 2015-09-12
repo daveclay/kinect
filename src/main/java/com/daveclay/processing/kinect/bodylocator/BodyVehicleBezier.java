@@ -1,17 +1,23 @@
-package com.daveclay.processing.sketches;
+package com.daveclay.processing.kinect.bodylocator;
 
 import com.daveclay.processing.api.Field;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.Vehicle;
 import com.daveclay.processing.api.image.ImgProc;
+import com.daveclay.processing.kinect.api.User;
+import com.daveclay.processing.kinect.api.UserTrackingSketch;
 import processing.core.PApplet;
 import processing.core.PVector;
+import KinectPV2.KinectPV2;
+import KinectPV2.*;
 
-public class VehicleBezier2 extends PApplet {
+public class BodyVehicleBezier extends UserTrackingSketch {
 
     public static void main(String[] args) {
-        SketchRunner.run(new VehicleBezier2());
+        SketchRunner.run(new BodyVehicleBezier());
     }
+
+    User user;
 
     ImgProc imgProc;
     Field fieldA;
@@ -20,8 +26,6 @@ public class VehicleBezier2 extends PApplet {
     Vehicle controlPoint2;
     Vehicle anchorPoint1;
     Vehicle anchorPoint2;
-    Vehicle target1;
-    Vehicle target2;
 
     float noiseR = random(7536451);
     float noiseG = random(16432);
@@ -33,9 +37,25 @@ public class VehicleBezier2 extends PApplet {
         blurOn = !blurOn;
     }
 
-    public void setup() {
-        size(displayWidth, displayHeight);
-        background(0);
+    public BodyVehicleBezier() {
+        setSketchCallback(new SketchCallback() {
+            @Override
+            public void draw() {
+                if (BodyVehicleBezier.this.user != null) {
+                    drawUser();
+                }
+            }
+
+            @Override
+            public void setup(KinectPV2 kinect) {
+                kinect.enableSkeleton(true);
+                kinect.enableSkeleton3dMap(true);
+                kinect.enableSkeletonColorMap(true);
+                background(0);
+                frameRate(30);
+            }
+        });
+
         imgProc = new ImgProc(this);
 
         fieldA = new Field(50, this);
@@ -43,14 +63,25 @@ public class VehicleBezier2 extends PApplet {
         controlPoint1 = new Vehicle(this, 100, 100);
         controlPoint2 = new Vehicle(this, 500, 300);
 
-        controlPoint1.maxspeed = controlPoint2.maxspeed = 16;
-        controlPoint1.maxforce = controlPoint2.maxforce = 1f;
+        controlPoint1.maxspeed = controlPoint2.maxspeed = 28;
+        controlPoint1.maxforce = controlPoint2.maxforce = 2f;
 
         anchorPoint1 = new Vehicle(this, 0, height/2);
         anchorPoint2 = new Vehicle(this, width, height/2);
-        target1 = new Vehicle(this, random(0, width), random(0, height));
-        target2 = new Vehicle(this, random(0, width), random(0, height));
-        frameRate(30);
+
+        registerEventListeners();
+    }
+
+    protected void registerEventListeners() {
+        onUserEntered(user -> {
+            System.out.println("HELLO User " + user.getID() + "!");
+            BodyVehicleBezier.this.user = user;
+        });
+
+        onUserWasLost(user -> {
+            System.out.println("User " + user.getID() + " LOST, eh well...");
+            BodyVehicleBezier.this.user = null;
+        });
     }
 
     void incrementFade() {
@@ -61,27 +92,23 @@ public class VehicleBezier2 extends PApplet {
         }
     }
 
-    public void draw() {
+    public void drawUser() {
         boolean blur = false;
         if (frameCount % 4 == 0 && blurOn) {
             blur = true;
         }
         smooth();
-        PVector mouse = new PVector(mouseX, mouseY);
-        target1.seek(mouse);
-        target2.seek(mouse);
-
-        controlPoint1.flow(fieldA.lookup(controlPoint1.location));
-        controlPoint2.flow(fieldB.lookup(controlPoint2.location));
-        anchorPoint1.flow(fieldA.lookup(anchorPoint1.location));
-        anchorPoint2.flow(fieldB.lookup(anchorPoint2.location));
+        PVector left = user.getJointPosition2D(KinectPV2.JointType_HandLeft); // fieldA.lookup(anchorPoint1.location));
+        PVector right = user.getJointPosition2D(KinectPV2.JointType_HandRight);
+        controlPoint1.flow(fieldA.lookup(left));
+        controlPoint2.flow(fieldB.lookup(right));
+        anchorPoint1.flow(left);
+        anchorPoint2.flow(right);
 
         controlPoint1.update();
         controlPoint2.update();
         anchorPoint1.update();
         anchorPoint2.update();
-        target1.update();
-        target2.update();
 
         int color = color(
                 noise(noiseR += 1) * 255,
