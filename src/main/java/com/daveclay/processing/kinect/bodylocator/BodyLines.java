@@ -213,7 +213,7 @@ public class BodyLines extends UserTrackingSketch {
             maxforce = random(.6f, .9f);
         }
 
-        // Method to update location
+        // Method to draw location
         public void update() {
             // Update velocity
             velocity.add(acceleration);

@@ -88,7 +88,7 @@ public class Vehicle {
     }
 
 
-    // Method to update location
+    // Method to draw location
     public void update() {
         // Update velocity
         velocity.add(acceleration);

@@ -173,7 +173,7 @@ public class GeometricRecognizer implements GestureRecognizer {
             http://faculty.washington.edu/wobbrock/pubs/uist-07.1.pdf
             Step 1: Resample the Point Path
             Step 2: Rotate Once Based on the "Indicative Angle"
-            Step 3: Scale and Translate
+            Step 3: Translation and Translate
             Step 4: Find the Optimal Angle for the Best Score
         */
         // TODO: Switch to $N algorithm so can handle 1D shapes
@@ -251,7 +251,7 @@ public class GeometricRecognizer implements GestureRecognizer {
         }
         List<PVector> newPoints = new ArrayList<>();
         for (PVector point : points) {
-            //--- Scale the points to fit the main box
+            //--- Translation the points to fit the main box
             //--- So if we wanted everything 100x100 and this was 50x50,
             //---  we'd multiply every point by 2
             float scaledX = point.x * (this.squareSize / box.width);
