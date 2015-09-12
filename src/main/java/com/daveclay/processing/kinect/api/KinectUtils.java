@@ -5,7 +5,7 @@ import processing.core.PVector;
 
 public class KinectUtils {
 
-    public static PVector getPosition(KJoint joint) {
+    public static PVector jointToPVector(KJoint joint) {
         return new PVector(joint.getX(), joint.getY(), joint.getZ());
     }
 }

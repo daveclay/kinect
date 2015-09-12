@@ -2,10 +2,10 @@ package com.daveclay.processing.kinect.api;
 
 import KinectPV2.*;
 import com.daveclay.processing.api.VectorMath;
-import processing.core.PApplet;
 import processing.core.PVector;
 
 import java.awt.*;
+import java.awt.geom.Dimension2D;
 
 public class User {
 
@@ -66,7 +66,7 @@ public class User {
     }
 
     private PVector getJointPositionForSkeleton(int joint, Skeleton skeleton) {
-        return KinectUtils.getPosition(skeleton.getJoints()[joint]);
+        return KinectUtils.jointToPVector(skeleton.getJoints()[joint]);
     }
 
     public PVector getJointPosition2D(int joint) {

@@ -193,7 +193,7 @@ public class CityOfDeJongRealtime extends PApplet {
         }
 
         void incrementalupdate() {
-            //Loops the non-clearing update and plotting to produce low-noise render
+            //Loops the non-clearing draw and plotting to produce low-noise render
             populate(16, false);
             plot(80, false);
             redraw();

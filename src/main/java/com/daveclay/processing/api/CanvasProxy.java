@@ -52,6 +52,18 @@ public interface CanvasProxy {
         getCanvas().noStroke();
     }
 
+    default void scale(float x, float y) {
+        getCanvas().scale(x, y);
+    }
+
+    default void translate(float x, float y, float z) {
+        getCanvas().translate(x, y, z);
+    }
+
+    default void translate(float x, float y) {
+        getCanvas().translate(x, y);
+    }
+
     default void pushMatrix() {
         getCanvas().pushMatrix();
     }
