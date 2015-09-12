@@ -19,7 +19,7 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
         GestureDataStore gestureDataStore = GestureDataStore.getDefaultInstance();
         MultipleBodyLocator bodyLocator = new MultipleBodyLocator(gestureDataStore);
         PresentationServer.register(gestureDataStore, bodyLocator);
-        SketchRunner.run(bodyLocator);
+        SketchRunner.runSketchFullScreen(bodyLocator, 0);
         bodyLocator.frame.setLocation(0, 0);
     }
 
@@ -48,7 +48,6 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
                 kinect.enableSkeleton(true);
                 kinect.enableSkeleton3dMap(true);
                 kinect.enableSkeletonColorMap(true);
-                background(0);
             }
         });
 
@@ -59,6 +58,13 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
         this.listener = listener;
         this.stage.addListener(listener);
     }
+
+    /*
+    @Override
+    public boolean sketchFullScreen() {
+        return true;
+    }
+    */
 
     public Stage getStage() {
         return stage;
@@ -81,6 +87,7 @@ public class MultipleBodyLocator extends UserTrackingSketch implements BodyLocat
     }
 
     private void drawBodyLocator() {
+        background(0);
         setKinectRGBImageAsBackground();
         for (UserData userData : userDataById.values()) {
             userData.update();

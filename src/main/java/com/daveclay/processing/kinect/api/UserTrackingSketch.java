@@ -7,6 +7,7 @@ import com.daveclay.processing.api.HUD;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,11 @@ public class UserTrackingSketch extends PApplet {
     protected HUD hud;
 
     public final void setup() {
-        size(1920, 1080, P2D);
+        //size(displayWidth, displayHeight, P2D);
+        //frame.setSize(displayWidth, displayHeight);
+        //frame.setBackground(Color.black);
+        size(displayWidth, displayHeight, P2D);
+        //size(1920, 1080, P2D);
         kinect = new KinectPV2(this);
         sketchCallback.setup(kinect);
         kinect.init();
@@ -47,7 +52,8 @@ public class UserTrackingSketch extends PApplet {
 
     public void setKinectRGBImageAsBackground() {
         PImage colorImage = kinect.getColorImage();
-        background(colorImage);
+        image(colorImage, 0, 0);
+        // background(colorImage);
     }
 
     public void setSketchCallback(SketchCallback sketchCallback) {

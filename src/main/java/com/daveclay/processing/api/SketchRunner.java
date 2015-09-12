@@ -12,8 +12,9 @@ public class SketchRunner {
 
     public static void runSketchFullScreen(PApplet pApplet, int display) {
         String[] args = {
-            pApplet.getClass().getName(),
-            "--display=" + display
+            "--present",
+            "--display=" + display,
+            pApplet.getClass().getName()
         };
         PApplet.runSketch(args, pApplet);
     }
