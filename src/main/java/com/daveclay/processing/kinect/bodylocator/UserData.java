@@ -42,13 +42,13 @@ public class UserData {
                     BodyLocatorListener listener,
                     HUD hud,
                     Stage stage,
-                    Translation translation,
+                    Translation kinectImageTranslation,
                     GestureRecognizer gestureRecognizer) {
         this.user = user;
         this.listener = listener;
         this.hud = hud;
         this.stage = stage;
-        this.translation = translation;
+        this.translation = kinectImageTranslation;
 
         leftHandBox = new HandBox(canvas);
         leftHandBox.color = canvas.color(255, 120, 0);
@@ -74,8 +74,7 @@ public class UserData {
         userDrawing = new Drawing(canvas) {
             public void draw() {
                 pushMatrix();
-                //translation(translation.width, translation.height);
-                translate(translation.x, translation.y);
+                translate(kinectImageTranslation.x, kinectImageTranslation.y);
 
                 PVector leftHandPosition2d = user.getLeftHandPosition2D();
                 PVector rightHandPosition2d = user.getRightHandPosition2D();
