@@ -2,6 +2,9 @@ package com.daveclay.processing.api.image;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import processing.opengl.PShader;
+
+import java.io.File;
 
 public class ImgProc {
 
@@ -296,5 +299,10 @@ public class ImgProc {
 
     public static PImage loadImageByName(PApplet canvas, String name) {
         return canvas.loadImage("/Users/daveclay/work/rebel belly after video/" + name);
+    }
+
+    public static PShader loadShader(String name) {
+        File f = new File(System.getProperty("user.dir") + "/src/main/resources/shaders/" + name + ".glsl");
+        return loadShader(f.getAbsolutePath());
     }
 }
