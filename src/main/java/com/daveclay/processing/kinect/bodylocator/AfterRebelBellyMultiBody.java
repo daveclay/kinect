@@ -4,7 +4,6 @@ import KinectPV2.KinectPV2;
 import com.daveclay.processing.api.Drawing;
 import com.daveclay.processing.api.HUD;
 import com.daveclay.processing.api.SketchRunner;
-import com.daveclay.processing.api.image.ImgProc;
 import com.daveclay.processing.kinect.api.User;
 import com.daveclay.processing.kinect.api.UserTrackingSketch;
 import processing.core.PApplet;
@@ -24,7 +23,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     }
 
     private Map<Integer, Body> bodiesById = new HashMap<>();
-    PShader shade;
+    PShader shader;
 
     public AfterRebelBellyMultiBody() {
         hud = new HUD();
@@ -42,10 +41,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
                 kinect.enableSkeletonColorMap(true);
 
                 File f = new File(System.getProperty("user.dir") + "/src/main/resources/shaders/blur.glsl");
-                shade = loadShader(f.getAbsolutePath());
-                shade.set("sigma", 60f);
-                shade.set("blurSize", 30);
-                shade.set("texOffset", 1f, 1f);
+                shader = loadShader(f.getAbsolutePath());
+                shader.set("sigma", 60f);
+                shader.set("blurSize", 30);
+                shader.set("texOffset", 1f, 1f);
 
                 background(0);
             }
@@ -68,8 +67,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     }
 
     private void drawBodies() {
+        shader(shader);
         bodiesById.values().forEach(Body::draw);
-        shader(shade);
         //drawHUD();
     }
 
