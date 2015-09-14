@@ -64,6 +64,14 @@ public interface CanvasProxy {
         getCanvas().translate(x, y);
     }
 
+    default void rotate(float a) {
+        getCanvas().rotate(a);
+    }
+
+    default void vertex(float x, float y) {
+        getCanvas().vertex(x, y);
+    }
+
     default void pushMatrix() {
         getCanvas().pushMatrix();
     }
@@ -98,6 +106,10 @@ public interface CanvasProxy {
 
     default void stroke(float v1, float v2, float v3, float alpha) {
         getCanvas().stroke(v1, v2, v3, alpha);
+    }
+
+    default void noFill() {
+        getCanvas().noFill();
     }
 
     default void fill(int color) {

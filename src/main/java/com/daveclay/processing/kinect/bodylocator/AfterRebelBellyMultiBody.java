@@ -133,7 +133,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
             pushStyle();
             stroke(255);
-            sineTo(leftHandPosition2d, rightHandPosition2d, noise(leftHandPosition2d.x, rightHandPosition2d.x) * 5, 10);
+            line(leftHandPosition2d.x, leftHandPosition2d.y, rightHandPosition2d.x, rightHandPosition2d.y);
             endShape();
             popStyle();
 
@@ -145,33 +145,13 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             strokeWeight(3);
             noFill();
             stroke(color);
-            rect(center.x, center.y, 100, 100);
+            rect(center.x - 50, center.y - 50, 100, 100);
             textFont(orator23);
             text("x"+center.x, center.x + 110, center.y + 20);
             textFont(orator9);
             text("SEND::"+center.y, center.x + 110, center.y + 40);
             popStyle();
 
-        }
-
-        void sineTo(PVector p1, PVector p2, float freq, float amp)
-        {
-            if (p1.mag() > width || p2.mag() > width) {
-                return;
-            }
-
-            float d = PVector.dist(p1,p2);
-            float a = atan2(p2.y-p1.y,p2.x-p1.x);
-            noFill();
-            pushMatrix();
-            translate(p1.x,p1.y);
-            rotate(a);
-            beginShape();
-            for (float i = 0; i <= d; i += 1) {
-                vertex(i,sin(i*TWO_PI*freq/d)*amp);
-            }
-            endShape();
-            popMatrix();
         }
     }
 }
