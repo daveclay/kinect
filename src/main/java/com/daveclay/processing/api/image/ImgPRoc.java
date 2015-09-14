@@ -301,8 +301,8 @@ public class ImgProc {
         return canvas.loadImage("/Users/daveclay/work/rebel belly after video/" + name);
     }
 
-    public static PShader loadShader(String name) {
+    public static PShader shader(PApplet pApplet, String name) {
         File f = new File(System.getProperty("user.dir") + "/src/main/resources/shaders/" + name + ".glsl");
-        return loadShader(f.getAbsolutePath());
+        return pApplet.loadShader(f.getAbsolutePath());
     }
 }

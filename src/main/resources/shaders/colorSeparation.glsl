@@ -1,3 +1,5 @@
+#define PROCESSING_TEXTURE_SHADER
+
 #ifdef GL_ES
 precision mediump float;
 precision mediump int;
@@ -8,7 +10,6 @@ uniform sampler2D texture;
 // The inverse of the texture dimensions along X and Y
 uniform vec2 texOffset;
 
-varying vec4 vertColor;
 varying vec4 vertTexCoord;
 
 uniform vec2 resolution;
