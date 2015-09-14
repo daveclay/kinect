@@ -88,7 +88,7 @@ public class UserTrackingSketch extends PApplet {
     private long perfCount = 0;
 
     public final void draw() {
-        long start = System.currentTimeMillis();
+        //long start = System.currentTimeMillis();
         calculateAndTriggerUserEvents();
         if (sketchCallback != null) {
             sketchCallback.draw();
