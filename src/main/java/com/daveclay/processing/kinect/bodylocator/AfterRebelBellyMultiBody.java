@@ -8,6 +8,7 @@ import com.daveclay.processing.api.image.ImgProc;
 import com.daveclay.processing.kinect.api.User;
 import com.daveclay.processing.kinect.api.UserTrackingSketch;
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PVector;
 import processing.opengl.PShader;
 
@@ -24,11 +25,15 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
     private Map<Integer, Body> bodiesById = new HashMap<>();
     PShader colorSeparator;
+    PShader blur;
+    public PFont orator9;
+    public PFont orator23;
 
     public AfterRebelBellyMultiBody() {
         hud = new HUD();
 
         setSketchCallback(new SketchCallback() {
+
             @Override
             public void draw() {
                 drawBodies();
@@ -39,7 +44,14 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
                 kinect.enableSkeleton(true);
                 kinect.enableSkeleton3dMap(true);
                 kinect.enableSkeletonColorMap(true);
+                blur = ImgProc.shader(AfterRebelBellyMultiBody.this, "gaussianBlur");
+                blur.set("kernelSize", 12); // How big is the sampling kernel?
+                blur.set("strength", 8f); // How strong is the gaussianBlur?
+
                 colorSeparator = ImgProc.shader(AfterRebelBellyMultiBody.this, "colorSeparation");
+
+                orator9 = createFont("OratorStd", 9);
+                orator23 = createFont("OratorStd", 23);
             }
         });
 
@@ -62,9 +74,19 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     private void drawBodies() {
         background(0);
         bodiesById.values().forEach(Body::draw);
+        blur();
         colorSeparator.set("time", (float) millis() / 1000f);
         filter(colorSeparator);
         drawHUD();
+    }
+
+    void blur() {
+        blur.set("horizontalPass", 0);
+        filter(blur);
+
+        // Horizontal pass
+        blur.set("horizontalPass", 1);
+        filter(blur);
     }
 
     private void drawHUD() {
@@ -102,23 +124,54 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
         public void draw() {
             pushMatrix();
+
             PVector leftHandPosition2d = user.getLeftHandPosition2D();
             PVector rightHandPosition2d = user.getRightHandPosition2D();
 
             drawHand(leftHandPosition2d, color(255, 150, 200));
             drawHand(rightHandPosition2d, color(165, 228, 255));
 
+            pushStyle();
+            stroke(255);
+            sineTo(leftHandPosition2d, rightHandPosition2d, noise(leftHandPosition2d.x, rightHandPosition2d.x) * 5, 10);
+            endShape();
+            popStyle();
+
             popMatrix();
         }
 
         void drawHand(PVector center, int color) {
             pushStyle();
-            strokeWeight(6);
+            strokeWeight(3);
             noFill();
             stroke(color);
             rect(center.x, center.y, 100, 100);
+            textFont(orator23);
+            text("x"+center.x, center.x + 110, center.y + 20);
+            textFont(orator9);
+            text("SEND::"+center.y, center.x + 110, center.y + 40);
             popStyle();
 
+        }
+
+        void sineTo(PVector p1, PVector p2, float freq, float amp)
+        {
+            if (p1.mag() > width || p2.mag() > width) {
+                return;
+            }
+
+            float d = PVector.dist(p1,p2);
+            float a = atan2(p2.y-p1.y,p2.x-p1.x);
+            noFill();
+            pushMatrix();
+            translate(p1.x,p1.y);
+            rotate(a);
+            beginShape();
+            for (float i = 0; i <= d; i += 1) {
+                vertex(i,sin(i*TWO_PI*freq/d)*amp);
+            }
+            endShape();
+            popMatrix();
         }
     }
 }
