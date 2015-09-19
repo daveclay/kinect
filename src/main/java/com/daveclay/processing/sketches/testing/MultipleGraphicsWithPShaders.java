@@ -4,6 +4,7 @@ import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.image.ImgProc;
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.core.PImage;
 import processing.opengl.PShader;
 
 public class MultipleGraphicsWithPShaders extends PApplet {
@@ -12,52 +13,75 @@ public class MultipleGraphicsWithPShaders extends PApplet {
         SketchRunner.run(new MultipleGraphicsWithPShaders());
     }
 
+    PShader badBlur;
     PShader gaussianBlur;
     PShader chromaticAbberation;
     PShader pixellate;
     PShader barrelBlurChroma;
 
-    PGraphics graphicsA;
-    PGraphics graphicsB;
+    PGraphics sprite;
+    PGraphics screenBlur;
+    PGraphics multiplyMe;
+
+    PImage previous;
+
+    ImgProc imgProc;
 
     public void setup() {
         size(1600, 800, P2D);
 
+        imgProc = new ImgProc(this);
+
+        badBlur = ImgProc.shader(this, "badBlur");
+        badBlur.set("sketchSize", (float) width, (float) height);
+
         gaussianBlur = ImgProc.shader(this, "gaussianBlur");
-        gaussianBlur.set("kernelSize", 12); // How big is the sampling kernel?
-        gaussianBlur.set("strength", 8f); // How strong is the gaussianBlur?
 
         chromaticAbberation = ImgProc.shader(this, "colorSeparation");
         pixellate = ImgProc.shader(this, "pixellate");
         barrelBlurChroma = ImgProc.shader(this, "barrelBlurChroma");
         barrelBlurChroma.set("sketchSize", (float) width, (float) height);
 
-        graphicsA = createGraphics(width, height);
-        graphicsB = createGraphics(width, height);
+        sprite = createGraphics(400, 400, P2D);
+        screenBlur = createGraphics(width, height, P2D);
+        multiplyMe = createGraphics(width, height, P2D);
 
-        graphicsA.background(0);
-        graphicsB.background(0);
-        background(0);
+        bg(sprite);
+        bg(screenBlur);
+        background(255);
     }
 
     public void draw() {
-        blendMode(SCREEN);
+        sprite.beginDraw();
+        sprite.background(0);
+        drawRect(sprite, color(255, 20, 0));
+        sprite.endDraw();
 
-        drawRect(graphicsA, 70, color(55, 20, 0));
-        drawRect(graphicsB, 600,color(5, 20, 40));
+        screenBlur.beginDraw();
+        screenBlur.blendMode(SCREEN);
+        screenBlur.image(sprite, mouseX - 250, mouseY - 250);
+        blur(screenBlur, 12, 8f);
+        screenBlur.filter(badBlur);
+        screenBlur.endDraw();
 
-        image(graphicsA, 0, 0);
-        image(graphicsB, 0, 0);
+        image(screenBlur, 0, 0);
+        filter(badBlur);
     }
 
-    void drawRect(PGraphics graphics, int y, int color) {
+    void drawRect(PGraphics graphics, int color) {
         graphics.pushStyle();
         graphics.strokeWeight(6);
         graphics.noFill();
         graphics.stroke(color);
-        graphics.rect(90, y, 500, 500);
+        graphics.rect(50, 50, 300, 300);
         graphics.popStyle();
-        blur(graphics);
+        //blur(graphics, 12, 8f);
+    }
+
+    void bg(PGraphics graphics) {
+        graphics.beginDraw();
+        graphics.background(0);
+        graphics.endDraw();
     }
 
     void chroma(PGraphics graphics) {
@@ -76,10 +100,23 @@ public class MultipleGraphicsWithPShaders extends PApplet {
         graphics.filter(barrelBlurChroma);
     }
 
-    void blur(PGraphics graphics) {
+    void blur(int size, float strength) {
+        gaussianBlur.set("kernelSize", size); // How big is the sampling kernel?
+        gaussianBlur.set("strength", strength); // How strong is the gaussianBlur?
+
+        gaussianBlur.set("horizontalPass", 0);
+        filter(gaussianBlur);
+        // Horizontal pass
+        gaussianBlur.set("horizontalPass", 1);
+        filter(gaussianBlur);
+    }
+
+    void blur(PGraphics graphics, int size, float strength) {
+        gaussianBlur.set("kernelSize", size); // How big is the sampling kernel?
+        gaussianBlur.set("strength", strength); // How strong is the gaussianBlur?
+
         gaussianBlur.set("horizontalPass", 0);
         graphics.filter(gaussianBlur);
-
         // Horizontal pass
         gaussianBlur.set("horizontalPass", 1);
         graphics.filter(gaussianBlur);
