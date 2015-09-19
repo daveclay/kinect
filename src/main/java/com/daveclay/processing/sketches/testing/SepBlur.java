@@ -53,12 +53,12 @@ public class SepBlur extends PApplet {
         popStyle();
 
 
+        blur();
         /*
         barrelBlurChroma();
-        blur();
         pixellate();
-        */
         chroma();
+        */
     }
 
     void chroma() {
