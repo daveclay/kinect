@@ -1,6 +1,7 @@
 package com.daveclay.processing.animation;
 
 import com.daveclay.processing.CoordinateSystem;
+import com.daveclay.processing.api.SketchRunner;
 import processing.core.PApplet;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
@@ -31,6 +32,9 @@ public class Presentation extends CoordinateSystem {
     }
 
     public static class Manager extends CoordinateSystem {
+        public static void main(String[] args) {
+            SketchRunner.run(new Manager());
+        }
 
         public void setup() {
             size(1024, 768, OPENGL);

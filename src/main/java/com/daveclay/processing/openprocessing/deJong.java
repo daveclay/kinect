@@ -22,7 +22,7 @@ public class deJong extends PApplet {
     int stepCounter;
 
     public void setup() {
-        size(1400, 1000);
+        size(1400, 800);
         noFill();
         smooth();
         colorMode(HSB, 255);

@@ -21,27 +21,20 @@ public class ColorDrift extends PApplet {
     private PImage image;
     Noise2D xnoise = new Noise2D(this, .0001f);
     Noise2D ynoise = new Noise2D(this, .0001f);
-    NoiseColor cnoise = new NoiseColor(this, .000001f);
-    PImage canvas;
+    NoiseColor cnoise = new NoiseColor(this, .03f);
 
     public void setup() {
-        size(900, 450);
+        size(1600, 950);
         image = loadImage("/Users/daveclay/work/kinect/glitch.jpg");
         xnoise.setScale(width * height);
         ynoise.setScale(height * width);
-        canvas = new PImage(width, height);
         background(0);
     }
 
     public void draw() {
-        for(int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                // int x = (int) xnoise.next() / width;
-                // int y = (int) ynoise.next() % height;
-                set(i, j, cnoise.nextColor(255));
-            }
-        }
-        //image(canvas, 0, 0);
+        fill(cnoise.nextColor(255));
+        rect(0, 0, width, height);
+        fill(0);
         text(frameRate, 20, 20);
     }
 }

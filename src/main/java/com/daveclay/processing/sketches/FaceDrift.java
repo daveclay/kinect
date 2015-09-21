@@ -40,7 +40,7 @@ public class FaceDrift extends PApplet {
         artLib = ImageLib.art(this);
         blurFace = new BlurFace(this);
         screenOverlay = new ImageFrame(this, loadImageByName(this, "screen-lines.png"), 0, 0);
-        imageFrame = new ImageFrame(this, loadImageByName(this, artLib.files[3]), 10, 10);
+        imageFrame = new ImageFrame(this, loadImageByName(this, artLib.files.get(3)), 10, 10);
         test = blurFace.next();
     }
 

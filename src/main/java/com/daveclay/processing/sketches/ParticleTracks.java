@@ -27,7 +27,7 @@ public class ParticleTracks extends PApplet {
     int size = 3000;
 
     public void setup() {
-        size(800, 800, P3D);
+        size(1400, 800, P3D);
         cam = new PeasyCam(this, 200);
         cam.setFreeRotationMode();
         zControlPointNoise.setScale(200);
