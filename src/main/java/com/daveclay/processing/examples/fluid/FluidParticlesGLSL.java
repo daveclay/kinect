@@ -1,21 +1,24 @@
 package com.daveclay.processing.examples.fluid;
 
+import com.daveclay.processing.api.FloatValueMeasurement;
 import com.daveclay.processing.api.LogSketch;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.image.ImgProc;
-import com.daveclay.processing.api.FloatValueMeasurement;
 import processing.core.PApplet;
+import processing.opengl.PShader;
 
-public class FluidParticles extends PApplet {
+public class FluidParticlesGLSL extends PApplet {
 
     public static void main(String[] args) {
         LogSketch logSketch = new LogSketch();
-        SketchRunner.run(new FluidParticles(logSketch), logSketch);
+        SketchRunner.run(new FluidParticlesGLSL(logSketch));
     }
 
 
     private final LogSketch logSketch;
     FloatValueMeasurement f = new FloatValueMeasurement();
+    PShader badBlur;
+    PShader gaussianBlur;
 
     NavierStokesSolver fluidSolver;
     double visc, diff, limitVelocity, vScale, velocityScale;
@@ -28,14 +31,20 @@ public class FluidParticles extends PApplet {
 
     ImgProc imgProc;
 
-    public FluidParticles(LogSketch logSketch) {
+    public FluidParticlesGLSL(LogSketch logSketch) {
         this.logSketch = logSketch;
     }
 
     public void setup() {
-        size(1200, 800);
-
+        size(1200, 800, P2D);
+        
         imgProc = new ImgProc(this);
+        badBlur = ImgProc.shader(this, "badBlur");
+        badBlur.set("sketchSize", (float) width, (float) height);
+
+        gaussianBlur = ImgProc.shader(this, "gaussianBlur");
+        badBlur = ImgProc.shader(this, "badBlur");
+
         fluidSolver = new NavierStokesSolver();
         frameRate(60);
 
@@ -70,7 +79,6 @@ public class FluidParticles extends PApplet {
     }
 
     public void draw() {
-        imgProc.blur();
         imgProc.copyFrame();
 
         handleMouseMotion();
@@ -89,6 +97,7 @@ public class FluidParticles extends PApplet {
         paintParticles();
 
         imgProc.draw();
+        blur(3, 1.3f);
     }
 
     private void paintParticles() {
@@ -222,7 +231,7 @@ public class FluidParticles extends PApplet {
 
             float h = Math.abs(map(dx + dy, 0, 20, 160, 50)) % 200;
             float s = 40;
-            float v = min(254, Math.abs(map(dx + dy, 0, 20, 0, 200)));
+            float v = min(254, Math.abs(map(dx + dy, 0, 10, 30, 255)));
 
             int color = color(h, s, v);
             int px = (int) x;
@@ -236,5 +245,20 @@ public class FluidParticles extends PApplet {
             y = min(max(y, 0), height - 1);
             imgProc.pixel(x, y, color);
         }
+    }
+
+    void badBlur() {
+        filter(badBlur);
+    }
+
+    void blur(int size, float strength) {
+        gaussianBlur.set("kernelSize", size); // How big is the sampling kernel?
+        gaussianBlur.set("strength", strength); // How strong is the gaussianBlur?
+
+        gaussianBlur.set("horizontalPass", 0);
+        filter(gaussianBlur);
+        // Horizontal pass
+        gaussianBlur.set("horizontalPass", 1);
+        filter(gaussianBlur);
     }
 }

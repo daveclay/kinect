@@ -3,16 +3,25 @@ package com.daveclay.processing.sketches;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class ImageLib {
 
     public PImage[] images;
-    public String[] files;
+    public List<String> files;
     private PApplet canvas;
 
-    public ImageLib(PApplet canvas, String[] files) {
+    public ImageLib(PApplet canvas, List<String> files) {
         this.files = files;
         this.canvas = canvas;
-        this.images = new PImage[files.length];
+        this.images = new PImage[files.size()];
+    }
+
+    public ImageLib(PApplet canvas, String[] files) {
+        this(canvas, Arrays.asList(files));
     }
 
     PImage[] pickRandomImages() {
@@ -26,16 +35,30 @@ public class ImageLib {
 
     PImage pickRandomImage() {
         int index = (int) canvas.random(images.length);
-        System.out.println(files[(index)]);
         return images[index];
     }
 
     ImageLib loadImages() {
-        for (int i = 0; i < files.length; i++) {
-            images[i] = FaceDrift.loadImageByName(canvas, files[i]);
+        for (int i = 0; i < files.size(); i++) {
+            images[i] = loadImageByName(canvas, files.get(i));
             images[i].loadPixels();
         }
         return this;
+    }
+
+    public static PImage loadImageByName(PApplet canvas, String name) {
+        return canvas.loadImage("/Users/daveclay/work/rebel belly after video/" + name);
+    }
+
+    public static ImageLib components(PApplet canvas) {
+        List<String> imageFiles = new ArrayList<>();
+        File dir = new File("/Users/daveclay/work/rebel belly after video/components");
+        for (File file : dir.listFiles()) {
+            if (file.getName().endsWith(".png")) {
+                imageFiles.add(file.getAbsolutePath());
+            }
+        }
+        return new ImageLib(canvas, imageFiles);
     }
 
     public static ImageLib face(PApplet canvas) {

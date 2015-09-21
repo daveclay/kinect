@@ -1,5 +1,6 @@
 package com.daveclay.processing;
 
+import com.daveclay.processing.api.SketchRunner;
 import processing.core.PApplet;
 import processing.core.PMatrix3D;
 import processing.core.PVector;

@@ -45,7 +45,7 @@ public class Genetics extends PApplet {
         blurGeneticGraphic = new BlurGeneticGraphic(this);
         screenOverlay = new ImageFrame(this, loadImageByName(this, "screen-lines.png"), 0, 0);
         glitchImages = new GlitchImages(this, ImageLib.glitches(this));
-        imageFrame = new ImageFrame(this, loadImageByName(this, artLib.files[3]), 10, 10);
+        imageFrame = new ImageFrame(this, loadImageByName(this, artLib.files.get(3)), 10, 10);
     }
 
     public void draw() {
@@ -59,7 +59,7 @@ public class Genetics extends PApplet {
             terminalText.draw();
         }
         //screenOverlay.draw();
-        //glitchImages.draw();
+        glitchImages.draw();
     }
 
     class GeneticID {

@@ -1,7 +1,9 @@
 package com.daveclay.processing.openprocessing.NebulaDefault;/* OpenProcessing Tweak of *@*http://www.openprocessing.org/sketch/1412*@* */
 
 import com.daveclay.processing.api.SketchRunner;
+import com.daveclay.processing.api.image.ImgProc;
 import processing.core.PApplet;
+import processing.opengl.PShader;
 
 /* !do not delete the line above, required for linking your tweak if you upload again */
 //NEBULA
@@ -15,15 +17,25 @@ public class NebulaDefault extends PApplet {
     }
 
     float depth = 400;
+    PShader gaussianBlur;
+    PShader chromaticAbberation;
+    PShader pixellate;
+    PShader barrelBlurChroma;
 
     public void setup(){
-        size(800, 600, P3D);
+        size(1600, 800, OPENGL);
         noStroke();
+        gaussianBlur = ImgProc.shader(this, "gaussianBlur");
+        gaussianBlur.set("kernelSize", 32); // How big is the sampling kernel?
+        gaussianBlur.set("strength", 30f); // How strong is the gaussianBlur?
+
+        chromaticAbberation = ImgProc.shader(this, "colorSeparation");
+        pixellate = ImgProc.shader(this, "pixellate");
+        barrelBlurChroma = ImgProc.shader(this, "barrelBlurChroma");
+        barrelBlurChroma.set("sketchSize", (float) width, (float) height);
     }
 
     public void draw(){
-        background(15, 15, 15);
-
         float cameraY = height/1;
         float cameraX = width/1;
 
@@ -58,36 +70,62 @@ public class NebulaDefault extends PApplet {
             //alt effect
             //rotateY(frameCount*PI/1000);
 
-
             for (int y = -2; y < 2; y++) {
                 for (int x = -2; x < 2; x++) {
                     for (int z = -2; z < 2; z++) {
 
                         pushMatrix();
                         translate(400*x, 300*y, 300*z);
-                        box(5, 5, 100);
+                        box(5, 5, random(100));
                         popMatrix();
 
                         pushMatrix();
                         translate(400*x, 300*y, 50*z);
-                        box(100, 5, 5);
+                        box(random(100) + 30, 5, 5);
                         popMatrix();
 
                         pushMatrix();
                         translate(400*x, 10*y, 50*z);
-                        box(50, 5, 5);
+                        box(random(500), 5, 5);
                         popMatrix();
 
                         pushMatrix();
                         rotateY(frameCount*PI/400);
                         translate(100*x, 300*y, 300*z);
-                        box(60, 40, 20);
+                        box(random(60), random(40), 20);
                         popMatrix();
 
                     }
                 }
             }
         }
+
+        barrelBlurChroma();
+    }
+
+    void chroma() {
+        if (random(1f) > .7f) {
+            chromaticAbberation.set("time", (float) millis() / 1000f);
+            filter(chromaticAbberation);
+        }
+    }
+
+    void pixellate() {
+        pixellate.set("cellSize", ((float)mouseY / (float)height) * .1f);
+        filter(pixellate);
+    }
+
+    void barrelBlurChroma() {
+        filter(barrelBlurChroma);
+    }
+
+    void blur() {
+        gaussianBlur.set("horizontalPass", 0);
+        filter(gaussianBlur);
+
+        // Horizontal pass
+        gaussianBlur.set("horizontalPass", 1);
+        filter(gaussianBlur);
     }
 
 
