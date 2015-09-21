@@ -36,9 +36,7 @@ public class Genetics extends PApplet {
         orator23 = createFont("OratorStd", 23);
 
         terminalTexts = new TerminalText[] {
-                info(10, 60),
-                info(10, 300),
-                info(10, 660),
+                info(10, 60)
         };
         artLib = ImageLib.art(this);
         geneticID = new GeneticID();
@@ -52,14 +50,14 @@ public class Genetics extends PApplet {
         background(0);
         blendMode(SCREEN);
         // tint(noiseColor.nextColor(255));
-        blurGeneticGraphic.draw();
+        //blurGeneticGraphic.draw();
         noTint();
         geneticID.draw();
         for (TerminalText terminalText : terminalTexts) {
             terminalText.draw();
         }
         //screenOverlay.draw();
-        glitchImages.draw();
+        // glitchImages.draw();
     }
 
     class GeneticID {
@@ -78,9 +76,12 @@ public class Genetics extends PApplet {
         }
 
         void next() {
-            s = random(1) > .15f ? "AUX" : "ERR";
-            s += StringUtils.rightPad(Integer.toHexString(64 + (int) random(670)).toUpperCase(), 4, "X") + ".";
-            s += random(1) > .9f ? "GEN" : "RNA";
+            s = Integer.toHexString(frameCount).toUpperCase() + "::" + Float.toHexString(frameRate);
+            /*
+            s = random(1) > .5f ? "TX" : "RX";
+            s += StringUtils.rightPad(Integer.toHexString(64 + (int) random(670)).toUpperCase(), 4, "X") + "/";
+            s += random(1) > .9f ? "!ERR" : Integer.toHexString(frameCount);
+            */
         }
     }
 
