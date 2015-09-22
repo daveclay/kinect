@@ -32,7 +32,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     NoiseColor noiseColor;
 
     PFont orator9;
+    PFont orator13;
+    PFont orator18;
     PFont orator23;
+    PFont orator36;
 
     PGraphics screenBlur;
     PGraphics multiplyMe;
@@ -61,7 +64,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
                 colorSeparator = ImgProc.shader(AfterRebelBellyMultiBody.this, "colorSeparation");
 
                 orator9 = createFont("OratorStd", 9);
+                orator13 = createFont("OratorStd", 13);
+                orator18 = createFont("OratorStd", 18);
                 orator23 = createFont("OratorStd", 23);
+                orator36 = createFont("OratorStd", 36);
 
                 noiseColor = new NoiseColor(AfterRebelBellyMultiBody.this, .01f);
 
@@ -225,7 +231,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             rect(center.x - 50, center.y - 50, 100, 100);
             textFont(orator23);
             text("x" + center.x, center.x + 110, center.y + 20);
-            textFont(orator9);
+            textFont(orator13);
             text("SEND::" + center.y, center.x + 110, center.y + 40);
             popStyle();
 
@@ -233,7 +239,13 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
         public void updatePosition() {
             leftHandPosition2d = scale(user.getLeftHandPosition2D());
+            leftHandPosition2d.z = user.getLeftHandPosition().z;
             rightHandPosition2d = scale(user.getRightHandPosition2D());
+            rightHandPosition2d.z = user.getLeftHandPosition().z;
+
+            int s = (int) max(60, map(leftHandPosition2d.z, 0, 3, 260, 60));
+            hud.log("Z", leftHandPosition2d.z);
+            size = new Dimension(s, s);
         }
 
         PVector scale(PVector location) {
@@ -283,10 +295,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             line(x + offset, y + offset, x + size.width + offset, y + size.height + offset);
             line(x + offset, y + size.height + offset, x + size.width + offset, y + offset);
 
-            textFont(orator9);
+            textFont(orator23);
             fill(color(255, 255, 255, 120));
             text("0x" + Integer.toHexString(frameCount).toUpperCase(), x + size.height + offset, y + offset + 23);
-            text("[" + x + "," + y + "]", x + size.height + offset, y + 46);
+            text("[" + x + "," + y + "]", x + size.height + offset, y + 60);
             popStyle();
         }
 
