@@ -44,6 +44,13 @@ public class ColorUtils extends PApplet {
         return (split[3] << 24) | ((255 - split[0]) << 16) | ((255 - split[1]) << 8) | (255 - split[2]);
     }
 
+    public static int addRed(int red, int color) {
+        int alpha = color >> 24 & 0xff;
+        int green = color >> 8 & 0xff;
+        int blue = color & 0xff;
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
+    }
+
     int color;
     int inverse;
 
