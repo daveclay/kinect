@@ -252,8 +252,12 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             sprite.background(0);
             int color = noiseColor.nextColor(255);
             // add red! blend it in? How? reduce others by some amount?
-            int red = (int) map(leftHandPosition2d.y, 0, height - 400, 0, 255);
-            color = ColorUtils.addRed(red, color);
+            // This should probably be Z, because Y's going to be hard to reach.
+            int red = (int) min(255, map(location.y, 0, height - 400, 0, 255));
+            if (location.y > height - 300) {
+                color = color(red, 0, 0);
+            }
+            color = ColorUtils.setRed(red, color);
             drawRect(sprite, offset, size, color);
             sprite.endDraw();
 
