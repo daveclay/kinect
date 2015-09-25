@@ -74,6 +74,9 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
                 screenBlur = createGraphics(width, height, P2D);
                 multiplyMe = createGraphics(width, height, P2D);
                 bg(screenBlur);
+
+                createBodies();
+
                 background(255);
             }
         });
@@ -81,11 +84,24 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         registerEventListeners();
     }
 
+    void createBodies() {
+        for (int i = 0; i < 8; i++) {
+            Body body = new Body(this, i, hud);
+            this.bodiesById.put(i, body);
+        }
+    }
+
     protected void registerEventListeners() {
         onUserEntered(user -> {
             hud.log("Detected Body " + user.getID(), "");
-            Body body = new Body(this, user, hud);
-            this.bodiesById.put(user.getID(), body);
+            Body body = this.bodiesById.get(user.getID());
+            if (body == null) {
+                body = new Body(this, user, hud);
+                this.bodiesById.put(user.getID(), body);
+                System.out.println("No Body found for ID " + user.getID());
+            } else {
+                body.userActive(user);
+            }
         });
 
         onUserWasLost(user -> {
@@ -97,21 +113,31 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     private void drawBodies() {
         background(0);
 
-        bodiesById.values().forEach(Body::updatePosition);
+        bodiesById.values().forEach(body -> {
+            if (body.user != null) {
+                body.updatePosition();
+            }
+        });
 
         // draw onto the ScreenBlur
-        bodiesById.values().forEach(Body::drawScreenBlur);
+        bodiesById.values().forEach(body -> {
+            if (body.user != null) {
+                body.drawScreenBlur();
+            }
+        });
 
         screenBlur.beginDraw();
         Body previous = null;
         screenBlur.pushStyle();
         screenBlur.strokeWeight(1);
         for (Body body : bodiesById.values()) {
-            lineTo(body.leftHandPosition2d, body.rightHandPosition2d);
-            if (previous != null) {
-                lineTo(body.rightHandPosition2d, previous.leftHandPosition2d);
+            if (body.user != null) {
+                lineTo(body.leftHandPosition2d, body.rightHandPosition2d);
+                if (previous != null) {
+                    lineTo(body.rightHandPosition2d, previous.leftHandPosition2d);
+                }
+                previous = body;
             }
-            previous = body;
         }
         screenBlur.popStyle();
 
@@ -182,8 +208,9 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     }
 
     public class Body extends Drawing {
-        private User user;
-        private HUD hud;
+        int id;
+        User user;
+        HUD hud;
         PGraphics sprite;
         NoiseColor noiseColor;
 
@@ -193,9 +220,23 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         int offset = 10;
 
         public Body(PApplet canvas,
+                    int id,
+                    HUD hud) {
+            this(canvas, id, null, hud);
+        }
+
+        public Body(PApplet canvas,
+                    User user,
+                    HUD hud) {
+            this(canvas, user.getID(), user, hud);
+        }
+
+        public Body(PApplet canvas,
+                    int id,
                     User user,
                     HUD hud) {
             super(canvas);
+            this.id = id;
             this.size = new Dimension(60, 60);
             this.offset = 10;
             this.user = user;
@@ -238,6 +279,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         public void updatePosition() {
+            if (user == null) {
+                return;
+            }
+
             leftHandPosition2d = scale(user.getLeftHandPosition2D());
             leftHandPosition2d.z = user.getLeftHandPosition().z;
             rightHandPosition2d = scale(user.getRightHandPosition2D());
@@ -280,25 +325,64 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         public void draw() {
-            drawRect(leftHandPosition2d);
-            drawRect(rightHandPosition2d);
+            if (user != null) {
+                drawUser();
+            } else {
+                drawMissing();
+            }
         }
 
-        void drawRect(PVector location) {
+        void drawMissing() {
+            PVector location = new PVector(id * (width / 6), 213);
+
+            pushStyle();
+            int color = color(random(235), random(50), 0);
+            stroke(color);
+            crossRect(location);
+            fill(color);
+            terminalText(new String[]{
+                    "0x" + Integer.toHexString((int) random(100)).toUpperCase(),
+                    "[" + location.x + "," + location.y + "]"
+            }, location);
+            popStyle();
+        }
+
+        void drawUser() {
+            drawUserRect(leftHandPosition2d);
+            drawUserRect(rightHandPosition2d);
+        }
+
+        void drawUserRect(PVector location) {
+            int x = (int) location.x;
+            int y = (int) location.y;
+            pushStyle();
+            crossRect(location);
+            fill(color(255, 255, 255, 120));
+            terminalText(new String[]{
+                    "0x" + Integer.toHexString(frameCount).toUpperCase(),
+                    "[" + x + "," + y + "]"
+            }, location);
+            popStyle();
+        }
+
+        void terminalText(String[] lines, PVector location) {
+            int x = (int) location.x;
+            int y = (int) location.y;
+            textFont(orator23);
+            for (int i = 0; i < lines.length; i++) {
+                text(lines[i], x + size.width + offset + 6, y + offset + 23 + (26 * i));
+            }
+        }
+
+        void crossRect(PVector location) {
             int x = (int) location.x;
             int y = (int) location.y;
             pushStyle();
             strokeWeight(1);
             noFill();
-            stroke(color(255, 100));
             rect(x + offset, y + offset, size.width, size.height);
             line(x + offset, y + offset, x + size.width + offset, y + size.height + offset);
             line(x + offset, y + size.height + offset, x + size.width + offset, y + offset);
-
-            textFont(orator23);
-            fill(color(255, 255, 255, 120));
-            text("0x" + Integer.toHexString(frameCount).toUpperCase(), x + size.height + offset, y + offset + 23);
-            text("[" + x + "," + y + "]", x + size.height + offset, y + 60);
             popStyle();
         }
 
@@ -311,6 +395,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             graphics.rect(offset, offset, size.width, size.height);
             graphics.popStyle();
             //gaussianBlur(graphics, 12, 8f);
+        }
+
+        public void userActive(User user) {
+            this.user = user;
         }
     }
 }
