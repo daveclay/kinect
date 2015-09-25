@@ -133,7 +133,16 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         screenBlur.strokeWeight(1);
         for (Body body : bodiesById.values()) {
             if (body.user != null) {
-                lineTo(body.leftHandPosition2d, body.rightHandPosition2d);
+                PVector leftHandPosition2d = body.leftHandPosition2d.get();
+                PVector rightHandPosition2d = body.rightHandPosition2d.get();
+
+                PVector v = new PVector(body.size.width, body.size.height);
+                v.div(2f);
+
+                leftHandPosition2d.add(v);
+                rightHandPosition2d.add(v);
+
+                lineTo(leftHandPosition2d, rightHandPosition2d);
                 if (previous != null) {
                     lineTo(body.rightHandPosition2d, previous.leftHandPosition2d);
                 }
@@ -359,6 +368,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             crossRect(missingLocation);
             fill(color);
             terminalText(new String[]{
+                    "BODY." + id + ".MISSING",
                     "0x" + Integer.toHexString((int) random(100)).toUpperCase(),
                     "[" + missingLocation.x + "," + missingLocation.y + "]"
             }, missingLocation);
@@ -378,6 +388,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             crossRect(location);
             fill(color(255, 255, 255, 120));
             terminalText(new String[]{
+                    "BODY." + id,
                     "0x" + Integer.toHexString(frameCount).toUpperCase(),
                     "[" + x + "," + y + "]"
             }, location);
@@ -389,7 +400,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             int y = (int) location.y;
             textFont(orator23);
             for (int i = 0; i < lines.length; i++) {
-                text(lines[i], x + size.width + offset + 6, y + offset + 23 + (26 * i));
+                text(lines[i], x + size.width + offset + 6, y + 23 + (26 * i));
             }
         }
 
