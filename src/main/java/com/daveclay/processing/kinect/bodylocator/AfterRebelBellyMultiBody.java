@@ -106,7 +106,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
         onUserWasLost(user -> {
             hud.log("Lost Body " + user.getID(), "");
-            bodiesById.remove(user.getID());
+            Body body = this.bodiesById.get(user.getID());
+            if (body != null) {
+                body.userActive(null);
+            }
         });
     }
 
@@ -121,9 +124,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
         // draw onto the ScreenBlur
         bodiesById.values().forEach(body -> {
-            if (body.user != null) {
-                body.drawScreenBlur();
-            }
+            body.drawScreenBlur();
         });
 
         screenBlur.beginDraw();
@@ -214,6 +215,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         PGraphics sprite;
         NoiseColor noiseColor;
 
+        PVector missingLocation;
         PVector leftHandPosition2d;
         PVector rightHandPosition2d;
         Dimension size;
@@ -237,13 +239,18 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
                     HUD hud) {
             super(canvas);
             this.id = id;
-            this.size = new Dimension(60, 60);
+            this.size = defaultSize();
             this.offset = 10;
             this.user = user;
             this.hud = hud;
             this.sprite = canvas.createGraphics(400, 400, P2D);
             bg(this.sprite);
             noiseColor = new NoiseColor(canvas, .01f);
+            missingLocation = new PVector(id * (width / 6), 213);
+        }
+
+        private Dimension defaultSize() {
+            return new Dimension(60, 60);
         }
 
         public void drawBasicBoxes() {
@@ -300,8 +307,21 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         public void drawScreenBlur() {
-            drawScreenBlur(leftHandPosition2d);
-            drawScreenBlur(rightHandPosition2d);
+            if (user != null) {
+                drawScreenBlur(leftHandPosition2d);
+                drawScreenBlur(rightHandPosition2d);
+            } else {
+                if (random(10) > 8) {
+                    /*
+                    screenBlur.beginDraw();
+                    screenBlur.blendMode(SCREEN);
+                    screenBlur.stroke(color(255, random(120), 0));
+                    screenBlur.noFill();
+                    screenBlur.rect(missingLocation.x, missingLocation.y, size.width, size.height);
+                    screenBlur.endDraw();
+                    */
+                }
+            }
         }
 
         public void drawScreenBlur(PVector location) {
@@ -333,18 +353,17 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         void drawMissing() {
-            PVector location = new PVector(id * (width / 6), 213);
-
             pushStyle();
             int color = color(random(235), random(50), 0);
             stroke(color);
-            crossRect(location);
+            crossRect(missingLocation);
             fill(color);
             terminalText(new String[]{
                     "0x" + Integer.toHexString((int) random(100)).toUpperCase(),
-                    "[" + location.x + "," + location.y + "]"
-            }, location);
+                    "[" + missingLocation.x + "," + missingLocation.y + "]"
+            }, missingLocation);
             popStyle();
+
         }
 
         void drawUser() {
@@ -399,6 +418,9 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
         public void userActive(User user) {
             this.user = user;
+            if (user == null) {
+                size = defaultSize();
+            }
         }
     }
 }
