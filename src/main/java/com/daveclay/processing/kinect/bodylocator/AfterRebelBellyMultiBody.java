@@ -106,6 +106,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             Body body = this.bodiesById.get(user.getID());
             if (body == null) {
                 body = new Body(this, user, hud);
+                body.userActive(user);
                 this.bodiesById.put(user.getID(), body);
                 System.out.println("No Body found for ID " + user.getID());
             } else {
@@ -303,11 +304,15 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
 
         public void toggleFake() {
+            if (!fake && this.user != null) {
+                // Don't do it!
+                return;
+            }
+
             fake = !fake;
             if (fake) {
                 active = true;
             } else if (user == null) {
-                active = false;
                 userActive(null);
             }
             leftPVectorGenerator = new FakePVectorGenerator(canvas, random(.015f) + .005f);
@@ -512,6 +517,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             this.user = user;
             if (user == null) {
                 this.size = defaultSize();
+                this.active = false;
+            } else {
+                this.fake = false;
+                this.active = true;
             }
         }
     }
