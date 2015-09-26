@@ -42,6 +42,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
     public AfterRebelBellyMultiBody() {
         hud = new HUD();
+        hud.setFontSize(23);
 
         setSketchCallback(new SketchCallback() {
 
@@ -156,8 +157,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         bodiesById.values().forEach(Body::draw);
         previous = null;
 
-        stroke(color(255, 0, 0, 200));
-        strokeWeight(1);
+        stroke(noiseColor.nextColor(180));
+        strokeWeight(2);
         noFill();
         for (Body body : bodiesById.values()) {
             if (body.active) {
@@ -197,14 +198,14 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         leftHandPosition2d.add(v);
         rightHandPosition2d.add(v);
 
-        lineTo(leftHandPosition2d, rightHandPosition2d);
+        //lineTo(leftHandPosition2d, rightHandPosition2d);
         if (previous != null) {
-            lineTo(body.rightHandPosition2d, previous.leftHandPosition2d);
+            //lineTo(body.rightHandPosition2d, previous.leftHandPosition2d);
         }
     }
 
     void lineTo(PVector locationA, PVector locationB) {
-        screenBlur.stroke(noiseColor.nextColor(200));
+        screenBlur.stroke(noiseColor.nextColor(40));
         screenBlur.line(locationA.x, locationA.y, locationB.x, locationB.y);
     }
 
@@ -404,7 +405,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         public void drawScreenBlur(PVector location) {
             sprite.beginDraw();
             sprite.background(0);
-            int color = noiseColor.nextColor(255);
+            int color = noiseColor.nextColor(213);
             // add red! blend it in? How? reduce others by some amount?
             // This should probably be Z, because Y's going to be hard to reach.
             int red = (int) min(255, map(location.y, 0, height - 400, 0, 255));
@@ -461,7 +462,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             rightHandPosition2d.add(v);
 
             pushStyle();
-            stroke(color(180, 100));
+            stroke(noiseColor.nextColor(180));
+            strokeWeight(2);
             line(leftHandPosition2d.x, leftHandPosition2d.y, rightHandPosition2d.x, rightHandPosition2d.y);
             popStyle();;
         }
@@ -495,7 +497,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             int y = (int) location.y;
             pushStyle();
             strokeWeight(1);
-            noFill();
+            fill(color(0, 100));
             rect(x + offset, y + offset, size.width, size.height);
             line(x + offset, y + offset, x + size.width + offset, y + size.height + offset);
             line(x + offset, y + size.height + offset, x + size.width + offset, y + offset);
