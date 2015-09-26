@@ -32,6 +32,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
     NoiseColor noiseColor;
 
+    PFont orator8;
     PFont orator9;
     PFont orator13;
     PFont orator18;
@@ -45,7 +46,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
     public AfterRebelBellyMultiBody() {
         hud = new HUD();
-        hud.setFontSize(23);
+        hud.setFontSize(11);
         hud.setColor(color(140, 100));
 
         setSketchCallback(new SketchCallback() {
@@ -68,6 +69,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
                 colorSeparator = ImgProc.shader(AfterRebelBellyMultiBody.this, "colorSeparation");
 
+                orator8 = createFont("OratorStd", 8);
                 orator9 = createFont("OratorStd", 9);
                 orator13 = createFont("OratorStd", 13);
                 orator18 = createFont("OratorStd", 18);
@@ -103,7 +105,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
     public void keyPressed() {
         if (Character.isDigit(key)) {
-            Body body = bodiesById.get(Integer.parseInt(String.valueOf(key)));
+            Body body = bodiesById.get(Integer.parseInt(String.valueOf(key)) - 1);
             if (body != null) {
                 body.toggleFake();
             }
@@ -333,12 +335,12 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             } else if (user == null) {
                 userActive(null);
             }
-            leftPVectorGenerator = new FakePVectorGenerator(canvas, random(.015f) + .005f);
-            rightPVectorGenerator = new FakePVectorGenerator(canvas, random(.015f) + .005f);
+            leftPVectorGenerator = new FakePVectorGenerator(canvas, random(.005f) + .001f);
+            rightPVectorGenerator = new FakePVectorGenerator(canvas, random(.005f) + .001f);
         }
 
         private Dimension defaultSize() {
-            return new Dimension(60, 60);
+            return new Dimension(50, 50);
         }
 
         public void drawBasicBoxes() {
@@ -365,10 +367,9 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             noFill();
             stroke(color);
             rect(center.x - 50, center.y - 50, 100, 100);
-            textFont(orator23);
-            text("x" + center.x, center.x + 110, center.y + 20);
-            textFont(orator13);
-            text("SEND::" + center.y, center.x + 110, center.y + 40);
+            textFont(orator8);
+            text("x" + center.x, center.x + 110, center.y + 10);
+            text("SEND::" + center.y, center.x + 110, center.y + 20);
             popStyle();
         }
 
@@ -391,7 +392,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         void scaleSize() {
-            int s = (int) max(60, map(leftHandPosition2d.z, 0, 3, 260, 60));
+            int s = (int) max(50, map(leftHandPosition2d.z, 0, 3, 100, 50));
             size = new Dimension(s, s);
         }
 
@@ -501,9 +502,9 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         void terminalText(String[] lines, PVector location) {
             int x = (int) location.x;
             int y = (int) location.y;
-            textFont(orator23);
+            textFont(orator9);
             for (int i = 0; i < lines.length; i++) {
-                text(lines[i], x + size.width + offset + 6, y + 23 + (26 * i));
+                text(lines[i], x + size.width + offset + 6, y + 16 + (9 * i));
             }
         }
 
@@ -547,18 +548,28 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         private Noise2D yNoise;
         private Noise2D zNoise;
 
+        int offsetX;
+        int offsetY;
+
         public FakePVectorGenerator(PApplet canvas, double rate) {
             this.xNoise = new Noise2D(canvas, rate);
             this.yNoise = new Noise2D(canvas, rate);
             this.zNoise = new Noise2D(canvas, .008f);
 
-            xNoise.setScale(canvas.width + 600);
-            yNoise.setScale(canvas.height + 600);
+            offsetX = (int) ((canvas.width * .25f) * -1);
+            offsetY = (int) ((canvas.height * .25f) * -1);
+
+            xNoise.setScale(canvas.width + canvas.width * .5f);
+            yNoise.setScale(canvas.height + canvas.height * .5f);
             zNoise.setScale(2);
         }
 
         public PVector next() {
-            return new PVector(-200 + xNoise.next(), -200 + yNoise.next(), zNoise.next() + 1f);
+            if (random(10) > 9.5f) {
+                xNoise.setRate(random(.005f) + .001f);
+                yNoise.setRate(random(.005f) + .001f);
+            }
+            return new PVector(offsetX + xNoise.next(), offsetY + yNoise.next(), zNoise.next() + 1f);
         }
     }
 }
