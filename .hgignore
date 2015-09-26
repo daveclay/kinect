@@ -4,3 +4,22 @@ target
 temp
 .DS_Store
 export
+syntax: glob
+classes\artifacts\kinect_test_jar\Java-WebSocket-1.3.0.jar
+classes\artifacts\kinect_test_jar\KinectPV2.jar
+classes\artifacts\kinect_test_jar\Shapes3D.jar
+classes\artifacts\kinect_test_jar\commons-lang3-3.0.jar
+classes\artifacts\kinect_test_jar\core.jar
+classes\artifacts\kinect_test_jar\geomerative.jar
+classes\artifacts\kinect_test_jar\glitchP5.jar
+classes\artifacts\kinect_test_jar\gluegen-rt.jar
+classes\artifacts\kinect_test_jar\gstreamer-java.jar
+classes\artifacts\kinect_test_jar\jackson-annotations-2.4.0.jar
+classes\artifacts\kinect_test_jar\jackson-core-2.4.3.jar
+classes\artifacts\kinect_test_jar\jackson-databind-2.4.3.jar
+classes\artifacts\kinect_test_jar\jna.jar
+classes\artifacts\kinect_test_jar\jogl-all.jar
+classes\artifacts\kinect_test_jar\kinect-test.jar
+classes\artifacts\kinect_test_jar\opencv-2.4.9-7.jar
+classes\artifacts\kinect_test_jar\peasycam.jar
+classes\artifacts\kinect_test_jar\video.jar
