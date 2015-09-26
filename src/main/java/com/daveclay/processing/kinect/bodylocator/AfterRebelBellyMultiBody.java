@@ -96,6 +96,18 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     public void keyPressed() {
         if (key == 'r') {
             fake = !fake;
+            if (fake) {
+                bodiesById.values().forEach(body -> {
+                    body.active = true;
+                });
+            } else {
+                bodiesById.values().forEach(body -> {
+                    if (body.user == null) {
+                        body.active = false;
+                        body.userActive(null);
+                    }
+                });
+            }
         }
     }
 
@@ -124,18 +136,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     private void drawBodies() {
         background(0);
 
-        // XXX
-        if (fake) {
-            bodiesById.values().forEach(body -> {
-                body.active = true;
-                body.fakePosition();
-            });
-        }
-
         bodiesById.values().forEach(body -> {
-            if (body.user != null) {
-                body.updatePosition();
-            }
+            body.updatePosition();
         });
 
         // draw onto the ScreenBlur
@@ -148,7 +150,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         screenBlur.pushStyle();
         screenBlur.strokeWeight(1);
         for (Body body : bodiesById.values()) {
-            if (body.user != null) {
+            if (body.active) {
                 PVector leftHandPosition2d = body.leftHandPosition2d.get();
                 PVector rightHandPosition2d = body.rightHandPosition2d.get();
 
@@ -313,27 +315,23 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             textFont(orator13);
             text("SEND::" + center.y, center.x + 110, center.y + 40);
             popStyle();
-
-        }
-
-        public void fakePosition() {
-            this.leftHandPosition2d = leftPVectorGenerator.next();
-            this.rightHandPosition2d = rightPVectorGenerator.next();
-            scaleSize();
-            active = true;
         }
 
         public void updatePosition() {
             if (!active) {
                 return;
             }
+            if (user == null) {
+                this.leftHandPosition2d = leftPVectorGenerator.next();
+                this.rightHandPosition2d = rightPVectorGenerator.next();
+            } else {
+                leftHandPosition2d = scale(user.getLeftHandPosition2D());
+                leftHandPosition2d.z = user.getLeftHandPosition().z;
+                rightHandPosition2d = scale(user.getRightHandPosition2D());
+                rightHandPosition2d.z = user.getLeftHandPosition().z;
 
-            leftHandPosition2d = scale(user.getLeftHandPosition2D());
-            leftHandPosition2d.z = user.getLeftHandPosition().z;
-            rightHandPosition2d = scale(user.getRightHandPosition2D());
-            rightHandPosition2d.z = user.getLeftHandPosition().z;
-
-            hud.log("Z", leftHandPosition2d.z);
+                hud.log("Z", leftHandPosition2d.z);
+            }
             scaleSize();
         }
 
@@ -474,6 +472,9 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         public FakePVectorGenerator(PApplet canvas, double rate) {
             this.xNoise = new Noise2D(canvas, rate);
             this.yNoise = new Noise2D(canvas, rate);
+
+            xNoise.setScale(canvas.width);
+            yNoise.setScale(canvas.height);
         }
 
         public PVector next() {
