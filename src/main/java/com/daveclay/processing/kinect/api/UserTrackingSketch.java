@@ -7,6 +7,7 @@ import com.daveclay.processing.api.HUD;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ public class UserTrackingSketch extends PApplet {
     private KinectPV2 kinect;
     private Translation translation;
     protected HUD hud;
+    Rectangle monitor;
 
     public final void setup() {
         //size(displayWidth, displayHeight, P2D);
@@ -41,15 +43,41 @@ public class UserTrackingSketch extends PApplet {
         // TODO: the background image, so can take up the full screen rather than
         // TODO: be limited to just the background image size. For now, just always
         // TODO: go full screen, then optionally translation to the background image.
-        size(displayWidth, displayHeight, P2D);
+
+        /*
+        GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+        GraphicsDevice window;
+        if (devices.length > 1) {
+            window = devices[1];
+        } else {
+            window = devices[0];
+        }
+
+        window.setFullScreenWindow(this.frame);
+        Rectangle bounds = window.getFullScreenWindow().getBounds();
+        size(bounds.width, bounds.height, P2D);
+        */
+
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        // gs[1] gets the *second* screen. gs[0] would get the primary screen
+        GraphicsDevice gd = gs[1];
+        GraphicsConfiguration[] gc = gd.getConfigurations();
+        monitor = gc[0].getBounds();
+
+        println(monitor.x + " " + monitor.y + " " + monitor.width + " " + monitor.height);
+        size(monitor.width, monitor.height, P2D);
+
+        // size(displayWidth, displayHeight, P2D);
+
         //size(1920, 1080, P2D);
         kinect = new KinectPV2(this);
         sketchCallback.setup(kinect);
         kinect.init();
 
         PImage kinectImage = getKinectImage();
-        int kinectImageX = (displayWidth - kinectImage.width) / 2;
-        int kinectImageY = (displayHeight - kinectImage.height) / 2;
+        int kinectImageX = (monitor.width - kinectImage.width) / 2;
+        int kinectImageY = (monitor.height - kinectImage.height) / 2;
         translation = new Translation(kinectImageX, kinectImageY);
         System.out.println(translation);
     }
@@ -88,6 +116,8 @@ public class UserTrackingSketch extends PApplet {
     private long perfCount = 0;
 
     public final void draw() {
+        frame.setLocation(monitor.x, monitor.y);
+        frame.setAlwaysOnTop(true);
         //long start = System.currentTimeMillis();
         calculateAndTriggerUserEvents();
         if (sketchCallback != null) {

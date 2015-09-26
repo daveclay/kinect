@@ -20,7 +20,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
     public static void main(String[] args) {
         AfterRebelBellyMultiBody bodyLocator = new AfterRebelBellyMultiBody();
-        SketchRunner.runSketchFullScreen(bodyLocator, 0);
+        SketchRunner.runSketchFullScreen(bodyLocator, 1);
         bodyLocator.frame.setLocation(0, 0);
     }
 
@@ -46,6 +46,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     public AfterRebelBellyMultiBody() {
         hud = new HUD();
         hud.setFontSize(23);
+        hud.setColor(color(140, 100));
 
         setSketchCallback(new SketchCallback() {
 
@@ -88,6 +89,11 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         registerEventListeners();
     }
 
+    @Override
+    public boolean sketchFullScreen() {
+        return true;
+    }
+
     void createBodies() {
         for (int i = 0; i < 8; i++) {
             Body body = new Body(this, i, hud);
@@ -112,7 +118,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
     protected void registerEventListeners() {
         onUserEntered(user -> {
-            hud.log("Detected Body " + user.getID(), "");
+            //hud.log("Detected Body " + user.getID(), "");
+            hud.log("Detected Body", user.getID());
             Body body = this.bodiesById.get(user.getID());
             if (body == null) {
                 body = new Body(this, user, hud);
@@ -125,7 +132,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         });
 
         onUserWasLost(user -> {
-            hud.log("Lost Body " + user.getID(), "");
+            hud.log("Lost Body", user.getID());
             Body body = this.bodiesById.get(user.getID());
             if (body != null) {
                 body.userActive(null);
@@ -239,7 +246,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     }
 
     private void drawHUD() {
-        hud.log("Frame Rate", frameRate);
+        hud.log("Frame", frameCount);
+        hud.log("Seq/R", frameRate);
         hud.draw(this);
     }
 
@@ -478,8 +486,6 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         void drawUserRect(PVector location) {
-            int x = (int) location.x;
-            int y = (int) location.y;
             pushStyle();
             stroke(color(180, 100));
             crossRect(location);
@@ -487,7 +493,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             terminalText(new String[]{
                     "BODY." + id,
                     "0x" + Integer.toHexString(frameCount).toUpperCase(),
-                    "[" + x + "," + y + "]"
+                    "[" + (int) location.x + "," + (int) location.y + "," + (int) location.z + "]"
             }, location);
             popStyle();
         }
