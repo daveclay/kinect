@@ -40,6 +40,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     PGraphics screenBlur;
     PGraphics multiplyMe;
 
+    boolean fake;
+
     public AfterRebelBellyMultiBody() {
         hud = new HUD();
 
@@ -91,6 +93,12 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
     }
 
+    public void keyPressed() {
+        if (key == 'r') {
+            fake = !fake;
+        }
+    }
+
     protected void registerEventListeners() {
         onUserEntered(user -> {
             hud.log("Detected Body " + user.getID(), "");
@@ -115,6 +123,14 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
     private void drawBodies() {
         background(0);
+
+        // XXX
+        if (fake) {
+            bodiesById.values().forEach(body -> {
+                body.active = true;
+                body.fakePosition();
+            });
+        }
 
         bodiesById.values().forEach(body -> {
             if (body.user != null) {
@@ -230,6 +246,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         Dimension size;
         int offset = 10;
 
+        boolean active;
+        FakePVectorGenerator leftPVectorGenerator;
+        FakePVectorGenerator rightPVectorGenerator;
+
         public Body(PApplet canvas,
                     int id,
                     HUD hud) {
@@ -256,6 +276,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             bg(this.sprite);
             noiseColor = new NoiseColor(canvas, .01f);
             missingLocation = new PVector(id * (width / 6), 213);
+            leftPVectorGenerator = new FakePVectorGenerator(canvas, random(.1f) + .01f);
+            rightPVectorGenerator = new FakePVectorGenerator(canvas, random(.1f) + .01f);
         }
 
         private Dimension defaultSize() {
@@ -294,8 +316,15 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
         }
 
+        public void fakePosition() {
+            this.leftHandPosition2d = leftPVectorGenerator.next();
+            this.rightHandPosition2d = rightPVectorGenerator.next();
+            scaleSize();
+            active = true;
+        }
+
         public void updatePosition() {
-            if (user == null) {
+            if (!active) {
                 return;
             }
 
@@ -304,8 +333,12 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             rightHandPosition2d = scale(user.getRightHandPosition2D());
             rightHandPosition2d.z = user.getLeftHandPosition().z;
 
-            int s = (int) max(60, map(leftHandPosition2d.z, 0, 3, 260, 60));
             hud.log("Z", leftHandPosition2d.z);
+            scaleSize();
+        }
+
+        void scaleSize() {
+            int s = (int) max(60, map(leftHandPosition2d.z, 0, 3, 260, 60));
             size = new Dimension(s, s);
         }
 
@@ -316,7 +349,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         public void drawScreenBlur() {
-            if (user != null) {
+            if (active) {
                 drawScreenBlur(leftHandPosition2d);
                 drawScreenBlur(rightHandPosition2d);
             } else {
@@ -354,7 +387,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         public void draw() {
-            if (user != null) {
+            if (active) {
                 drawUser();
             } else {
                 drawMissing();
@@ -430,8 +463,21 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         public void userActive(User user) {
             this.user = user;
             if (user == null) {
-                size = defaultSize();
+                this.size = defaultSize();
             }
+        }
+    }
+
+    class FakePVectorGenerator {
+        private Noise2D xNoise;
+        private Noise2D yNoise;
+        public FakePVectorGenerator(PApplet canvas, double rate) {
+            this.xNoise = new Noise2D(canvas, rate);
+            this.yNoise = new Noise2D(canvas, rate);
+        }
+
+        public PVector next() {
+            return new PVector(xNoise.next(), yNoise.next());
         }
     }
 }
