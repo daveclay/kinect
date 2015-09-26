@@ -12,6 +12,7 @@ import processing.core.PVector;
 import processing.opengl.PShader;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +40,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
 
     PGraphics screenBlur;
     PGraphics multiplyMe;
+
+    int rectBlurAlpha = 213;
 
     public AfterRebelBellyMultiBody() {
         hud = new HUD();
@@ -98,6 +101,12 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             if (body != null) {
                 body.toggleFake();
             }
+        } else if (keyCode == KeyEvent.VK_DOWN) {
+            rectBlurAlpha = min(255, max(0, (rectBlurAlpha - 10)));
+            System.out.println("rectBlurAlpha: " + rectBlurAlpha);
+        } else if (keyCode == KeyEvent.VK_UP) {
+            rectBlurAlpha = min(255, max(0, (rectBlurAlpha + 10)));
+            System.out.println("rectBlurAlpha: " + rectBlurAlpha);
         }
     }
 
@@ -405,12 +414,12 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         public void drawScreenBlur(PVector location) {
             sprite.beginDraw();
             sprite.background(0);
-            int color = noiseColor.nextColor(213);
+            int color = noiseColor.nextColor(rectBlurAlpha);
             // add red! blend it in? How? reduce others by some amount?
             // This should probably be Z, because Y's going to be hard to reach.
-            int red = (int) min(255, map(location.y, 0, height - 400, 0, 255));
+            int red = (int) max(0, min(255, map(location.y, 0, height * .75f, 0, 255)));
             if (location.y > height - 300) {
-                color = color(red, 0, 0);
+                color = color(red, random(30), 0);
             }
             color = ColorUtils.setRed(red, color);
             drawRect(sprite, offset, size, color);
