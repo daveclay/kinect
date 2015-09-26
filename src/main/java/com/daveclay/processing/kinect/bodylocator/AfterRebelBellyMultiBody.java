@@ -40,8 +40,6 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     PGraphics screenBlur;
     PGraphics multiplyMe;
 
-    boolean fake;
-
     public AfterRebelBellyMultiBody() {
         hud = new HUD();
 
@@ -94,19 +92,10 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     }
 
     public void keyPressed() {
-        if (key == 'r') {
-            fake = !fake;
-            if (fake) {
-                bodiesById.values().forEach(body -> {
-                    body.active = true;
-                });
-            } else {
-                bodiesById.values().forEach(body -> {
-                    if (body.user == null) {
-                        body.active = false;
-                        body.userActive(null);
-                    }
-                });
+        if (Character.isDigit(key)) {
+            Body body = bodiesById.get(Integer.parseInt(String.valueOf(key)));
+            if (body != null) {
+                body.toggleFake();
             }
         }
     }
@@ -151,19 +140,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         screenBlur.strokeWeight(1);
         for (Body body : bodiesById.values()) {
             if (body.active) {
-                PVector leftHandPosition2d = body.leftHandPosition2d.get();
-                PVector rightHandPosition2d = body.rightHandPosition2d.get();
-
-                PVector v = new PVector(body.size.width, body.size.height);
-                v.div(2f);
-
-                leftHandPosition2d.add(v);
-                rightHandPosition2d.add(v);
-
-                lineTo(leftHandPosition2d, rightHandPosition2d);
-                if (previous != null) {
-                    lineTo(body.rightHandPosition2d, previous.leftHandPosition2d);
-                }
+                blurConnect(body, previous);
                 previous = body;
             }
         }
@@ -176,11 +153,53 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         image(screenBlur, 0, 0);
 
         bodiesById.values().forEach(Body::draw);
+        previous = null;
+
+        stroke(color(255, 0, 0, 200));
+        strokeWeight(1);
+        noFill();
+        for (Body body : bodiesById.values()) {
+            if (body.active) {
+                if (previous != null) {
+                    connect(body, previous);
+                }
+                previous = body;
+            }
+        }
 
         //blur();
         //colorSeparator.set("time", (float) millis() / 1000f);
         //filter(colorSeparator);
         drawHUD();
+    }
+
+    void connect(Body body, Body previous) {
+        PVector left = body.leftHandPosition2d.get();
+        PVector right = previous.rightHandPosition2d.get();
+
+        PVector v = new PVector(body.size.width, body.size.height);
+        v.div(2f);
+
+        left.add(v);
+        right.add(v);
+
+        line(right.x, right.y, left.x, left.y);
+    }
+
+    void blurConnect(Body body, Body previous) {
+        PVector leftHandPosition2d = body.leftHandPosition2d.get();
+        PVector rightHandPosition2d = body.rightHandPosition2d.get();
+
+        PVector v = new PVector(body.size.width, body.size.height);
+        v.div(2f);
+
+        leftHandPosition2d.add(v);
+        rightHandPosition2d.add(v);
+
+        lineTo(leftHandPosition2d, rightHandPosition2d);
+        if (previous != null) {
+            lineTo(body.rightHandPosition2d, previous.leftHandPosition2d);
+        }
     }
 
     void lineTo(PVector locationA, PVector locationB) {
@@ -249,6 +268,8 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         int offset = 10;
 
         boolean active;
+
+        boolean fake;
         FakePVectorGenerator leftPVectorGenerator;
         FakePVectorGenerator rightPVectorGenerator;
 
@@ -278,8 +299,19 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
             bg(this.sprite);
             noiseColor = new NoiseColor(canvas, .01f);
             missingLocation = new PVector(id * (width / 6), 213);
-            leftPVectorGenerator = new FakePVectorGenerator(canvas, random(.1f) + .01f);
-            rightPVectorGenerator = new FakePVectorGenerator(canvas, random(.1f) + .01f);
+        }
+
+
+        public void toggleFake() {
+            fake = !fake;
+            if (fake) {
+                active = true;
+            } else if (user == null) {
+                active = false;
+                userActive(null);
+            }
+            leftPVectorGenerator = new FakePVectorGenerator(canvas, random(.015f) + .005f);
+            rightPVectorGenerator = new FakePVectorGenerator(canvas, random(.015f) + .005f);
         }
 
         private Dimension defaultSize() {
@@ -410,12 +442,30 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         void drawUser() {
             drawUserRect(leftHandPosition2d);
             drawUserRect(rightHandPosition2d);
+            connectHands();
+        }
+
+        void connectHands() {
+            PVector leftHandPosition2d = this.leftHandPosition2d.get();
+            PVector rightHandPosition2d = this.rightHandPosition2d.get();
+
+            PVector v = new PVector(size.width, size.height);
+            v.div(2f);
+
+            leftHandPosition2d.add(v);
+            rightHandPosition2d.add(v);
+
+            pushStyle();
+            stroke(color(180, 100));
+            line(leftHandPosition2d.x, leftHandPosition2d.y, rightHandPosition2d.x, rightHandPosition2d.y);
+            popStyle();;
         }
 
         void drawUserRect(PVector location) {
             int x = (int) location.x;
             int y = (int) location.y;
             pushStyle();
+            stroke(color(180, 100));
             crossRect(location);
             fill(color(255, 255, 255, 120));
             terminalText(new String[]{
@@ -469,16 +519,20 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
     class FakePVectorGenerator {
         private Noise2D xNoise;
         private Noise2D yNoise;
+        private Noise2D zNoise;
+
         public FakePVectorGenerator(PApplet canvas, double rate) {
             this.xNoise = new Noise2D(canvas, rate);
             this.yNoise = new Noise2D(canvas, rate);
+            this.zNoise = new Noise2D(canvas, .008f);
 
-            xNoise.setScale(canvas.width);
-            yNoise.setScale(canvas.height);
+            xNoise.setScale(canvas.width + 600);
+            yNoise.setScale(canvas.height + 600);
+            zNoise.setScale(2);
         }
 
         public PVector next() {
-            return new PVector(xNoise.next(), yNoise.next());
+            return new PVector(-200 + xNoise.next(), -200 + yNoise.next(), zNoise.next() + 1f);
         }
     }
 }
