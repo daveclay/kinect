@@ -1,26 +1,25 @@
 package com.daveclay.processing.sketches.testing;
 
+import com.daveclay.processing.api.Noise2D;
 import com.daveclay.processing.api.NoiseColor;
 import com.daveclay.processing.api.SketchRunner;
 import com.daveclay.processing.api.image.ImgProc;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PGraphics;
-import processing.core.PImage;
 import processing.opengl.PShader;
 
 import java.awt.*;
-import java.awt.geom.Dimension2D;
 
-public class MultipleGraphicsWithPShaders extends PApplet {
+public class MultipleGraphicsCombiningOpenGLWithP2D extends PApplet {
 
     public static void main(String[] args) {
-        SketchRunner.run(new MultipleGraphicsWithPShaders());
+        SketchRunner.run(new MultipleGraphicsCombiningOpenGLWithP2D());
     }
 
     PShader badBlur;
     PShader gaussianBlur;
-    PShader chromaticAbberation;
+    PShader colorSeparation;
     PShader pixellate;
     PShader barrelBlurChroma;
 
@@ -34,13 +33,16 @@ public class MultipleGraphicsWithPShaders extends PApplet {
 
     NoiseColor noiseColor;
 
+    Noise2D noise2D;
+
     public void setup() {
-        size(1600, 800, P2D);
+        size(1600, 800, OPENGL);
 
         orator9 = createFont("OratorStd", 9);
         orator23 = createFont("OratorStd", 23);
 
         noiseColor = new NoiseColor(this, .01f);
+        noise2D = new Noise2D(this, .001f);
 
         imgProc = new ImgProc(this);
 
@@ -49,12 +51,13 @@ public class MultipleGraphicsWithPShaders extends PApplet {
 
         gaussianBlur = ImgProc.shader(this, "gaussianBlur");
 
-        chromaticAbberation = ImgProc.shader(this, "colorSeparation");
+        colorSeparation = ImgProc.shader(this, "humanBurn");
+
         pixellate = ImgProc.shader(this, "pixellate");
         barrelBlurChroma = ImgProc.shader(this, "barrelBlurChroma");
         barrelBlurChroma.set("sketchSize", (float) width, (float) height);
 
-        sprite = createGraphics(400, 400, P2D);
+        sprite = createGraphics(400, 400, OPENGL);
         screenBlur = createGraphics(width, height, P2D);
         multiplyMe = createGraphics(width, height, P2D);
 
@@ -73,13 +76,17 @@ public class MultipleGraphicsWithPShaders extends PApplet {
 
         sprite.beginDraw();
         sprite.background(0);
-        drawRect(sprite, offset, size, noiseColor.nextColor(255));
+        drawKiller(sprite, offset, size, noiseColor.nextColor(255));
         sprite.endDraw();
 
         screenBlur.beginDraw();
         screenBlur.blendMode(SCREEN);
         screenBlur.image(sprite, x, y);
-        blur(screenBlur, 9, 2f);
+        screenBlur.image(sprite, x + 20, y);
+        screenBlur.image(sprite, x - 20, y);
+        blur(screenBlur, 3, 1.9f);
+        //colorSeparation.set("time", (float) millis() / 1000f);
+        //screenBlur.filter(colorSeparation);
         screenBlur.filter(badBlur);
         screenBlur.endDraw();
 
@@ -87,9 +94,16 @@ public class MultipleGraphicsWithPShaders extends PApplet {
         strokeWeight(1);
         noFill();
         stroke(color(255, 100));
-        rect(x + offset, y + offset, size.width, size.height);
-        line(x + offset, y + offset, x + size.width + offset, y + size.height + offset);
-        line(x + offset, y + size.height + offset, x + size.width + offset, y + offset);
+
+        pushMatrix();
+        translate(x + offset, y + offset, 100);
+        rotateX(noise2D.next() * TWO_PI);
+        rotateY(noise2D.next() * TWO_PI);
+        rotateZ(noise2D.next() * TWO_PI);
+        box(noise2D.next() * size.width, size.height, size.width);
+        popMatrix();
+
+        colorSeparation();
 
         textFont(orator9);
         fill(255, 120);
@@ -97,15 +111,26 @@ public class MultipleGraphicsWithPShaders extends PApplet {
         text("[" + x + "," + y + "]", x + size.height + offset, y + 46);
     }
 
-    void drawRect(PGraphics graphics, int offset, Dimension size, int color) {
+    void colorSeparation() {
+        colorSeparation.set("time", (float) millis() / 1021f);
+        filter(colorSeparation);
+    }
+
+    void drawKiller(PGraphics graphics, int offset, Dimension size, int color) {
         graphics.pushStyle();
         graphics.strokeWeight(1);
         graphics.noFill();
         graphics.stroke(color);
-        // blur size...
-        graphics.rect(offset, offset, size.width, size.height);
+
+        graphics.pushMatrix();
+        graphics.translate(size.width / 2, size.height / 2);
+        graphics.rotateX(noise2D.next() * TWO_PI);
+        graphics.rotateY(noise2D.next() * TWO_PI);
+        graphics.rotateZ(noise2D.next() * TWO_PI);
+        graphics.box(size.width, size.height, size.width);
+        graphics.popMatrix();
+
         graphics.popStyle();
-        //blur(graphics, 12, 8f);
     }
 
     void bg(PGraphics graphics) {
@@ -116,8 +141,8 @@ public class MultipleGraphicsWithPShaders extends PApplet {
 
     void chroma(PGraphics graphics) {
         if (random(1f) > .7f) {
-            chromaticAbberation.set("time", (float) millis() / 1000f);
-            graphics.filter(chromaticAbberation);
+            colorSeparation.set("time", (float) millis() / 1000f);
+            graphics.filter(colorSeparation);
         }
     }
 
