@@ -340,7 +340,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         private Dimension defaultSize() {
-            return new Dimension(50, 50);
+            return new Dimension(30, 30);
         }
 
         public void drawBasicBoxes() {
@@ -392,7 +392,7 @@ public class AfterRebelBellyMultiBody extends UserTrackingSketch implements Body
         }
 
         void scaleSize() {
-            int s = (int) max(50, map(leftHandPosition2d.z, 0, 3, 100, 50));
+            int s = (int) max(30, map(leftHandPosition2d.z, 0, 3, 100, 30));
             size = new Dimension(s, s);
         }
 
