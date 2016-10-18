@@ -1,0 +1,32 @@
+// by Nikos Papadopoulos, 4rknova / 2014
+// Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+
+#ifdef GL_ES
+precision highp float;
+#endif
+
+varying vec4 vertTexcoord;
+uniform sampler2D textureSampler;
+
+//void mainImage( out vec4 fragColor, in vec2 fragCoord )
+void main() {
+    vec4 ret;
+	vec4 c0 = texture2D(iChannel0,fragCoord.xy/iResolution.xy);
+
+	if (mod(floor(fragCoord.y),2.0) > 0.0)
+	{
+		float l = dot(c0.xyz, vec3(.2126, .7152, .0722));
+		fragColor = l * c0;
+		return;
+	}
+
+	float t = pow((((1. + sin(iGlobalTime * 10.0) * .5)
+		 *  .8 + sin(iGlobalTime * cos(fragCoord.y) * 41415.92653) * .0125)
+		 * 1.5 + sin(iGlobalTime * 7.) * .5), 5.0);
+
+	vec4 c1 = texture2D(textureSampler, vertTextcoord.xy/(iResolution.xy+vec2(t * .2,.0)));
+	vec4 c2 = texture2D(textureSampler, vertTextcoord.xy/(iResolution.xy+vec2(t * .5,.0)));
+	vec4 c3 = texture2D(textureSampler, vertTextcoord.xy/(iResolution.xy+vec2(t * .9,.0)));
+
+    gl_FragColor = vec4(c3.r, c2.g, c1.b, 1.0);
+}
